@@ -1,0 +1,17 @@
+version: "3"
+services:
+  database:
+    image: postgres:alpine
+    container_name: pg
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    build:
+      dockerfile: Dockerfile
+      context: ./database
