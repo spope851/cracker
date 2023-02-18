@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from "type-graphql"
 
 @ObjectType()
 class User {
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   id!: string
 
   @Field(() => String, { nullable: true })
@@ -14,7 +14,6 @@ class User {
   @Field(() => String)
   username!: string
 
-  @Field(() => String)
   password!: string
 }
 
