@@ -7,8 +7,7 @@ import { User, UserInput } from "../schemas"
 class RegistrationResolver {
   @Mutation(() => String)
   async register(@Arg("user", () => UserInput) user: UserInput) {
-    let response
-    const req = await pool.query(
+    await pool.query(
       `INSERT INTO users (full_name, email, username, password)
        VALUES (
         $1,
