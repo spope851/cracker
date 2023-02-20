@@ -40,3 +40,4 @@ public/static/svelte-apps
 *.code-workspace
 
 **/postgres-data/**
+**/cache/**

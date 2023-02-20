@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "type-graphql"
+import { Field, ID, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
 class User {
@@ -12,6 +12,9 @@ class User {
   username!: string
 
   password?: string
+
+  @Field(() => Int)
+  role!: number
 }
 
 export { User }

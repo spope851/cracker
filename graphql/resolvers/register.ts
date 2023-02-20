@@ -22,12 +22,13 @@ class RegistrationResolver {
         [user.email, user.username, hashedPassword]
       )
       .then((queryRes: PgQueryResponse) => {
-        const { id, username, email } = queryRes.rows[0]
+        const { id, username, email, role } = queryRes.rows[0]
         return {
           user: {
             id,
             username,
             email,
+            role,
           },
         }
       })

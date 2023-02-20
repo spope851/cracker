@@ -19,9 +19,10 @@ services:
       context: ./database
   cache:
     image: redis:6.2-alpine
+    container_name: redis
     restart: always
     ports:
       # TODO: add ports to env vars
       - "6379:6379"
     volumes:
-      - cache:/data
+      - ./cache:/data
