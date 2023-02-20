@@ -1,5 +1,7 @@
+import { User } from "@/graphql/schemas"
+
 interface PgQueryResponse {
-  rows: { id: string }[]
+  rows: User[]
 }
 
 interface PgQueryError {
