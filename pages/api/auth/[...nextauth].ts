@@ -1,9 +1,7 @@
 import { PgQueryResponse, PgQueryError } from "@/types"
 import { pool } from "@/utils/postgres"
-import redis from "@/utils/redis"
 import argon2 from "argon2"
 import NextAuth from "next-auth"
-import { JWT } from "next-auth/jwt"
 import CredentialsProvider from "next-auth/providers/credentials"
 export const authOptions = {
   // Configure one or more authentication providers
@@ -26,15 +24,13 @@ export const authOptions = {
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
-        console.log(credentials?.username)
-
         const user = await pool
           .query(`SELECT * FROM "user" WHERE username = $1;`, [
             credentials?.username,
           ])
           .then(async (res: PgQueryResponse) => {
             if (res.rows.length === 0) return null
-            const { id, email, password, role } = res.rows[0]
+            const { id, password } = res.rows[0]
 
             const correctPassword = await argon2.verify(
               password!,
@@ -44,9 +40,6 @@ export const authOptions = {
 
             return {
               id,
-              username: res.rows[0].username,
-              email,
-              role,
             }
           })
           .catch((e: PgQueryError) => {
@@ -60,9 +53,22 @@ export const authOptions = {
     // ...add more providers here
   ],
   callbacks: {
-    async jwt({ token }: { token: JWT }) {
-      await redis.set("qid", token.sub)
+    async jwt({ token, user }: any) {
+      user && (token.user = user)
+      // console.log("token", token)
+      // token {
+      //   sub: '6',
+      //   user: { id: 6 },
+      //   iat: 1676950152,
+      //   exp: 1679542152,
+      //   jti: 'cdce51a6-7d61-4e2d-9bbc-6ed288bf91a2'
+      // }
       return token
+    },
+    async session({ session, token }: any) {
+      session.user = token.user
+      // console.log("session", session)
+      return session
     },
   },
 }

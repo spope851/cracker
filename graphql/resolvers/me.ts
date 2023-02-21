@@ -1,37 +1,60 @@
-import { MyContext } from "@/pages/api/graphql"
 import { PgQueryError, PgQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
-import { Ctx, Query, Resolver } from "type-graphql"
-import { User } from "../schemas"
+import redis from "@/utils/redis"
+import { Arg, Query, Resolver } from "type-graphql"
+import { UserAuthInput } from "../schemas"
 import { GetUserResponse } from "../schemas/getUser/getUserResponse"
 
-@Resolver(User)
+@Resolver(GetUserResponse)
 export class MeReslover {
   @Query(() => GetUserResponse)
-  async me(@Ctx() { userId }: Awaited<MyContext>): Promise<GetUserResponse> {
-    const res: Promise<GetUserResponse> = pool
-      .query(`SELECT * FROM "user" WHERE id = $1;`, [userId])
-      .then((res: PgQueryResponse) => {
-        if (res.rows.length === 0)
-          return {
-            error: "not found",
+  async me(
+    @Arg("user", () => UserAuthInput) { token, id }: UserAuthInput
+  ): Promise<GetUserResponse> {
+    // 1
+    // check redis for token key
+    // 2
+    // if it returns a user, return that user
+    // 3
+    // if it returns falsy, use the id to find the user in the database
+    // 4
+    // if you find them in the database, first
+    //  1
+    //  save them to redis, then
+    //  2
+    //  return them
+    // 5
+    // if you don't find them in the database, return an error
+
+    const redisUser = await redis.get(token)
+    if (redisUser) return JSON.parse(redisUser)
+    else {
+      const postgresUser: Promise<GetUserResponse> = pool
+        .query(`SELECT * FROM "user" WHERE id = $1;`, [id])
+        .then(async (res: PgQueryResponse) => {
+          if (res.rows.length === 0)
+            return {
+              error: "not found",
+            }
+          const { id, email, role } = res.rows[0]
+          const foundUser = {
+            user: {
+              id,
+              username: res.rows[0].username,
+              email,
+              role,
+            },
           }
-        const { id, email, role } = res.rows[0]
-        return {
-          user: {
-            id,
-            username: res.rows[0].username,
-            email,
-            role,
-          },
-        }
-      })
-      .catch((e: PgQueryError) => {
-        console.log(e)
-        return {
-          error: "unhandled error",
-        }
-      })
-    return res
+          await redis.set(token, JSON.stringify(foundUser))
+          return foundUser
+        })
+        .catch((e: PgQueryError) => {
+          console.log(e)
+          return {
+            error: "unhandled error",
+          }
+        })
+      return postgresUser
+    }
   }
 }
