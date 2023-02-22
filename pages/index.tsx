@@ -11,6 +11,7 @@ export default function Home() {
   const [username, setUsername] = useState<string>()
   const [password, setPassword] = useState<string>()
   const [signInError, setSignInError] = useState<string>()
+  const [signInLoading, setSignInLoading] = useState(false)
   const session = useSession()
   const [registerMutation, { data, loading, error }] = useMutation(
     graphql(`
@@ -113,7 +114,11 @@ export default function Home() {
             password,
             redirect: false,
           }).then((res) => {
-            if (res?.error) setSignInError("incorrect credentials")
+            setSignInLoading(true)
+            if (res?.error) {
+              setSignInError("incorrect credentials")
+              setSignInLoading(false)
+            }
           })
         }}
         style={{ display: "flex", flexDirection: "column" }}
