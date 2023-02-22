@@ -3,15 +3,21 @@ import { ApolloProvider } from "@apollo/client"
 import Layout from "@/components/layout"
 import client from "../graphql/apolloClient"
 import { ThemeProvider } from "@/components/themeProvider"
+import { SessionProvider } from "next-auth/react"
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
-    <ThemeProvider>
-      <ApolloProvider client={client}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ApolloProvider>
-    </ThemeProvider>
+    <SessionProvider session={session}>
+      <ThemeProvider>
+        <ApolloProvider client={client}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ApolloProvider>
+      </ThemeProvider>
+    </SessionProvider>
   )
 }

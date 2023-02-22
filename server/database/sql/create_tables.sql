@@ -6,10 +6,9 @@ create table if not exists role_lookup (
 
 create table if not exists "user" (
     id serial primary key,
-    name varchar (255),
-    email varchar (255) not null unique,
     username varchar (255) not null unique,
     password varchar (255) not null,
+    email varchar (255) not null unique,
     created_at timestamp default now(),
     updated_at timestamp default now(),
     role integer default 1,
