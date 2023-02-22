@@ -4,6 +4,7 @@ import Layout from "@/components/layout"
 import client from "../graphql/apolloClient"
 import { ThemeProvider } from "@/components/themeProvider"
 import { SessionProvider } from "next-auth/react"
+import "animate.css"
 
 export default function App({
   Component,

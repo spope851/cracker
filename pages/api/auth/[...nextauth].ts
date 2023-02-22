@@ -53,6 +53,11 @@ export const authOptions = {
     // ...add more providers here
   ],
   callbacks: {
+    async redirect({ baseUrl }: any) {
+      // Allows relative callback URLs
+      // Allows callback URLs on the same origin
+      return baseUrl
+    },
     async jwt({ token, user }: any) {
       user && (token.user = user)
       // console.log("token", token)
@@ -66,10 +71,22 @@ export const authOptions = {
       return token
     },
     async session({ session, token }: any) {
-      session.user = token.user
+      session.user = {
+        id: String(token.user.id),
+        token: token.jti,
+      }
       // console.log("session", session)
+      // session {
+      //   user: {
+      //     id: 6
+      //     token: 'cdce51a6-7d61-4e2d-9bbc-6ed288bf91a2'
+      //   }
+      // }
       return session
     },
+  },
+  pages: {
+    signIn: "/",
   },
 }
 export default NextAuth(authOptions)
