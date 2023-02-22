@@ -37,7 +37,7 @@ export default function Home() {
           redirect: false,
         })
     })()
-  }, [loading, data])
+  }, [loading, data, password])
 
   const form = register ? (
     <>
@@ -50,7 +50,7 @@ export default function Home() {
             password &&
             (await registerMutation({
               variables: { user: { email, username, password } },
-            }).then((res) => console.log(res)))
+            }))
         }}
         style={{ display: "flex", flexDirection: "column" }}
       >
