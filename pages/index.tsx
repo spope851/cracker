@@ -140,7 +140,7 @@ export default function Home() {
           />
         </label>
         <button type="submit" disabled={!username || !password}>
-          sign in
+          {signInLoading ? "...processing" : "sign in"}
         </button>
         {signInError && (
           <Typography variant="caption" color="red" mt={1} textAlign="center">
