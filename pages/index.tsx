@@ -109,12 +109,12 @@ export default function Home() {
       <form
         onSubmit={async (e) => {
           e.preventDefault()
+          setSignInLoading(true)
           await signIn("credentials", {
             username,
             password,
             redirect: false,
           }).then((res) => {
-            setSignInLoading(true)
             if (res?.error) {
               setSignInError("incorrect credentials")
               setSignInLoading(false)
