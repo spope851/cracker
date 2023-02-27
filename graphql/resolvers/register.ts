@@ -1,9 +1,9 @@
-import { PgQueryError, RegisterQueryResponse } from "@/types"
+import { PgQueryError, PgQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
 import { postgresErrorDetails } from "@/utils/stringUtils"
 import argon2 from "argon2"
 import { Arg, Mutation, Resolver } from "type-graphql"
-import { UserInput, RegisterResponse } from "../schemas"
+import { UserInput, RegisterResponse, User } from "../schemas"
 
 @Resolver(RegisterResponse)
 class RegistrationResolver {
@@ -22,7 +22,7 @@ class RegistrationResolver {
         ) RETURNING *;`,
         [user.email, user.username, hashedPassword]
       )
-      .then((queryRes: RegisterQueryResponse) => {
+      .then((queryRes: PgQueryResponse<User>) => {
         const { id, username, email, role } = queryRes.rows[0]
         return {
           user: {

@@ -1,4 +1,4 @@
-import { PgQueryError, TrackQueryResponse } from "@/types"
+import { PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
 import { postgresErrorDetails } from "@/utils/stringUtils"
 import { Arg, Mutation, Resolver } from "type-graphql"
@@ -23,7 +23,7 @@ class TrackerResolver {
         ) RETURNING *;`,
         [overview, numberCreativeHours, rating, user]
       )
-      .then((queryRes: TrackQueryResponse) => {
+      .then((queryRes: PgQueryResponse<PgTrackerRow>) => {
         const returnRow = queryRes.rows[0]
         return {
           track: {

@@ -1,12 +1,11 @@
-import { User } from "@/graphql/schemas"
 import { Track } from "@/graphql/schemas/track"
 
-interface TrackQueryResponse {
-  rows: (Omit<Track, "numberCreativeHours"> & { number_creative_hours: string })[]
+interface PgQueryResponse<T> {
+  rows: T[]
 }
 
-interface RegisterQueryResponse {
-  rows: User[]
+type PgTrackerRow = Omit<Track, "numberCreativeHours"> & {
+  number_creative_hours: string
 }
 
 interface PgQueryError {
@@ -14,4 +13,4 @@ interface PgQueryError {
   detail: string
 }
 
-export type { RegisterQueryResponse, PgQueryError, TrackQueryResponse }
+export type { PgTrackerRow, PgQueryError, PgQueryResponse }
