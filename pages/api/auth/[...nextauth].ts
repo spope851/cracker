@@ -1,4 +1,4 @@
-import { PgQueryResponse, PgQueryError } from "@/types"
+import { PgQueryError, RegisterQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
 import argon2 from "argon2"
 import NextAuth from "next-auth"
@@ -28,7 +28,7 @@ export const authOptions = {
           .query(`SELECT * FROM "user" WHERE username = $1;`, [
             credentials?.username,
           ])
-          .then(async (res: PgQueryResponse) => {
+          .then(async (res: RegisterQueryResponse) => {
             if (res.rows.length === 0) return null
             const { id, password } = res.rows[0]
 

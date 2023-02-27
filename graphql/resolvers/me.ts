@@ -1,4 +1,4 @@
-import { PgQueryError, PgQueryResponse } from "@/types"
+import { PgQueryError, RegisterQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
 import redis from "@/utils/redis"
 import { Arg, Query, Resolver } from "type-graphql"
@@ -31,7 +31,7 @@ export class MeReslover {
     else {
       const postgresUser: Promise<GetUserResponse> = pool
         .query(`SELECT * FROM "user" WHERE id = $1;`, [id])
-        .then(async (res: PgQueryResponse) => {
+        .then(async (res: RegisterQueryResponse) => {
           if (res.rows.length === 0)
             return {
               error: "not found",
