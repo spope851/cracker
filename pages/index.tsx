@@ -15,7 +15,7 @@ export default function Home() {
   const session = useSession()
   const [registerMutation, { data, loading, error }] = useMutation(
     graphql(`
-      mutation Mutation($user: UserInput!) {
+      mutation RegisterMutation($user: UserInput!) {
         register(user: $user) {
           errors {
             field
