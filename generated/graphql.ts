@@ -23,11 +23,23 @@ export type GetUserResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   register: RegisterResponse;
+  track: TrackerResponse;
 };
 
 
 export type MutationRegisterArgs = {
   user: UserInput;
+};
+
+
+export type MutationTrackArgs = {
+  tracker: TrackerInput;
+};
+
+export type PsqlError = {
+  __typename?: 'PsqlError';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type Query = {
@@ -42,8 +54,30 @@ export type QueryMeArgs = {
 
 export type RegisterResponse = {
   __typename?: 'RegisterResponse';
-  errors?: Maybe<Array<UserError>>;
+  errors?: Maybe<Array<PsqlError>>;
   user?: Maybe<User>;
+};
+
+export type Track = {
+  __typename?: 'Track';
+  id: Scalars['ID'];
+  numberCreativeHours: Scalars['Float'];
+  overview: Scalars['String'];
+  rating: Scalars['Int'];
+  user: Scalars['String'];
+};
+
+export type TrackerInput = {
+  numberCreativeHours: Scalars['Float'];
+  overview: Scalars['String'];
+  rating: Scalars['Int'];
+  user: Scalars['String'];
+};
+
+export type TrackerResponse = {
+  __typename?: 'TrackerResponse';
+  errors?: Maybe<Array<PsqlError>>;
+  track?: Maybe<Track>;
 };
 
 export type User = {
@@ -57,12 +91,6 @@ export type User = {
 export type UserAuthInput = {
   id: Scalars['String'];
   token: Scalars['String'];
-};
-
-export type UserError = {
-  __typename?: 'UserError';
-  field: Scalars['String'];
-  message: Scalars['String'];
 };
 
 export type UserInput = {
@@ -83,7 +111,7 @@ export type MutationMutationVariables = Exact<{
 }>;
 
 
-export type MutationMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', errors?: Array<{ __typename?: 'UserError', field: string, message: string }> | null, user?: { __typename?: 'User', username: string } | null } };
+export type MutationMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', errors?: Array<{ __typename?: 'PsqlError', field: string, message: string }> | null, user?: { __typename?: 'User', username: string } | null } };
 
 
 export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserAuthInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;

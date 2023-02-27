@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "type-graphql"
 
 @ObjectType()
-class UserError {
+class PsqlError {
   @Field(() => String)
   field!: string
 
@@ -9,4 +9,4 @@ class UserError {
   message!: string
 }
 
-export { UserError }
+export { PsqlError }

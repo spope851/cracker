@@ -2,11 +2,15 @@ import "reflect-metadata"
 import { ApolloServer } from "@apollo/server"
 import { startServerAndCreateNextHandler } from "@as-integrations/next"
 import { buildSchema } from "type-graphql"
-import { RegistrationResolver, MeReslover } from "@/graphql/resolvers"
+import {
+  RegistrationResolver,
+  MeReslover,
+  TrackerResolver,
+} from "@/graphql/resolvers"
 // import { NextApiRequest, NextApiResponse } from "next"
 
 const schema = await buildSchema({
-  resolvers: [RegistrationResolver, MeReslover],
+  resolvers: [RegistrationResolver, MeReslover, TrackerResolver],
   validate: false,
 })
 
