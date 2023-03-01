@@ -119,11 +119,11 @@ export type MeQuery = {
   }
 }
 
-export type MutationMutationVariables = Exact<{
+export type RegisterMutationMutationVariables = Exact<{
   user: UserInput
 }>
 
-export type MutationMutation = {
+export type RegisterMutationMutation = {
   __typename?: "Mutation"
   register: {
     __typename?: "RegisterResponse"
@@ -133,6 +133,30 @@ export type MutationMutation = {
       message: string
     }> | null
     user?: { __typename?: "User"; username: string } | null
+  }
+}
+
+export type TrackerMutationMutationVariables = Exact<{
+  tracker: TrackerInput
+}>
+
+export type TrackerMutationMutation = {
+  __typename?: "Mutation"
+  track: {
+    __typename?: "TrackerResponse"
+    errors?: Array<{
+      __typename?: "PsqlError"
+      message: string
+      field: string
+    }> | null
+    track?: {
+      __typename?: "Track"
+      numberCreativeHours: number
+      overview: string
+      rating: number
+      user: string
+      id: string
+    } | null
   }
 }
 
@@ -194,13 +218,13 @@ export const MeDocument = {
     },
   ],
 } as unknown as DocumentNode<MeQuery, MeQueryVariables>
-export const MutationDocument = {
+export const RegisterMutationDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "mutation",
-      name: { kind: "Name", value: "Mutation" },
+      name: { kind: "Name", value: "RegisterMutation" },
       variableDefinitions: [
         {
           kind: "VariableDefinition",
@@ -255,4 +279,85 @@ export const MutationDocument = {
       },
     },
   ],
-} as unknown as DocumentNode<MutationMutation, MutationMutationVariables>
+} as unknown as DocumentNode<
+  RegisterMutationMutation,
+  RegisterMutationMutationVariables
+>
+export const TrackerMutationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "TrackerMutation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "tracker" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TrackerInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "track" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "tracker" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "tracker" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "errors" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "message" } },
+                      { kind: "Field", name: { kind: "Name", value: "field" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "track" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "numberCreativeHours" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "overview" } },
+                      { kind: "Field", name: { kind: "Name", value: "rating" } },
+                      { kind: "Field", name: { kind: "Name", value: "user" } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TrackerMutationMutation,
+  TrackerMutationMutationVariables
+>
