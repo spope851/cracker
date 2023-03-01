@@ -1,3 +1,4 @@
+import { User } from "@/graphql/schemas"
 import { PgQueryResponse, PgQueryError } from "@/types"
 import { pool } from "@/utils/postgres"
 import argon2 from "argon2"
@@ -28,7 +29,7 @@ export const authOptions = {
           .query(`SELECT * FROM "user" WHERE username = $1;`, [
             credentials?.username,
           ])
-          .then(async (res: PgQueryResponse) => {
+          .then(async (res: PgQueryResponse<User>) => {
             if (res.rows.length === 0) return null
             const { id, password } = res.rows[0]
 

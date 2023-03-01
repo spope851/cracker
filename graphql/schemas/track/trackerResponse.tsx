@@ -1,14 +1,14 @@
 import { PsqlError } from "@/graphql/error"
 import { Field, ObjectType } from "type-graphql"
-import { User } from "../user"
+import { Track } from "./track"
 
 @ObjectType()
-class RegisterResponse {
-  @Field(() => User, { nullable: true })
-  user?: User
+class TrackerResponse {
+  @Field(() => Track, { nullable: true })
+  track?: Track
 
   @Field(() => [PsqlError], { nullable: true })
   errors?: PsqlError[]
 }
 
-export { RegisterResponse }
+export { TrackerResponse }
