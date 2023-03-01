@@ -1,126 +1,363 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core"
+export type Maybe<T> = T | null
+export type InputMaybe<T> = Maybe<T>
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>
+}
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>
+}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-};
+  ID: string
+  String: string
+  Boolean: boolean
+  Int: number
+  Float: number
+}
 
 export type GetUserResponse = {
-  __typename?: 'GetUserResponse';
-  error?: Maybe<Scalars['String']>;
-  user?: Maybe<User>;
-};
+  __typename?: "GetUserResponse"
+  error?: Maybe<Scalars["String"]>
+  user?: Maybe<User>
+}
 
 export type Mutation = {
-  __typename?: 'Mutation';
-  register: RegisterResponse;
-  track: TrackerResponse;
-};
-
+  __typename?: "Mutation"
+  register: RegisterResponse
+  track: TrackerResponse
+}
 
 export type MutationRegisterArgs = {
-  user: UserInput;
-};
-
+  user: UserInput
+}
 
 export type MutationTrackArgs = {
-  tracker: TrackerInput;
-};
+  tracker: TrackerInput
+}
 
 export type PsqlError = {
-  __typename?: 'PsqlError';
-  field: Scalars['String'];
-  message: Scalars['String'];
-};
+  __typename?: "PsqlError"
+  field: Scalars["String"]
+  message: Scalars["String"]
+}
 
 export type Query = {
-  __typename?: 'Query';
-  me: GetUserResponse;
-};
-
+  __typename?: "Query"
+  me: GetUserResponse
+}
 
 export type QueryMeArgs = {
-  user: UserAuthInput;
-};
+  user: UserAuthInput
+}
 
 export type RegisterResponse = {
-  __typename?: 'RegisterResponse';
-  errors?: Maybe<Array<PsqlError>>;
-  user?: Maybe<User>;
-};
+  __typename?: "RegisterResponse"
+  errors?: Maybe<Array<PsqlError>>
+  user?: Maybe<User>
+}
 
 export type Track = {
-  __typename?: 'Track';
-  id: Scalars['ID'];
-  numberCreativeHours: Scalars['Float'];
-  overview: Scalars['String'];
-  rating: Scalars['Int'];
-  user: Scalars['String'];
-};
+  __typename?: "Track"
+  id: Scalars["ID"]
+  numberCreativeHours: Scalars["Float"]
+  overview: Scalars["String"]
+  rating: Scalars["Int"]
+  user: Scalars["String"]
+}
 
 export type TrackerInput = {
-  numberCreativeHours: Scalars['Float'];
-  overview: Scalars['String'];
-  rating: Scalars['Int'];
-  user: Scalars['String'];
-};
+  numberCreativeHours: Scalars["Float"]
+  overview: Scalars["String"]
+  rating: Scalars["Int"]
+  user: Scalars["String"]
+}
 
 export type TrackerResponse = {
-  __typename?: 'TrackerResponse';
-  errors?: Maybe<Array<PsqlError>>;
-  track?: Maybe<Track>;
-};
+  __typename?: "TrackerResponse"
+  errors?: Maybe<Array<PsqlError>>
+  track?: Maybe<Track>
+}
 
 export type User = {
-  __typename?: 'User';
-  email: Scalars['String'];
-  id: Scalars['ID'];
-  role: Scalars['Int'];
-  username: Scalars['String'];
-};
+  __typename?: "User"
+  email: Scalars["String"]
+  id: Scalars["ID"]
+  role: Scalars["Int"]
+  username: Scalars["String"]
+}
 
 export type UserAuthInput = {
-  id: Scalars['String'];
-  token: Scalars['String'];
-};
+  id: Scalars["String"]
+  token: Scalars["String"]
+}
 
 export type UserInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-  username: Scalars['String'];
-};
+  email: Scalars["String"]
+  password: Scalars["String"]
+  username: Scalars["String"]
+}
 
 export type MeQueryVariables = Exact<{
-  user: UserAuthInput;
-}>;
+  user: UserAuthInput
+}>
 
-
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'GetUserResponse', error?: string | null, user?: { __typename?: 'User', email: string, id: string, role: number, username: string } | null } };
+export type MeQuery = {
+  __typename?: "Query"
+  me: {
+    __typename?: "GetUserResponse"
+    error?: string | null
+    user?: {
+      __typename?: "User"
+      email: string
+      id: string
+      role: number
+      username: string
+    } | null
+  }
+}
 
 export type RegisterMutationMutationVariables = Exact<{
-  user: UserInput;
-}>;
+  user: UserInput
+}>
 
-
-export type RegisterMutationMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', errors?: Array<{ __typename?: 'PsqlError', field: string, message: string }> | null, user?: { __typename?: 'User', username: string } | null } };
+export type RegisterMutationMutation = {
+  __typename?: "Mutation"
+  register: {
+    __typename?: "RegisterResponse"
+    errors?: Array<{
+      __typename?: "PsqlError"
+      field: string
+      message: string
+    }> | null
+    user?: { __typename?: "User"; username: string } | null
+  }
+}
 
 export type TrackerMutationMutationVariables = Exact<{
-  tracker: TrackerInput;
-}>;
+  tracker: TrackerInput
+}>
 
+export type TrackerMutationMutation = {
+  __typename?: "Mutation"
+  track: {
+    __typename?: "TrackerResponse"
+    errors?: Array<{
+      __typename?: "PsqlError"
+      message: string
+      field: string
+    }> | null
+    track?: {
+      __typename?: "Track"
+      numberCreativeHours: number
+      overview: string
+      rating: number
+      user: string
+      id: string
+    } | null
+  }
+}
 
-export type TrackerMutationMutation = { __typename?: 'Mutation', track: { __typename?: 'TrackerResponse', errors?: Array<{ __typename?: 'PsqlError', message: string, field: string }> | null, track?: { __typename?: 'Track', numberCreativeHours: number, overview: string, rating: number, user: string, id: string } | null } };
-
-
-export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserAuthInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
-export const RegisterMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutationMutation, RegisterMutationMutationVariables>;
-export const TrackerMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TrackerMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TrackerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"track"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tracker"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"field"}}]}},{"kind":"Field","name":{"kind":"Name","value":"track"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<TrackerMutationMutation, TrackerMutationMutationVariables>;
+export const MeDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "Me" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "user" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "UserAuthInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "me" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "user" },
+                value: { kind: "Variable", name: { kind: "Name", value: "user" } },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "error" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "user" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "role" } },
+                      { kind: "Field", name: { kind: "Name", value: "username" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<MeQuery, MeQueryVariables>
+export const RegisterMutationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RegisterMutation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "user" } },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "UserInput" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "register" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "user" },
+                value: { kind: "Variable", name: { kind: "Name", value: "user" } },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "errors" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "field" } },
+                      { kind: "Field", name: { kind: "Name", value: "message" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "user" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "username" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RegisterMutationMutation,
+  RegisterMutationMutationVariables
+>
+export const TrackerMutationDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "TrackerMutation" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "tracker" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TrackerInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "track" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "tracker" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "tracker" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "errors" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "message" } },
+                      { kind: "Field", name: { kind: "Name", value: "field" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "track" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "numberCreativeHours" },
+                      },
+                      { kind: "Field", name: { kind: "Name", value: "overview" } },
+                      { kind: "Field", name: { kind: "Name", value: "rating" } },
+                      { kind: "Field", name: { kind: "Name", value: "user" } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TrackerMutationMutation,
+  TrackerMutationMutationVariables
+>
