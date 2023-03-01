@@ -1,9 +1,13 @@
 import { AppBar, Box, Typography } from "@mui/material"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import AvatarMenu from "./avatarMenu"
 
 export default function Navbar() {
   const router = useRouter()
+  const session = useSession()
+  const user = session.data?.user
 
   return (
     <AppBar position="static" sx={{ backgroundColor: "grey" }}>
@@ -33,19 +37,32 @@ export default function Navbar() {
               </Typography>
             </Link>
           </Box>
-          <Box
-            component="li"
-            p={2}
-            ml="auto"
-            borderLeft="solid 1px #bbb"
-            sx={{
-              backgroundColor:
-                router.pathname === "/track" ? "primary.main" : "grey",
-            }}
-          >
-            <Link href="/track" style={{ textDecoration: "none" }}>
-              <Typography color="#fff">track</Typography>
-            </Link>
+          <Box ml="auto" display="flex">
+            <Box
+              component="li"
+              p={2}
+              borderLeft="solid 1px #bbb"
+              sx={{
+                backgroundColor:
+                  router.pathname === "/track" ? "primary.main" : "grey",
+              }}
+            >
+              <Link href="/track" style={{ textDecoration: "none" }}>
+                <Typography color="#fff">track</Typography>
+              </Link>
+            </Box>
+            {session.status === "authenticated" && user?.id && user?.token && (
+              <Box
+                component="li"
+                p={1}
+                borderLeft="solid 1px #bbb"
+                sx={{
+                  backgroundColor: "grey",
+                }}
+              >
+                <AvatarMenu id={user.id} token={user.token} />
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>

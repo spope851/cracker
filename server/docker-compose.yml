@@ -4,10 +4,12 @@ services:
     image: postgres:alpine
     container_name: pg
     environment:
+      # TODO: add secrets to env vars
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
     ports:
+      # TODO: add ports to env vars
       - "5432:5432"
     restart: always
     volumes:
@@ -15,3 +17,12 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./database
+  cache:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      # TODO: add ports to env vars
+      - "6379:6379"
+    volumes:
+      - ./cache:/data
