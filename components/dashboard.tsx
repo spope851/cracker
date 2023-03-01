@@ -5,7 +5,7 @@ import { DashboardQueryQuery } from "@/generated/graphql"
 
 const Dashboard: React.FC<{
   loading: boolean
-  data?: DashboardQueryQuery["dashboard"]["dashboard"]
+  data: DashboardQueryQuery["dashboard"]["dashboard"]
 }> = ({ loading, data }) => {
   if (loading) return <>...loading</>
   const {

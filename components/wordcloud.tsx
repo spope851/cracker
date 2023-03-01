@@ -5,7 +5,7 @@ import { useRouter } from "next/router"
 
 const Wordcloud: React.FC<{
   loading: boolean
-  data?: WordcloudQueryQuery["dashboard"]["dashboard"]
+  data: WordcloudQueryQuery["dashboard"]["dashboard"]
 }> = ({ loading, data }) => {
   const id = useRouter().query.id as "30" | "60" | "90"
   if (loading) return <>...loading</>
