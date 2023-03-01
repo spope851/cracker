@@ -84,12 +84,16 @@ export default function Track() {
           </FormControl>
           <FormControl sx={{ mb: 5 }}>
             <FormLabel>rating</FormLabel>
-            <Input
-              defaultValue={0}
-              type="number"
-              inputProps={{ min: -2, max: 2 }}
-              onChange={(e) => setRating(Number(e.target.value))}
-            />
+            <Box display="flex" alignItems="center">
+              {rating > 0 && "+"}
+              <Input
+                fullWidth
+                defaultValue={0}
+                type="number"
+                inputProps={{ min: -2, max: 2 }}
+                onChange={(e) => setRating(Number(e.target.value))}
+              />
+            </Box>
           </FormControl>
           <FormControl>
             <Button type="submit" variant="outlined" disabled={!overview}>

@@ -1,10 +1,11 @@
 import { Grid, Typography } from "@mui/material"
 import React from "react"
-import { Dashboard as CodegenDashboardType } from "@/generated/graphql"
+import Link from "next/link"
+import { DashboardQueryQuery } from "@/generated/graphql"
 
 const Dashboard: React.FC<{
   loading: boolean
-  data?: CodegenDashboardType | null
+  data?: DashboardQueryQuery["dashboard"]["dashboard"]
 }> = ({ loading, data }) => {
   if (loading) return <>...loading</>
   const {
@@ -59,7 +60,9 @@ const Dashboard: React.FC<{
     <Grid container width="100vw" px={5}>
       {Object.entries(dashboardDatasets).map(([key, val]) => (
         <Grid md={4} key={key}>
-          <Typography variant="h5">{`${key} day data`}</Typography>
+          <Typography variant="h5">
+            <Link href={`/${key}`}>{`${key} day data`}</Link>
+          </Typography>
           <Typography>{`avg daily creative hours: ${val.avg.toFixed()}`}</Typography>
           <Typography>{`on track to hit ${(
             Number(val.avg) * 356
