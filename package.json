@@ -10,7 +10,8 @@
     "compile": "graphql-codegen",
     "watch": "graphql-codegen -w",
     "codegen": "graphql-codegen --config codegen.ts",
-    "start:server": "cd server && docker-compose up -d"
+    "start:server": "cd server && docker-compose up -d",
+    "new:db": "cd server && rm -rf postgres-data && docker-compose build && docker-compose up"
   },
   "dependencies": {
     "@apollo/client": "^3.7.3",
