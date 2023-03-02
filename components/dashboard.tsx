@@ -1,13 +1,21 @@
-import { Grid, Typography } from "@mui/material"
+import { Button, Grid, Typography } from "@mui/material"
 import React from "react"
 import Link from "next/link"
 import { DashboardQueryQuery } from "@/generated/graphql"
+import { useRouter } from "next/router"
 
 const Dashboard: React.FC<{
   loading: boolean
   data: DashboardQueryQuery["dashboard"]["dashboard"]
 }> = ({ loading, data }) => {
+  const router = useRouter()
   if (loading) return <>...loading</>
+  if (!data?.thirtyDayAvg)
+    return (
+      <Button onClick={() => router.push("/track")} variant="outlined">
+        no data... click to track
+      </Button>
+    )
   const {
     thirtyDayAvg,
     sixtyDayAvg,
@@ -59,7 +67,7 @@ const Dashboard: React.FC<{
   return (
     <Grid container width="100vw" px={5}>
       {Object.entries(dashboardDatasets).map(([key, val]) => (
-        <Grid md={4} key={key}>
+        <Grid md={4} key={key} item>
           <Typography variant="h5">
             <Link href={`/${key}`}>{`${key} day data`}</Link>
           </Typography>
