@@ -13,7 +13,7 @@ const Wordcloud: React.FC<{
   const session = useSession()
   if (session.status !== "authenticated") return <>you are not authenticated</>
   if (loading) return <>...loading</>
-  if (!data?.thirtyDayWordcloud)
+  if (!data)
     return (
       <Button onClick={() => router.push("/track")} variant="outlined">
         no data... click to track
