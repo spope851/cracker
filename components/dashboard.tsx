@@ -10,7 +10,7 @@ const Dashboard: React.FC<{
 }> = ({ loading, data }) => {
   const router = useRouter()
   if (loading) return <>...loading</>
-  if (!data)
+  if (!data?.thirtyDayAvg)
     return (
       <Button onClick={() => router.push("/track")} variant="outlined">
         no data... click to track
