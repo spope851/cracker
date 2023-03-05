@@ -2,7 +2,7 @@ import { PgQueryError, PgQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
 import redis from "@/utils/redis"
 import { Arg, Query, Resolver } from "type-graphql"
-import { User, UserAuthInput } from "../schemas"
+import { UserAuthInput } from "../schemas"
 import { GetUserResponse } from "../schemas/getUser/getUserResponse"
 
 @Resolver(GetUserResponse)
@@ -30,24 +30,35 @@ export class MeReslover {
     if (redisUser) return JSON.parse(redisUser)
     else {
       const postgresUser: Promise<GetUserResponse> = pool
-        .query(`SELECT * FROM "user" WHERE id = $1;`, [id])
-        .then(async (res: PgQueryResponse<User>) => {
-          if (res.rows.length === 0)
-            return {
-              error: "not found",
+        .query(`CALL get_user_info($1);`, [id])
+        .then(
+          async (
+            res: PgQueryResponse<{
+              _id: string
+              _email: string
+              _role: number
+              _username: string
+              _last_post: string
+            }>
+          ) => {
+            if (res.rows.length === 0)
+              return {
+                error: "not found",
+              }
+            const { _id, _email, _role, _username, _last_post } = res.rows[0]
+            const foundUser = {
+              user: {
+                id: _id,
+                username: _username,
+                email: _email,
+                role: _role,
+                lastPost: new Date(_last_post).toLocaleDateString(),
+              },
             }
-          const { id, email, role } = res.rows[0]
-          const foundUser = {
-            user: {
-              id,
-              username: res.rows[0].username,
-              email,
-              role,
-            },
+            await redis.set(token, JSON.stringify(foundUser))
+            return foundUser
           }
-          await redis.set(token, JSON.stringify(foundUser))
-          return foundUser
-        })
+        )
         .catch((e: PgQueryError) => {
           console.log(e)
           return {

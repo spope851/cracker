@@ -43,6 +43,7 @@ const AvatarMenu: React.FC<UserAvatarProps> = ({ id, token }) => {
             id
             role
             username
+            lastPost
           }
         }
       }
