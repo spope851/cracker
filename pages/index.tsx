@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Head from "next/head"
 import { signIn, useSession } from "next-auth/react"
 import { Box, Button, Typography } from "@mui/material"
 import { useMutation, useQuery } from "@apollo/client"
 import { graphql } from "@/generated"
 import Dashboard from "@/components/dashboard"
+import { UserContext } from "@/context/userContext"
 
 export default function Home() {
   const [register, setRegister] = useState(false)
@@ -14,6 +15,7 @@ export default function Home() {
   const [signInError, setSignInError] = useState<string>()
   const [signInLoading, setSignInLoading] = useState(false)
   const session = useSession()
+  const { postedToday } = useContext(UserContext)
   const [registerMutation, { data: registerData, loading: registerLoading, error }] =
     useMutation(
       graphql(`
@@ -209,10 +211,17 @@ export default function Home() {
         m="auto"
       >
         {session.status === "authenticated" ? (
-          <Dashboard
-            loading={dashboardLoading}
-            data={dashboardData?.dashboard.dashboard}
-          />
+          <>
+            {!postedToday && (
+              <Typography color="red">
+                you have not tracked your data today
+              </Typography>
+            )}
+            <Dashboard
+              loading={dashboardLoading}
+              data={dashboardData?.dashboard.dashboard}
+            />
+          </>
         ) : (
           form
         )}

@@ -1,5 +1,3 @@
-import { graphql } from "@/generated"
-import { useQuery } from "@apollo/client"
 import { Logout } from "@mui/icons-material"
 // import { Settings } from "@mui/icons-material"
 import {
@@ -13,17 +11,14 @@ import {
   Typography,
 } from "@mui/material"
 import { useRouter } from "next/router"
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"
 import { signOut } from "next-auth/react"
+import { UserContext } from "@/context/userContext"
 
-interface UserAvatarProps {
-  id: string
-  token: string
-}
-
-const AvatarMenu: React.FC<UserAvatarProps> = ({ id, token }) => {
+const AvatarMenu: React.FC = () => {
   const router = useRouter()
+  const { user, loading } = useContext(UserContext)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -32,28 +27,6 @@ const AvatarMenu: React.FC<UserAvatarProps> = ({ id, token }) => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
-  const { loading, data } = useQuery(
-    graphql(`
-      query Me($user: UserAuthInput!) {
-        me(user: $user) {
-          error
-          user {
-            email
-            id
-            role
-            username
-            lastPost
-          }
-        }
-      }
-    `),
-    {
-      variables: {
-        user: { id, token },
-      },
-    }
-  )
 
   return (
     <>
@@ -97,12 +70,10 @@ const AvatarMenu: React.FC<UserAvatarProps> = ({ id, token }) => {
       >
         <Box display="flex" p={1} justifyContent="center" alignItems="center">
           <Avatar />
-          <Typography ml={1}>
-            {loading ? "...loading" : data?.me.user?.username}
-          </Typography>
+          <Typography ml={1}>{loading ? "...loading" : user?.username}</Typography>
         </Box>
         <Divider />
-        {data?.me.user?.role === 2 && (
+        {user?.role === 2 && (
           <MenuItem onClick={() => router.push("/admin")}>
             <ListItemIcon>
               <AdminPanelSettingsIcon fontSize="small" />
