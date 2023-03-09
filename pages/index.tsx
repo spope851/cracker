@@ -15,7 +15,7 @@ export default function Home() {
   const [signInError, setSignInError] = useState<string>()
   const [signInLoading, setSignInLoading] = useState(false)
   const session = useSession()
-  const { postedToday } = useContext(UserContext)
+  const { hasPostedToday } = useContext(UserContext)
   const [registerMutation, { data: registerData, loading: registerLoading, error }] =
     useMutation(
       graphql(`
@@ -212,7 +212,7 @@ export default function Home() {
       >
         {session.status === "authenticated" ? (
           <>
-            {!postedToday && (
+            {!hasPostedToday && (
               <Typography color="red">
                 you have not tracked your data today
               </Typography>

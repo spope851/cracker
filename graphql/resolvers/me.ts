@@ -9,7 +9,8 @@ import { GetUserResponse } from "../schemas/getUser/getUserResponse"
 export class MeReslover {
   @Query(() => GetUserResponse)
   async me(
-    @Arg("user", () => UserAuthInput) { token, id }: UserAuthInput
+    @Arg("user", () => UserAuthInput) { token, id }: UserAuthInput,
+    @Arg("refetch", { nullable: true }) refetch: boolean = false
   ): Promise<GetUserResponse> {
     // 1
     // check redis for token key
@@ -25,11 +26,8 @@ export class MeReslover {
     //  return them
     // 5
     // if you don't find them in the database, return an error
-
-    const redisUser = await redis.get(token)
-    if (redisUser) return JSON.parse(redisUser)
-    else {
-      const postgresUser: Promise<GetUserResponse> = pool
+    const queryPostgres = (): Promise<GetUserResponse> =>
+      pool
         .query(`CALL get_user_info($1);`, [id])
         .then(
           async (
@@ -65,7 +63,13 @@ export class MeReslover {
             error: "unhandled error",
           }
         })
-      return postgresUser
+
+    if (refetch) {
+      return queryPostgres()
+    } else {
+      const redisUser = await redis.get(token)
+      if (redisUser) return JSON.parse(redisUser)
+      else return queryPostgres()
     }
   }
 }

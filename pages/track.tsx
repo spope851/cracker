@@ -20,7 +20,7 @@ const OVERVIEW_CHAR_LIMIT = 480
 export default function Track() {
   const session = useSession()
   const router = useRouter()
-  const { postedToday } = useContext(UserContext)
+  const { hasPostedToday, refetch } = useContext(UserContext)
   const [overview, setOverview] = useState<string>()
   const [numberCreativeHours, setNumberCreativeHours] = useState(0)
   const [rating, setRating] = useState(0)
@@ -49,7 +49,7 @@ export default function Track() {
         <title>creativity tracker</title>
       </Head>
       <Box display="flex" justifyContent="center" alignItems="center" mt="auto">
-        {postedToday ? (
+        {hasPostedToday ? (
           <Typography color="red">you have already posted today</Typography>
         ) : (
           <form style={{ display: "flex", flexDirection: "column" }}>
@@ -103,7 +103,7 @@ export default function Track() {
                         },
                       },
                     })
-                      .then()
+                      .then(() => refetch({ refetch: true }))
                       .finally(() => router.push("/"))
                 }}
               >
