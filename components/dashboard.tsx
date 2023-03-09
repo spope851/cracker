@@ -1,16 +1,26 @@
 import { Button, Grid, Typography } from "@mui/material"
 import React from "react"
 import Link from "next/link"
-import { DashboardQueryQuery } from "@/generated/graphql"
 import { useRouter } from "next/router"
+import { DASBOARD_QUERY } from "@/graphql/client"
+import { useQuery } from "@apollo/client"
+import { useSession } from "next-auth/react"
 
-const Dashboard: React.FC<{
-  loading: boolean
-  data: DashboardQueryQuery["dashboard"]["dashboard"]
-}> = ({ loading, data }) => {
+const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Typography sx={{ float: "right" }} component="span">
+    {children}
+  </Typography>
+)
+
+const Dashboard: React.FC = () => {
   const router = useRouter()
+  const session = useSession()
+  const { data, loading } = useQuery(DASBOARD_QUERY, {
+    variables: { user: Number(session.data?.user.id) },
+  })
+
   if (loading) return <>...loading</>
-  if (data?.thirtyDayAvg === undefined)
+  if (data?.dashboard?.dashboard?.thirtyDayAvg === undefined)
     return (
       <Button onClick={() => router.push("/track")} variant="outlined">
         no data... click to track
@@ -35,7 +45,7 @@ const Dashboard: React.FC<{
     ninetyDayCount0,
     ninetyDayCount1,
     ninetyDayCount2,
-  } = data!
+  } = data.dashboard.dashboard
 
   const dashboardDatasets = {
     "30": {
@@ -65,24 +75,48 @@ const Dashboard: React.FC<{
   }
 
   return (
-    <Grid container width="100vw" px={5}>
+    <Grid container width="100vw" justifyContent="space-evenly">
       {Object.entries(dashboardDatasets).map(([key, val]) => (
-        <Grid md={4} key={key} item>
+        <Grid item md={3} key={key} border="solid" borderRadius={2} p={5} m={5}>
           <Typography variant="h5">
             <Link href={`/${key}`}>{`${key} day data`}</Link>
           </Typography>
-          <Typography>{`avg daily creative hours: ${val.avg.toFixed()}`}</Typography>
-          <Typography>{`on track to hit ${(
-            Number(val.avg) * 356
-          ).toFixed()} creative hours this year`}</Typography>
+          <Typography>
+            {`avg daily creative hours:`}
+            <DashboardDatum>{val.avg.toFixed()}</DashboardDatum>
+          </Typography>
+          <br />
+          <Typography>
+            {`on track to hit `}
+            <Typography fontWeight="bold" component="span">
+              {(Number(val.avg) * 356).toFixed()}
+            </Typography>
+            {` creative hours this year`}
+          </Typography>
           <Typography variant="h6" mt={2}>
             breakdown of good/bad days
           </Typography>
-          <Typography>{`excellent (+2 rating): ${val.two}`}</Typography>
-          <Typography>{`great (+1 rating): ${val.one}`}</Typography>
-          <Typography>{`meh (0 rating): ${val.zero}`}</Typography>
-          <Typography>{`not great (-1 rating): ${val.neg1}`}</Typography>
-          <Typography>{`not very good (-2 rating): ${val.neg2}`}</Typography>
+          <br />
+          <Typography>
+            {`excellent (+2 rating):`}
+            <DashboardDatum>{val.two}</DashboardDatum>
+          </Typography>
+          <Typography>
+            {`great (+1 rating):`}
+            <DashboardDatum>{val.one}</DashboardDatum>
+          </Typography>
+          <Typography>
+            {`meh (0 rating):`}
+            <DashboardDatum>{val.zero}</DashboardDatum>
+          </Typography>
+          <Typography>
+            {`not great (-1 rating):`}
+            <DashboardDatum>{val.neg1}</DashboardDatum>
+          </Typography>
+          <Typography>
+            {`not very good (-2 rating):`}
+            <DashboardDatum>{val.neg2}</DashboardDatum>
+          </Typography>
         </Grid>
       ))}
     </Grid>
