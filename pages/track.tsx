@@ -18,8 +18,8 @@ import { UserContext } from "@/context/userContext"
 const OVERVIEW_CHAR_LIMIT = 480
 
 export default function Track() {
-  const router = useRouter()
   const session = useSession()
+  const router = useRouter()
   const { hasPostedToday, refetch } = useContext(UserContext)
   const [overview, setOverview] = useState<string>()
   const [numberCreativeHours, setNumberCreativeHours] = useState(0)
