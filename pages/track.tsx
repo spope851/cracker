@@ -12,15 +12,17 @@ import {
 import { useMutation } from "@apollo/client"
 import { graphql } from "@/generated"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
 
 const OVERVIEW_CHAR_LIMIT = 480
 
 export default function Track() {
   const session = useSession()
+  const router = useRouter()
   const [overview, setOverview] = useState<string>()
   const [numberCreativeHours, setNumberCreativeHours] = useState(0)
   const [rating, setRating] = useState(0)
-  const [track] = useMutation(
+  const [track, { data: _data, loading }] = useMutation(
     graphql(`
       mutation TrackerMutation($tracker: TrackerInput!) {
         track(tracker: $tracker) {
@@ -45,22 +47,7 @@ export default function Track() {
         <title>creativity tracker</title>
       </Head>
       <Box display="flex" justifyContent="center" alignItems="center" mt="auto">
-        <form
-          style={{ display: "flex", flexDirection: "column" }}
-          onSubmit={async () => {
-            if (overview)
-              await track({
-                variables: {
-                  tracker: {
-                    user: session.data?.user.id || "",
-                    numberCreativeHours,
-                    overview,
-                    rating,
-                  },
-                },
-              })
-          }}
-        >
+        <form style={{ display: "flex", flexDirection: "column" }}>
           <FormControl sx={{ width: "200%", alignSelf: "center", mb: 5 }}>
             <FormLabel>overview</FormLabel>
             <TextareaAutosize
@@ -84,16 +71,38 @@ export default function Track() {
           </FormControl>
           <FormControl sx={{ mb: 5 }}>
             <FormLabel>rating</FormLabel>
-            <Input
-              defaultValue={0}
-              type="number"
-              inputProps={{ min: -2, max: 2 }}
-              onChange={(e) => setRating(Number(e.target.value))}
-            />
+            <Box display="flex" alignItems="center">
+              {rating > 0 && "+"}
+              <Input
+                fullWidth
+                defaultValue={0}
+                type="number"
+                inputProps={{ min: -2, max: 2 }}
+                onChange={(e) => setRating(Number(e.target.value))}
+              />
+            </Box>
           </FormControl>
           <FormControl>
-            <Button type="submit" variant="outlined" disabled={!overview}>
-              submit
+            <Button
+              variant="outlined"
+              disabled={!overview}
+              onClick={() => {
+                if (overview)
+                  track({
+                    variables: {
+                      tracker: {
+                        user: session.data?.user.id || "",
+                        numberCreativeHours,
+                        overview,
+                        rating,
+                      },
+                    },
+                  })
+                    .then()
+                    .finally(() => router.push("/"))
+              }}
+            >
+              {loading ? "...processing" : "submit"}
             </Button>
           </FormControl>
         </form>

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react"
 import Head from "next/head"
 import { signIn, useSession } from "next-auth/react"
 import { Box, Button, Typography } from "@mui/material"
-import { useMutation } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import { graphql } from "@/generated"
+import Dashboard from "@/components/dashboard"
 
 export default function Home() {
   const [register, setRegister] = useState(false)
@@ -13,32 +14,73 @@ export default function Home() {
   const [signInError, setSignInError] = useState<string>()
   const [signInLoading, setSignInLoading] = useState(false)
   const session = useSession()
-  const [registerMutation, { data, loading, error }] = useMutation(
-    graphql(`
-      mutation RegisterMutation($user: UserInput!) {
-        register(user: $user) {
-          errors {
-            field
-            message
+  const [registerMutation, { data: registerData, loading: registerLoading, error }] =
+    useMutation(
+      graphql(`
+        mutation RegisterMutation($user: UserInput!) {
+          register(user: $user) {
+            errors {
+              field
+              message
+            }
+            user {
+              username
+            }
           }
-          user {
-            username
+        }
+      `)
+    )
+
+  const { data: dashboardData, loading: dashboardLoading } = useQuery(
+    graphql(`
+      query DashboardQuery($user: Int!) {
+        dashboard(user: $user) {
+          dashboard {
+            thirtyDayAvg
+            sixtyDayAvg
+            ninetyDayAvg
+            yearAvg
+            thirtyDayCountNeg2
+            thirtyDayCountNeg1
+            thirtyDayCount0
+            thirtyDayCount1
+            thirtyDayCount2
+            sixtyDayCountNeg2
+            sixtyDayCountNeg1
+            sixtyDayCount0
+            sixtyDayCount1
+            sixtyDayCount2
+            ninetyDayCountNeg2
+            ninetyDayCountNeg1
+            ninetyDayCount0
+            ninetyDayCount1
+            ninetyDayCount2
+            yearCountNeg2
+            yearCountNeg1
+            yearCount0
+            yearCount1
+            yearCount2
+            thirtyDayWordcloud
+            sixtyDayWordcloud
+            ninetyDayWordcloud
+            yearWordcloud
           }
         }
       }
-    `)
+    `),
+    { variables: { user: Number(session.data?.user.id) } }
   )
 
   useEffect(() => {
     ;(async () => {
-      if (data && !loading && data.register.user)
+      if (registerData && !registerLoading && registerData.register.user)
         await signIn("credentials", {
-          username: data?.register.user.username,
+          username: registerData?.register.user.username,
           password,
           redirect: false,
         })
     })()
-  }, [loading, data, password])
+  }, [registerLoading, registerData, password])
 
   const form = register ? (
     <>
@@ -80,15 +122,15 @@ export default function Home() {
           />
         </label>
         <button type="submit" disabled={!email || !username || !password}>
-          {loading ? "...processing" : "sign up"}
+          {registerLoading ? "...processing" : "sign up"}
         </button>
         {error && (
           <Typography variant="caption" color="red" mt={1} textAlign="center">
             unhandled error: {error.message}
           </Typography>
         )}
-        {data?.register.errors &&
-          data.register.errors.map(({ message }) => (
+        {registerData?.register.errors &&
+          registerData.register.errors.map(({ message }) => (
             <Typography
               key={message}
               variant="caption"
@@ -166,7 +208,14 @@ export default function Home() {
         flexDirection="column"
         m="auto"
       >
-        {session.status === "authenticated" ? "dashboard" : form}
+        {session.status === "authenticated" ? (
+          <Dashboard
+            loading={dashboardLoading}
+            data={dashboardData?.dashboard.dashboard}
+          />
+        ) : (
+          form
+        )}
       </Box>
     </>
   )
