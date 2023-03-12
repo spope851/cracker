@@ -10,6 +10,7 @@ export default function Admin() {
   useEffect(() => {
     session.status === "authenticated" && setTimeclock(<Timeclock />)
   }, [session])
+
   return (
     <>
       <Head>
