@@ -1,10 +1,10 @@
 import { Field, ObjectType } from "type-graphql"
-import { User } from "../user"
+import { UserInfo } from "./userInfo"
 
 @ObjectType()
 class GetUserResponse {
-  @Field(() => User, { nullable: true })
-  user?: User
+  @Field(() => UserInfo, { nullable: true })
+  user?: UserInfo
 
   @Field(() => String, { nullable: true })
   error?: string

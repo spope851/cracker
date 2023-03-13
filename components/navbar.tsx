@@ -60,7 +60,7 @@ export default function Navbar() {
                   backgroundColor: "grey",
                 }}
               >
-                <AvatarMenu id={user.id} token={user.token} />
+                <AvatarMenu />
               </Box>
             )}
           </Box>
