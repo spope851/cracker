@@ -1,8 +1,9 @@
-import { Button, Typography } from "@mui/material"
+import { Button } from "@mui/material"
 import React from "react"
 import { WordcloudQueryQuery } from "@/generated/graphql"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
+import Cloud from "./cloud"
 
 const Wordcloud: React.FC<{
   loading: boolean
@@ -11,6 +12,7 @@ const Wordcloud: React.FC<{
   const router = useRouter()
   const id = router.query.id as "30" | "60" | "90"
   const session = useSession()
+
   if (session.status !== "authenticated") return <>you are not authenticated</>
   if (loading) return <>...loading</>
   if (data?.ninetyDayWordcloud === undefined)
@@ -28,11 +30,7 @@ const Wordcloud: React.FC<{
     "90": ninetyDayWordcloud,
   }
 
-  return (
-    <Typography mx={10} sx={{ wordWrap: "break-word", wordBreak: "break-all" }}>
-      {wordclouds[id]}
-    </Typography>
-  )
+  return <Cloud data={wordclouds[id]} />
 }
 
 export default Wordcloud
