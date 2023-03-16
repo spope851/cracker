@@ -70,21 +70,21 @@ export const UpdateTracker: React.FC = () => {
         <Button
           variant="outlined"
           disabled={!overview}
-          onClick={() => {
-            if (overview)
-              track({
-                variables: {
-                  tracker: {
-                    user: session.data?.user.id || "",
-                    numberCreativeHours,
-                    overview,
-                    rating,
-                  },
-                },
-              })
-                .then(() => refetch({ refetch: true }))
-                .finally(() => router.push("/"))
-          }}
+          // onClick={() => {
+          //   if (overview)
+          //     track({
+          //       variables: {
+          //         tracker: {
+          //           user: session.data?.user.id || "",
+          //           numberCreativeHours,
+          //           overview,
+          //           rating,
+          //         },
+          //       },
+          //     })
+          //       .then(() => refetch({ refetch: true }))
+          //       .finally(() => router.push("/"))
+          // }}
         >
           {loading ? "...processing" : "submit"}
         </Button>
