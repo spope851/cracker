@@ -17,6 +17,7 @@ const documents = {
     "\n  mutation RegisterMutation($user: UserInput!) {\n    register(user: $user) {\n      errors {\n        field\n        message\n      }\n      user {\n        username\n      }\n    }\n  }\n": types.RegisterMutationDocument,
     "\n  query WordcloudQuery($user: Int!) {\n    dashboard(user: $user) {\n      dashboard {\n        thirtyDayWordcloud\n        sixtyDayWordcloud\n        ninetyDayWordcloud\n        yearWordcloud\n      }\n    }\n  }\n": types.WordcloudQueryDocument,
     "\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      error\n      user {\n        email\n        id\n        role\n        username\n        lastPost\n      }\n    }\n  }\n": types.MeDocument,
+    "\n  query Query($user: Int!) {\n    todaysPost(user: $user) {\n      overview\n      numberCreativeHours\n      rating\n    }\n  }\n": types.QueryDocument,
     "\n  mutation TrackerMutation($tracker: TrackerInput!) {\n    track(tracker: $tracker) {\n      errors {\n        message\n        field\n      }\n      track {\n        numberCreativeHours\n        overview\n        rating\n        user\n        id\n      }\n    }\n  }\n": types.TrackerMutationDocument,
 };
 
@@ -50,6 +51,10 @@ export function graphql(source: "\n  query WordcloudQuery($user: Int!) {\n    da
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      error\n      user {\n        email\n        id\n        role\n        username\n        lastPost\n      }\n    }\n  }\n"): (typeof documents)["\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      error\n      user {\n        email\n        id\n        role\n        username\n        lastPost\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Query($user: Int!) {\n    todaysPost(user: $user) {\n      overview\n      numberCreativeHours\n      rating\n    }\n  }\n"): (typeof documents)["\n  query Query($user: Int!) {\n    todaysPost(user: $user) {\n      overview\n      numberCreativeHours\n      rating\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
