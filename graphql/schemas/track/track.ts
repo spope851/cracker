@@ -14,8 +14,8 @@ class Track {
   @Field(() => Int)
   rating!: number
 
-  @Field(() => String)
-  user!: string
+  @Field(() => String, { nullable: true })
+  user?: string
 }
 
 export { Track }

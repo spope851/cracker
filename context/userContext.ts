@@ -1,18 +1,15 @@
-import { MeQuery, MeQueryVariables } from "@/generated/graphql"
-import { UserInfo } from "@/graphql/schemas"
+import { LastPost, MeQuery, MeQueryVariables, User } from "@/generated/graphql"
 import { ApolloQueryResult } from "@apollo/client"
 import { createContext } from "react"
 
-export const UserContext = createContext<{
-  user?: UserInfo | null
+export type UserContextProps = {
+  user: Partial<User>
+  lastPost: LastPost
   loading: boolean
-  hasPostedToday: boolean | void
+  hasPostedToday: boolean
   refetch: (
     variables?: Partial<MeQueryVariables>
   ) => Promise<ApolloQueryResult<MeQuery>>
-}>({
-  user: undefined,
-  loading: true,
-  hasPostedToday: false,
-  refetch: () => new Promise<ApolloQueryResult<MeQuery>>(() => undefined),
-})
+}
+
+export const UserContext = createContext<UserContextProps>({} as UserContextProps)

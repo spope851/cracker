@@ -1,2 +1,2 @@
 export * from "./track"
-export * from "./todaysPost"
+export * from "./lastPost"

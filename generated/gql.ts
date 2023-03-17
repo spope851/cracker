@@ -16,8 +16,7 @@ const documents = {
     "\n  query DashboardQuery($user: Int!) {\n    dashboard(user: $user) {\n      dashboard {\n        thirtyDayAvg\n        sixtyDayAvg\n        ninetyDayAvg\n        yearAvg\n        thirtyDayCountNeg2\n        thirtyDayCountNeg1\n        thirtyDayCount0\n        thirtyDayCount1\n        thirtyDayCount2\n        sixtyDayCountNeg2\n        sixtyDayCountNeg1\n        sixtyDayCount0\n        sixtyDayCount1\n        sixtyDayCount2\n        ninetyDayCountNeg2\n        ninetyDayCountNeg1\n        ninetyDayCount0\n        ninetyDayCount1\n        ninetyDayCount2\n        yearCountNeg2\n        yearCountNeg1\n        yearCount0\n        yearCount1\n        yearCount2\n        thirtyDayWordcloud\n        sixtyDayWordcloud\n        ninetyDayWordcloud\n        yearWordcloud\n      }\n    }\n  }\n": types.DashboardQueryDocument,
     "\n  mutation RegisterMutation($user: UserInput!) {\n    register(user: $user) {\n      errors {\n        field\n        message\n      }\n      user {\n        username\n      }\n    }\n  }\n": types.RegisterMutationDocument,
     "\n  query WordcloudQuery($user: Int!) {\n    dashboard(user: $user) {\n      dashboard {\n        thirtyDayWordcloud\n        sixtyDayWordcloud\n        ninetyDayWordcloud\n        yearWordcloud\n      }\n    }\n  }\n": types.WordcloudQueryDocument,
-    "\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      error\n      user {\n        email\n        id\n        role\n        username\n        lastPost\n      }\n    }\n  }\n": types.MeDocument,
-    "\n  query Query($user: Int!) {\n    todaysPost(user: $user) {\n      overview\n      numberCreativeHours\n      rating\n    }\n  }\n": types.QueryDocument,
+    "\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      me {\n        user {\n          email\n          username\n          role\n        }\n        lastPost {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n      }\n    }\n  }\n": types.MeDocument,
     "\n  mutation TrackerMutation($tracker: TrackerInput!) {\n    track(tracker: $tracker) {\n      errors {\n        message\n        field\n      }\n      track {\n        numberCreativeHours\n        overview\n        rating\n        user\n        id\n      }\n    }\n  }\n": types.TrackerMutationDocument,
 };
 
@@ -50,11 +49,7 @@ export function graphql(source: "\n  query WordcloudQuery($user: Int!) {\n    da
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      error\n      user {\n        email\n        id\n        role\n        username\n        lastPost\n      }\n    }\n  }\n"): (typeof documents)["\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      error\n      user {\n        email\n        id\n        role\n        username\n        lastPost\n      }\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query Query($user: Int!) {\n    todaysPost(user: $user) {\n      overview\n      numberCreativeHours\n      rating\n    }\n  }\n"): (typeof documents)["\n  query Query($user: Int!) {\n    todaysPost(user: $user) {\n      overview\n      numberCreativeHours\n      rating\n    }\n  }\n"];
+export function graphql(source: "\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      me {\n        user {\n          email\n          username\n          role\n        }\n        lastPost {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      me {\n        user {\n          email\n          username\n          role\n        }\n        lastPost {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

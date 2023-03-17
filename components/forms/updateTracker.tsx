@@ -8,26 +8,21 @@ import {
   TextareaAutosize,
   Typography,
 } from "@mui/material"
-import { useQuery } from "@apollo/client"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
-import { TODAYS_POST_QUERY } from "@/graphql/client/track/todaysPostQuery"
 
 const OVERVIEW_CHAR_LIMIT = 480
 
 export const UpdateTracker: React.FC = () => {
-  const { refetch } = useContext(UserContext)
+  const { lastPost } = useContext(UserContext)
   const session = useSession()
   const router = useRouter()
-  const [overview, setOverview] = useState<string>()
-  const [numberCreativeHours, setNumberCreativeHours] = useState(0)
-  const [rating, setRating] = useState(0)
-  const { data, loading } = useQuery(TODAYS_POST_QUERY, {
-    variables: { user: Number(session.data?.user.id) },
-  })
+  const [updatedOverview, setOverview] = useState<string>()
+  const [updatedNumberCreativeHours, setNumberCreativeHours] = useState(0)
+  const [updatedRating, setRating] = useState(0)
 
-  if (loading) return <>...loading</>
+  const { overview, numberCreativeHours, rating, id } = lastPost
 
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
@@ -38,7 +33,7 @@ export const UpdateTracker: React.FC = () => {
           maxLength={OVERVIEW_CHAR_LIMIT}
           placeholder="what did you do today?"
           onChange={(e) => setOverview(e.target.value)}
-          defaultValue={data?.todaysPost.overview}
+          defaultValue={overview}
         />
         <Typography textAlign="right" variant="caption">{`{ remaining: ${
           OVERVIEW_CHAR_LIMIT - (overview?.length || 0)
@@ -47,7 +42,7 @@ export const UpdateTracker: React.FC = () => {
       <FormControl sx={{ mb: 5 }}>
         <FormLabel>number creative hours</FormLabel>
         <Input
-          defaultValue={data?.todaysPost.numberCreativeHours}
+          defaultValue={numberCreativeHours}
           type="number"
           inputProps={{ min: 0, max: 24, step: 0.5 }}
           onChange={(e) => setNumberCreativeHours(Number(e.target.value))}
@@ -59,7 +54,7 @@ export const UpdateTracker: React.FC = () => {
           {rating > 0 && "+"}
           <Input
             fullWidth
-            defaultValue={data?.todaysPost.rating}
+            defaultValue={rating}
             type="number"
             inputProps={{ min: -2, max: 2 }}
             onChange={(e) => setRating(Number(e.target.value))}
@@ -86,7 +81,7 @@ export const UpdateTracker: React.FC = () => {
           //       .finally(() => router.push("/"))
           // }}
         >
-          {loading ? "...processing" : "submit"}
+          {/* {loading ? "...processing" : "submit"} */}submit
         </Button>
       </FormControl>
     </form>
