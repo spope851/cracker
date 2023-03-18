@@ -18,11 +18,13 @@ export const UpdateTracker: React.FC = () => {
   const { lastPost } = useContext(UserContext)
   const session = useSession()
   const router = useRouter()
-  const [updatedOverview, setOverview] = useState<string>()
-  const [updatedNumberCreativeHours, setNumberCreativeHours] = useState(0)
-  const [updatedRating, setRating] = useState(0)
 
   const { overview, numberCreativeHours, rating, id } = lastPost
+
+  const [updatedOverview, setOverview] = useState(overview)
+  const [updatedNumberCreativeHours, setNumberCreativeHours] =
+    useState(numberCreativeHours)
+  const [updatedRating, setRating] = useState(rating)
 
   return (
     <form style={{ display: "flex", flexDirection: "column" }}>
@@ -36,7 +38,7 @@ export const UpdateTracker: React.FC = () => {
           defaultValue={overview}
         />
         <Typography textAlign="right" variant="caption">{`{ remaining: ${
-          OVERVIEW_CHAR_LIMIT - (overview?.length || 0)
+          OVERVIEW_CHAR_LIMIT - (updatedOverview?.length || 0)
         } }`}</Typography>
       </FormControl>
       <FormControl sx={{ mb: 5 }}>
@@ -64,7 +66,7 @@ export const UpdateTracker: React.FC = () => {
       <FormControl>
         <Button
           variant="outlined"
-          disabled={!overview}
+          disabled={!updatedOverview}
           // onClick={() => {
           //   if (overview)
           //     track({
