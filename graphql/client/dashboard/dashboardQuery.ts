@@ -4,6 +4,7 @@ export const DASBOARD_QUERY = graphql(`
   query DashboardQuery($user: Int!) {
     dashboard(user: $user) {
       dashboard {
+        daysOfUse
         thirtyDayAvg
         sixtyDayAvg
         ninetyDayAvg

@@ -1,13 +1,24 @@
-import { Button, Grid, Typography } from "@mui/material"
-import React from "react"
-import Link from "next/link"
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material"
+import React, { useState } from "react"
 import { useRouter } from "next/router"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 import { useSession } from "next-auth/react"
+import Entities from "./entities"
+import PieChart from "./pieChart"
+import { RunningAverage } from "@/types"
+import { splitDashboardData } from "@/utils/dashboard"
 
 const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Typography sx={{ float: "right" }} component="span">
+  <Typography sx={{ float: "right" }} component="span" fontWeight="bold">
     {children}
   </Typography>
 )
@@ -15,6 +26,7 @@ const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const Dashboard: React.FC = () => {
   const router = useRouter()
   const session = useSession()
+  const [runningAvg, setRunningAvg] = useState<RunningAverage>("30")
   const { data, loading } = useQuery(DASBOARD_QUERY, {
     variables: { user: Number(session.data?.user.id) },
   })
@@ -26,99 +38,64 @@ const Dashboard: React.FC = () => {
         no data... click to track
       </Button>
     )
-  const {
-    thirtyDayAvg,
-    sixtyDayAvg,
-    ninetyDayAvg,
-    thirtyDayCountNeg2,
-    thirtyDayCountNeg1,
-    thirtyDayCount0,
-    thirtyDayCount1,
-    thirtyDayCount2,
-    sixtyDayCountNeg2,
-    sixtyDayCountNeg1,
-    sixtyDayCount0,
-    sixtyDayCount1,
-    sixtyDayCount2,
-    ninetyDayCountNeg2,
-    ninetyDayCountNeg1,
-    ninetyDayCount0,
-    ninetyDayCount1,
-    ninetyDayCount2,
-  } = data.dashboard.dashboard
 
-  const dashboardDatasets = {
-    "30": {
-      avg: thirtyDayAvg,
-      neg2: thirtyDayCountNeg2,
-      neg1: thirtyDayCountNeg1,
-      zero: thirtyDayCount0,
-      one: thirtyDayCount1,
-      two: thirtyDayCount2,
-    },
-    "60": {
-      avg: sixtyDayAvg,
-      neg2: sixtyDayCountNeg2,
-      neg1: sixtyDayCountNeg1,
-      zero: sixtyDayCount0,
-      one: sixtyDayCount1,
-      two: sixtyDayCount2,
-    },
-    "90": {
-      avg: ninetyDayAvg,
-      neg2: ninetyDayCountNeg2,
-      neg1: ninetyDayCountNeg1,
-      zero: ninetyDayCount0,
-      one: ninetyDayCount1,
-      two: ninetyDayCount2,
-    },
-  }
+  const { daysOfUse } = data.dashboard.dashboard
+
+  const dashboardDatasets = splitDashboardData(data.dashboard.dashboard)
+
+  const dataset = dashboardDatasets[runningAvg]
+  const { neg2, neg1, zero, one, two, avg, cloud } = dataset
 
   return (
-    <Grid container width="100vw" justifyContent="space-evenly">
-      {Object.entries(dashboardDatasets).map(([key, val]) => (
-        <Grid item md={3} key={key} border="solid" borderRadius={2} p={5} m={5}>
-          <Typography variant="h5">
-            <Link href={`/${key}`}>{`${key} day data`}</Link>
-          </Typography>
+    <Grid container width="100vw" justifyContent="flex-start">
+      <Grid item md={5} sm={6} p={5}>
+        <FormControl fullWidth sx={{ mb: 5 }}>
+          <InputLabel>Running Average</InputLabel>
+          <Select
+            value={runningAvg}
+            label="Running Average"
+            onChange={(e) => setRunningAvg(e.target.value as RunningAverage)}
+          >
+            <MenuItem value={"30"}>30 days</MenuItem>
+            {daysOfUse > 30 && <MenuItem value={"60"}>60 days</MenuItem>}
+            {daysOfUse > 60 && <MenuItem value={"90"}>90 days</MenuItem>}
+            {daysOfUse > 90 && <MenuItem value={"365"}>1 year</MenuItem>}
+          </Select>
+        </FormControl>
+        <Grid
+          item
+          border="solid"
+          borderRadius={2}
+          p={5}
+          display="flex"
+          flexDirection="column"
+        >
           <Typography>
             {`avg daily creative hours:`}
-            <DashboardDatum>{val.avg.toFixed()}</DashboardDatum>
+            <DashboardDatum>{avg.toFixed(1)}</DashboardDatum>
           </Typography>
           <br />
           <Typography>
-            {`on track to hit `}
+            {`on track for `}
             <Typography fontWeight="bold" component="span">
-              {(Number(val.avg) * 356).toFixed()}
+              {(Number(avg) * 356).toFixed()}
             </Typography>
             {` creative hours this year`}
           </Typography>
-          <Typography variant="h6" mt={2}>
-            breakdown of good/bad days
-          </Typography>
           <br />
-          <Typography>
-            {`excellent (+2 rating):`}
-            <DashboardDatum>{val.two}</DashboardDatum>
+          <Typography
+            variant="h6"
+            textAlign="center"
+            sx={{ textDecoration: "underline" }}
+          >
+            Ratings
           </Typography>
-          <Typography>
-            {`great (+1 rating):`}
-            <DashboardDatum>{val.one}</DashboardDatum>
-          </Typography>
-          <Typography>
-            {`meh (0 rating):`}
-            <DashboardDatum>{val.zero}</DashboardDatum>
-          </Typography>
-          <Typography>
-            {`not great (-1 rating):`}
-            <DashboardDatum>{val.neg1}</DashboardDatum>
-          </Typography>
-          <Typography>
-            {`not very good (-2 rating):`}
-            <DashboardDatum>{val.neg2}</DashboardDatum>
-          </Typography>
+          <Grid item height={300} width={350} alignSelf="center">
+            <PieChart data={{ neg2, neg1, zero, one, two }} />
+          </Grid>
         </Grid>
-      ))}
+      </Grid>
+      <Entities data={cloud} />
     </Grid>
   )
 }

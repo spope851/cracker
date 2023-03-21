@@ -1,4 +1,19 @@
+type RunningAverage = "30" | "60" | "90" | "365"
+
+type DashboardDataset = {
+  neg2: number
+  neg1: number
+  zero: number
+  one: number
+  two: number
+  avg: number
+  cloud: string
+}
+
+type DashboardDatasets = Record<RunningAverage, DashboardDataset>
+
 interface PgDashboard {
+  _days_of_use: number
   _30_day_avg: number
   _60_day_avg: number
   _90_day_avg: number
@@ -29,4 +44,4 @@ interface PgDashboard {
   _year_wordcloud: string
 }
 
-export type { PgDashboard }
+export type { PgDashboard, RunningAverage, DashboardDataset, DashboardDatasets }

@@ -11,6 +11,7 @@ export class DashboardReslover {
       .query(`CALL get_user_dashboard($1);`, [user])
       .then((res: PgQueryResponse<PgDashboard>) => {
         const {
+          _days_of_use,
           _30_day_avg,
           _60_day_avg,
           _90_day_avg,
@@ -43,6 +44,7 @@ export class DashboardReslover {
 
         return {
           dashboard: {
+            daysOfUse: Number(_days_of_use),
             thirtyDayAvg: Number(_30_day_avg),
             sixtyDayAvg: Number(_60_day_avg),
             ninetyDayAvg: Number(_90_day_avg),

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import language from "@google-cloud/language"
 
+// follow the documentation here to access the language api in your local environment: https://cloud.google.com/nodejs/docs/reference/language/latest#quickstart
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Instantiates a client
   const client = new language.LanguageServiceClient()

@@ -1,36 +1,38 @@
-/* DROP PROCEDURE get_user_dashboard(
-    integer,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor,
-    refcursor
-); */
+-- DROP PROCEDURE get_user_dashboard(
+--     integer,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor,
+--     refcursor
+-- );
 create or replace procedure get_user_dashboard(
 	user_id int, 
+    INOUT _days_of_use refcursor = 'total numbers of times user has tracked data', 
 	-- CREATIVE HOURS AVERAGES
     INOUT _30_day_avg refcursor = '30 day creative hours average', 
     INOUT _60_day_avg refcursor = '60 day creative hours average', 
@@ -71,6 +73,10 @@ as $$
 declare
 -- variable declaration
 begin
+	select count(*)
+	from tracker
+	where "user" = user_id
+	into _days_of_use;
 
 	-- CREATIVE HOURS AVERAGES
 	select avg(number_creative_hours) 

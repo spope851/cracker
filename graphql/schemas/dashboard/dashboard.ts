@@ -2,6 +2,8 @@ import { Field, Float, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
 class Dashboard {
+  @Field(() => Int)
+  daysOfUse!: number
   @Field(() => Float)
   thirtyDayAvg!: number
   @Field(() => Float)
