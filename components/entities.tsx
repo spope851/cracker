@@ -73,9 +73,10 @@ const Entities: React.FC<{
           {loading
             ? "...fetching"
             : entities &&
-              entities.map((entity) => {
+              entities.map((entity, idx) => {
                 return (
                   <Box
+                    key={idx}
                     component="tr"
                     color={sentimentColor(entity.sentiment.score)}
                     fontWeight={Math.abs(entity.sentiment.score) > 0 ? "bold" : ""}
