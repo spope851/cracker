@@ -1,5 +1,5 @@
 import { ME_QUERY } from "@/graphql/client"
-import { hasPostedToday } from "@/utils/stringUtils"
+import { fromToday } from "@/utils/stringUtils"
 import { useQuery } from "@apollo/client"
 import { useSession } from "next-auth/react"
 import React from "react"
@@ -9,21 +9,28 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const session = useSession()
-  const user = session.data?.user
+  const userSession = session.data?.user
   const { loading, data, refetch } = useQuery(ME_QUERY, {
     variables: {
-      user: { id: user?.id || "", token: user?.token || "" },
+      user: { id: userSession?.id || "", token: userSession?.token || "" },
     },
     skip: session.status !== "authenticated",
   })
 
+  if (loading || session.status !== "authenticated") return <>{children}</>
+
+  const { lastPost, user } = data?.me.me!
+
+  const hasPostedToday = fromToday(lastPost.createdAt)
+
   return (
     <UserContext.Provider
       value={{
-        user: data?.me.user,
+        user,
         loading,
-        hasPostedToday: hasPostedToday(data?.me.user?.lastPost),
+        hasPostedToday,
         refetch,
+        lastPost,
       }}
     >
       {children}

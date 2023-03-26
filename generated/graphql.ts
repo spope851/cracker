@@ -52,10 +52,26 @@ export type DashboardResponse = {
   errors?: Maybe<Array<PsqlError>>;
 };
 
-export type GetUserResponse = {
-  __typename?: 'GetUserResponse';
+export type LastPost = {
+  __typename?: 'LastPost';
+  createdAt: Scalars['String'];
+  id: Scalars['ID'];
+  numberCreativeHours: Scalars['Float'];
+  overview: Scalars['String'];
+  rating: Scalars['Int'];
+  user?: Maybe<Scalars['String']>;
+};
+
+export type Me = {
+  __typename?: 'Me';
+  lastPost: LastPost;
+  user: User;
+};
+
+export type MeQueryResponse = {
+  __typename?: 'MeQueryResponse';
   error?: Maybe<Scalars['String']>;
-  user?: Maybe<UserInfo>;
+  me?: Maybe<Me>;
 };
 
 export type Mutation = {
@@ -83,8 +99,7 @@ export type PsqlError = {
 export type Query = {
   __typename?: 'Query';
   dashboard: DashboardResponse;
-  me: GetUserResponse;
-  todaysPost: TodaysPost;
+  me: MeQueryResponse;
 };
 
 
@@ -98,25 +113,10 @@ export type QueryMeArgs = {
   user: UserAuthInput;
 };
 
-
-export type QueryTodaysPostArgs = {
-  user: Scalars['Int'];
-};
-
 export type RegisterResponse = {
   __typename?: 'RegisterResponse';
   errors?: Maybe<Array<PsqlError>>;
   user?: Maybe<User>;
-};
-
-export type TodaysPost = {
-  __typename?: 'TodaysPost';
-  createdAt: Scalars['String'];
-  id: Scalars['ID'];
-  numberCreativeHours: Scalars['Float'];
-  overview: Scalars['String'];
-  rating: Scalars['Int'];
-  user: Scalars['String'];
 };
 
 export type Track = {
@@ -125,7 +125,7 @@ export type Track = {
   numberCreativeHours: Scalars['Float'];
   overview: Scalars['String'];
   rating: Scalars['Int'];
-  user: Scalars['String'];
+  user?: Maybe<Scalars['String']>;
 };
 
 export type TrackerInput = {
@@ -152,15 +152,6 @@ export type User = {
 export type UserAuthInput = {
   id: Scalars['String'];
   token: Scalars['String'];
-};
-
-export type UserInfo = {
-  __typename?: 'UserInfo';
-  email: Scalars['String'];
-  id: Scalars['ID'];
-  lastPost: Scalars['String'];
-  role: Scalars['Int'];
-  username: Scalars['String'];
 };
 
 export type UserInput = {
@@ -196,26 +187,18 @@ export type MeQueryVariables = Exact<{
 }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'GetUserResponse', error?: string | null, user?: { __typename?: 'UserInfo', email: string, id: string, role: number, username: string, lastPost: string } | null } };
-
-export type QueryQueryVariables = Exact<{
-  user: Scalars['Int'];
-}>;
-
-
-export type QueryQuery = { __typename?: 'Query', todaysPost: { __typename?: 'TodaysPost', overview: string, numberCreativeHours: number, rating: number } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeQueryResponse', me?: { __typename?: 'Me', user: { __typename?: 'User', email: string, username: string, role: number }, lastPost: { __typename?: 'LastPost', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt: string } } | null } };
 
 export type TrackerMutationMutationVariables = Exact<{
   tracker: TrackerInput;
 }>;
 
 
-export type TrackerMutationMutation = { __typename?: 'Mutation', track: { __typename?: 'TrackerResponse', errors?: Array<{ __typename?: 'PsqlError', message: string, field: string }> | null, track?: { __typename?: 'Track', numberCreativeHours: number, overview: string, rating: number, user: string, id: string } | null } };
+export type TrackerMutationMutation = { __typename?: 'Mutation', track: { __typename?: 'TrackerResponse', errors?: Array<{ __typename?: 'PsqlError', message: string, field: string }> | null, track?: { __typename?: 'Track', numberCreativeHours: number, overview: string, rating: number, user?: string | null, id: string } | null } };
 
 
 export const DashboardQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"thirtyDayAvg"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayAvg"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayAvg"}},{"kind":"Field","name":{"kind":"Name","value":"yearAvg"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCount0"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCount1"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCount2"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCount0"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCount1"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCount2"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCount0"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCount1"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCount2"}},{"kind":"Field","name":{"kind":"Name","value":"yearCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"yearCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"yearCount0"}},{"kind":"Field","name":{"kind":"Name","value":"yearCount1"}},{"kind":"Field","name":{"kind":"Name","value":"yearCount2"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"yearWordcloud"}}]}}]}}]}}]} as unknown as DocumentNode<DashboardQueryQuery, DashboardQueryQueryVariables>;
 export const RegisterMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutationMutation, RegisterMutationMutationVariables>;
 export const WordcloudQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"WordcloudQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"thirtyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"yearWordcloud"}}]}}]}}]}}]} as unknown as DocumentNode<WordcloudQueryQuery, WordcloudQueryQueryVariables>;
-export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserAuthInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}},{"kind":"Argument","name":{"kind":"Name","value":"refetch"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"lastPost"}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
-export const QueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Query"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"todaysPost"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}}]}}]}}]} as unknown as DocumentNode<QueryQuery, QueryQueryVariables>;
+export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserAuthInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}},{"kind":"Argument","name":{"kind":"Name","value":"refetch"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastPost"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
 export const TrackerMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TrackerMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TrackerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"track"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tracker"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"field"}}]}},{"kind":"Field","name":{"kind":"Name","value":"track"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<TrackerMutationMutation, TrackerMutationMutationVariables>;
