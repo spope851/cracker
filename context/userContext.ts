@@ -4,7 +4,7 @@ import { createContext } from "react"
 
 export type UserContextProps = {
   user: Partial<User>
-  lastPost: LastPost
+  lastPost: LastPost | null | undefined
   loading: boolean
   hasPostedToday: boolean
   refetch: (

@@ -7,6 +7,6 @@ export class Me {
   @Field(() => User!)
   user!: User
 
-  @Field(() => LastPost!)
-  lastPost!: LastPost
+  @Field(() => LastPost, { nullable: true })
+  lastPost?: LastPost | null
 }
