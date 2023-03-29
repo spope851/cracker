@@ -1,8 +1,10 @@
 import { AppBar, Box, Typography } from "@mui/material"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/router"
 import AvatarMenu from "./avatarMenu"
+import cracker from "../public/images/cracker.svg"
 
 export default function Navbar() {
   const router = useRouter()
@@ -32,8 +34,15 @@ export default function Navbar() {
             }}
           >
             <Link href="/" style={{ textDecoration: "none" }}>
-              <Typography variant="h5" m={0} color="#fff">
-                creativity tracker
+              <Typography
+                variant="h5"
+                m={0}
+                color="#fff"
+                display="flex"
+                alignItems="center"
+              >
+                cracker
+                <Image src={cracker} height={35} width={35} alt="cracker" />
               </Typography>
             </Link>
           </Box>
