@@ -1,8 +1,8 @@
 import { graphql } from "@/generated"
 
 export const ME_QUERY = graphql(`
-  query Me($user: UserAuthInput!, $refetch: Boolean) {
-    me(user: $user, refetch: $refetch) {
+  query Me($refetch: Boolean) {
+    me(refetch: $refetch) {
       error
       user {
         email

@@ -9,7 +9,6 @@ import cracker from "../public/images/cracker.svg"
 export default function Navbar() {
   const router = useRouter()
   const session = useSession()
-  const user = session.data?.user
 
   return (
     <AppBar position="static" sx={{ backgroundColor: "grey" }}>
@@ -33,17 +32,23 @@ export default function Navbar() {
               backgroundColor: router.pathname === "/" ? "primary.main" : "grey",
             }}
           >
-            <Link href="/" style={{ textDecoration: "none" }}>
+            <Link
+              href="/"
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <Typography
                 variant="h5"
                 m={0}
                 color="#fff"
-                display="flex"
-                alignItems="center"
+                display={{ xs: "none", sm: "block" }}
               >
                 cracker
-                <Image src={cracker} height={35} width={35} alt="cracker" />
               </Typography>
+              <Image src={cracker} height={35} width={35} alt="cracker" />
             </Link>
           </Box>
           <Box ml="auto" display="flex">
@@ -60,7 +65,7 @@ export default function Navbar() {
                 <Typography color="#fff">track</Typography>
               </Link>
             </Box>
-            {session.status === "authenticated" && user?.id && user?.token && (
+            {session.status === "authenticated" && (
               <Box
                 component="li"
                 p={1}

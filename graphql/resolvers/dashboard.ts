@@ -1,12 +1,18 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { type MyContext } from "@/pages/api/graphql"
 import { PgDashboard, PgQueryError, PgQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
-import { Arg, Int, Query, Resolver } from "type-graphql"
+import { getServerSession } from "next-auth"
+import { Ctx, Query, Resolver } from "type-graphql"
 import { DashboardResponse } from "../schemas/dashboard"
 
 @Resolver(DashboardResponse)
 export class DashboardReslover {
   @Query(() => DashboardResponse)
-  async dashboard(@Arg("user", () => Int) user: number): Promise<DashboardResponse> {
+  async dashboard(@Ctx() { req, res }: MyContext): Promise<DashboardResponse> {
+    const {
+      user: { id: user },
+    } = await getServerSession(req, res, authOptions)
     const dashboardData: Promise<DashboardResponse> = await pool
       .query(`CALL get_user_dashboard($1);`, [user])
       .then((res: PgQueryResponse<PgDashboard>) => {

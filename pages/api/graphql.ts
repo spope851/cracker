@@ -8,7 +8,7 @@ import {
   TrackerResolver,
   DashboardReslover,
 } from "@/graphql/resolvers"
-// import { NextApiRequest, NextApiResponse } from "next"
+import { NextApiRequest, NextApiResponse } from "next"
 
 const schema = await buildSchema({
   resolvers: [RegistrationResolver, MeReslover, TrackerResolver, DashboardReslover],
@@ -17,17 +17,14 @@ const schema = await buildSchema({
 
 const server = new ApolloServer({ schema })
 
-// export type MyContext = {
-//   req: NextApiRequest
-//   res: NextApiResponse
-// }
+export type MyContext = {
+  req: NextApiRequest
+  res: NextApiResponse
+}
 
-export default startServerAndCreateNextHandler(
-  server
-  //   , {
-  //   context: async (req, res): Promise<MyContext> => ({
-  //       req, res
-  //     }
-  //   ),
-  // }
-)
+export default startServerAndCreateNextHandler(server, {
+  context: async (req, res): Promise<MyContext> => ({
+    req,
+    res,
+  }),
+})

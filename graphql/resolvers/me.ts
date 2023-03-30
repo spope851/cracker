@@ -1,17 +1,23 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { type MyContext } from "@/pages/api/graphql"
 import { PgQueryError, PgQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
 import redis from "@/utils/redis"
-import { Arg, Query, Resolver } from "type-graphql"
-import { UserAuthInput } from "../schemas"
+import { getServerSession } from "next-auth"
+import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import { GetUserResponse } from "../schemas/getUser/getUserResponse"
 
 @Resolver(GetUserResponse)
 export class MeReslover {
   @Query(() => GetUserResponse)
   async me(
-    @Arg("user", () => UserAuthInput) { token, id }: UserAuthInput,
-    @Arg("refetch", { nullable: true }) refetch: boolean = false
+    @Arg("refetch", { nullable: true }) refetch: boolean = false,
+    @Ctx() { req, res }: MyContext
   ): Promise<GetUserResponse> {
+    const {
+      user: { id: user },
+    } = await getServerSession(req, res, authOptions)
+
     // 1
     // check redis for token key
     // 2
@@ -28,7 +34,7 @@ export class MeReslover {
     // if you don't find them in the database, return an error
     const queryPostgres = (): Promise<GetUserResponse> =>
       pool
-        .query(`CALL get_user_info($1);`, [id])
+        .query(`CALL get_user_info($1);`, [user])
         .then(
           async (
             res: PgQueryResponse<{
@@ -53,7 +59,7 @@ export class MeReslover {
                 lastPost: new Date(_last_post).toLocaleDateString(),
               },
             }
-            await redis.set(token, JSON.stringify(foundUser))
+            await redis.setex(user, 60 * 15, JSON.stringify(foundUser)) // expires in 15 minutes
             return foundUser
           }
         )
@@ -67,7 +73,7 @@ export class MeReslover {
     if (refetch) {
       return queryPostgres()
     } else {
-      const redisUser = await redis.get(token)
+      const redisUser = await redis.get(user)
       if (redisUser) return JSON.parse(redisUser)
       else return queryPostgres()
     }

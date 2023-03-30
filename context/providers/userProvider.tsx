@@ -9,11 +9,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const session = useSession()
-  const user = session.data?.user
   const { loading, data, refetch } = useQuery(ME_QUERY, {
-    variables: {
-      user: { id: user?.id || "", token: user?.token || "" },
-    },
     skip: session.status !== "authenticated",
   })
 

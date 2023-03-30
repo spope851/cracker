@@ -6,18 +6,26 @@ import { ThemeProvider } from "@/components/themeProvider"
 import { SessionProvider } from "next-auth/react"
 import "animate.css"
 import { UserContextProvider } from "@/context/providers"
+import { NextComponentWithAuth } from "@/types"
+import { Auth } from "@/components/auth"
 
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
-}: AppProps) {
+}: AppProps & { Component: NextComponentWithAuth }) {
   return (
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
         <UserContextProvider>
           <ThemeProvider>
             <Layout>
-              <Component {...pageProps} />
+              {Component.auth ? (
+                <Auth role={Component.auth.role} redirect={Component.auth.redirect}>
+                  <Component {...pageProps} />
+                </Auth>
+              ) : (
+                <Component {...pageProps} />
+              )}
             </Layout>
           </ThemeProvider>
         </UserContextProvider>
