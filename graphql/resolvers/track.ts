@@ -1,5 +1,6 @@
 import { PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
+import redis from "@/utils/redis"
 import { postgresErrorDetails } from "@/utils/stringUtils"
 import { Arg, Mutation, Resolver } from "type-graphql"
 import { TrackerInput } from "../schemas/track/trackerInput"
@@ -12,6 +13,7 @@ class TrackerResolver {
     @Arg("tracker", () => TrackerInput) tracker: TrackerInput
   ): Promise<TrackerResponse> {
     const { overview, numberCreativeHours, rating, user } = tracker
+    await redis.del(`nlp/${user}`)
     const res: Promise<TrackerResponse> = await pool
       .query(
         `INSERT INTO tracker (overview, number_creative_hours, rating, "user")

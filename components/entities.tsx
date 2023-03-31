@@ -37,6 +37,8 @@ const Entities: React.FC<{
       const req = await fetch("/api/nlp", { method: "post", body: data })
         .then((res) => res.json())
         .then((res) => {
+          console.log(res)
+
           setEntities(res.entities)
           setLoading(false)
         })
