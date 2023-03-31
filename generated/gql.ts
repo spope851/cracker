@@ -18,6 +18,7 @@ const documents = {
     "\n  query WordcloudQuery($user: Int!) {\n    dashboard(user: $user) {\n      dashboard {\n        thirtyDayWordcloud\n        sixtyDayWordcloud\n        ninetyDayWordcloud\n        yearWordcloud\n      }\n    }\n  }\n": types.WordcloudQueryDocument,
     "\n  query Me($user: UserAuthInput!, $refetch: Boolean) {\n    me(user: $user, refetch: $refetch) {\n      error\n      user {\n        email\n        id\n        role\n        username\n        lastPost\n      }\n    }\n  }\n": types.MeDocument,
     "\n  mutation TrackerMutation($tracker: TrackerInput!) {\n    track(tracker: $tracker) {\n      errors {\n        message\n        field\n      }\n      track {\n        numberCreativeHours\n        overview\n        rating\n        user\n        id\n      }\n    }\n  }\n": types.TrackerMutationDocument,
+    "\n  mutation UploadTracker($data: [TrackerInput!]!) {\n    uploadTracker(data: $data) {\n      uploaded\n      errors {\n        field\n        message\n      }\n    }\n  }\n": types.UploadTrackerDocument,
 };
 
 /**
@@ -54,6 +55,10 @@ export function graphql(source: "\n  query Me($user: UserAuthInput!, $refetch: B
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation TrackerMutation($tracker: TrackerInput!) {\n    track(tracker: $tracker) {\n      errors {\n        message\n        field\n      }\n      track {\n        numberCreativeHours\n        overview\n        rating\n        user\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation TrackerMutation($tracker: TrackerInput!) {\n    track(tracker: $tracker) {\n      errors {\n        message\n        field\n      }\n      track {\n        numberCreativeHours\n        overview\n        rating\n        user\n        id\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UploadTracker($data: [TrackerInput!]!) {\n    uploadTracker(data: $data) {\n      uploaded\n      errors {\n        field\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UploadTracker($data: [TrackerInput!]!) {\n    uploadTracker(data: $data) {\n      uploaded\n      errors {\n        field\n        message\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

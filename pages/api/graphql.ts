@@ -7,11 +7,18 @@ import {
   MeReslover,
   TrackerResolver,
   DashboardReslover,
+  UploadTrackerResolver,
 } from "@/graphql/resolvers"
 // import { NextApiRequest, NextApiResponse } from "next"
 
 const schema = await buildSchema({
-  resolvers: [RegistrationResolver, MeReslover, TrackerResolver, DashboardReslover],
+  resolvers: [
+    RegistrationResolver,
+    MeReslover,
+    TrackerResolver,
+    DashboardReslover,
+    UploadTrackerResolver,
+  ],
   validate: false,
 })
 
