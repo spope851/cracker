@@ -8,18 +8,14 @@ import {
   TextareaAutosize,
   Typography,
 } from "@mui/material"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
 
 const OVERVIEW_CHAR_LIMIT = 480
 
 export const UpdateTracker: React.FC = () => {
   const { lastPost } = useContext(UserContext)
-  const session = useSession()
-  const router = useRouter()
 
-  const { overview, numberCreativeHours, rating, id } = lastPost
+  const { overview, numberCreativeHours, rating, id } = lastPost!
 
   const [updatedOverview, setOverview] = useState(overview)
   const [updatedNumberCreativeHours, setNumberCreativeHours] =
