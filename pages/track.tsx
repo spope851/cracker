@@ -2,11 +2,11 @@ import React, { useContext, useState } from "react"
 import Head from "next/head"
 import { Box, Button, Typography } from "@mui/material"
 import { UserContext } from "@/context/userContext"
-import { Tracker } from "@/components/forms"
 import Dropzone from "react-dropzone"
 import * as csv from "csv"
 import { useMutation } from "@apollo/client"
 import { UPLOAD_TRACKER_MUTATION } from "@/graphql/client/track/uploadTrackerMutation"
+import { Tracker, UpdateTracker } from "@/components/forms"
 
 export default function Track() {
   const { hasPostedToday } = useContext(UserContext)
@@ -15,7 +15,7 @@ export default function Track() {
 
   const post = hasPostedToday ? (
     // TODO: <UpdateTracker /> component goes here
-    <Typography color="red">you have already posted today</Typography>
+    <UpdateTracker />
   ) : (
     <>
       <Tracker />
