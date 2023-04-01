@@ -15,7 +15,6 @@ import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { OVERVIEW_CHAR_LIMIT } from "@/constants"
 
-
 export const UpdateTracker: React.FC = () => {
   const { lastPost, refetch } = useContext(UserContext)
   const session = useSession()
@@ -73,20 +72,19 @@ export const UpdateTracker: React.FC = () => {
           variant="outlined"
           disabled={!updatedOverview}
           onClick={() => {
-            if (overview)
-              updateTracker({
-                variables: {
-                  tracker: {
-                    user: session.data?.user.id || "",
-                    numberCreativeHours: updatedNumberCreativeHours,
-                    overview: updatedOverview,
-                    rating: updatedRating,
-                    id,
-                  },
+            updateTracker({
+              variables: {
+                tracker: {
+                  user: session.data?.user.id || "",
+                  numberCreativeHours: updatedNumberCreativeHours,
+                  overview: updatedOverview,
+                  rating: updatedRating,
+                  id,
                 },
-              })
-                .then(() => refetch({ refetch: true }))
-                .finally(() => router.push("/"))
+              },
+            })
+              .then(() => refetch({ refetch: true }))
+              .finally(() => router.push("/"))
           }}
         >
           {loading ? "...processing" : "submit"}
