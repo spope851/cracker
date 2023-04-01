@@ -13,8 +13,8 @@ import { UPDATE_TRACKER_MUTATION } from "@/graphql/client/track/updateTrackerMut
 import { useMutation } from "@apollo/client"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
+import { OVERVIEW_CHAR_LIMIT } from "@/constants"
 
-const OVERVIEW_CHAR_LIMIT = 480
 
 export const UpdateTracker: React.FC = () => {
   const { lastPost, refetch } = useContext(UserContext)

@@ -13,8 +13,8 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
 import { TRACKER_MUTATION } from "@/graphql/client"
+import { OVERVIEW_CHAR_LIMIT } from "@/constants"
 
-const OVERVIEW_CHAR_LIMIT = 480
 
 export const Tracker: React.FC = () => {
   const { refetch } = useContext(UserContext)
