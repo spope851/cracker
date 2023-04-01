@@ -9,13 +9,18 @@ import {
   Typography,
 } from "@mui/material"
 import { UserContext } from "@/context/userContext"
+import { UPDATE_TRACKER_MUTATION } from "@/graphql/client/track/updateTrackerMutation"
+import { useMutation } from "@apollo/client"
 
 const OVERVIEW_CHAR_LIMIT = 480
 
 export const UpdateTracker: React.FC = () => {
-  const { lastPost } = useContext(UserContext)
+  const { lastPost, refetch } = useContext(UserContext)
+  const session = useSession()
+  const router = useRouter()
 
   const { overview, numberCreativeHours, rating, id } = lastPost!
+  const [updateTracker, { data: _data, loading }] = useMutation(UPDATE_TRACKER_MUTATION)
 
   const [updatedOverview, setOverview] = useState(overview)
   const [updatedNumberCreativeHours, setNumberCreativeHours] =
@@ -63,23 +68,24 @@ export const UpdateTracker: React.FC = () => {
         <Button
           variant="outlined"
           disabled={!updatedOverview}
-          // onClick={() => {
-          //   if (overview)
-          //     track({
-          //       variables: {
-          //         tracker: {
-          //           user: session.data?.user.id || "",
-          //           numberCreativeHours,
-          //           overview,
-          //           rating,
-          //         },
-          //       },
-          //     })
-          //       .then(() => refetch({ refetch: true }))
-          //       .finally(() => router.push("/"))
-          // }}
+          onClick={() => {
+            if (overview)
+            updateTracker({
+                variables: {
+                  tracker: {
+                    user: session.data?.user.id || "",
+                    numberCreativeHours: updatedNumberCreativeHours,
+                    overview: updatedOverview,
+                    rating: updatedRating,
+                    id
+                  },
+                },
+              })
+                .then(() => refetch({ refetch: true }))
+                .finally(() => router.push("/"))
+          }}
         >
-          {/* {loading ? "...processing" : "submit"} */}submit
+          {loading ? "...processing" : "submit"}
         </Button>
       </FormControl>
     </form>
