@@ -64,7 +64,7 @@ export type LastPost = {
 
 export type Me = {
   __typename?: 'Me';
-  lastPost: LastPost;
+  lastPost?: Maybe<LastPost>;
   user: User;
 };
 
@@ -201,7 +201,7 @@ export type MeQueryVariables = Exact<{
 }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeQueryResponse', me?: { __typename?: 'Me', user: { __typename?: 'User', email: string, username: string, role: number }, lastPost: { __typename?: 'LastPost', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt: string } } | null } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeQueryResponse', me?: { __typename?: 'Me', user: { __typename?: 'User', email: string, username: string, role: number }, lastPost?: { __typename?: 'LastPost', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt: string } | null } | null } };
 
 export type TrackerMutationMutationVariables = Exact<{
   tracker: TrackerInput;

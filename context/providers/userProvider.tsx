@@ -21,7 +21,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { lastPost, user } = data?.me.me!
 
-  const hasPostedToday = fromToday(lastPost.createdAt)
+  const hasPostedToday = lastPost ? fromToday(lastPost.createdAt) : false
 
   return (
     <UserContext.Provider

@@ -53,13 +53,16 @@ export class MeReslover {
                 email: _email,
                 role: _role,
               },
-              lastPost: {
-                id: _last_post_id,
-                overview: _last_post_overview,
-                numberCreativeHours: _last_post_hours,
-                rating: _last_post_rating,
-                createdAt: new Date(_last_post_date).toLocaleDateString(),
-              },
+              lastPost:
+                _last_post_id === null
+                  ? null
+                  : {
+                      id: _last_post_id,
+                      overview: _last_post_overview,
+                      numberCreativeHours: _last_post_hours,
+                      rating: _last_post_rating,
+                      createdAt: new Date(_last_post_date!).toLocaleDateString(),
+                    },
             },
           }
           await redis.set(token, JSON.stringify(foundUser))
