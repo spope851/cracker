@@ -21,6 +21,7 @@ create table if not exists tracker (
     number_creative_hours numeric (3,1) not null,
     rating smallint not null,
     created_at timestamp default now(),
+    updated_at timestamp default now(),
     "user" integer not null,
     foreign key("user") references "user"(id)
 );

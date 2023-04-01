@@ -1,0 +1,3 @@
+const OVERVIEW_CHAR_LIMIT = 480
+
+export { OVERVIEW_CHAR_LIMIT }
