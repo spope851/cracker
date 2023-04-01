@@ -11,6 +11,8 @@ import {
 import { UserContext } from "@/context/userContext"
 import { UPDATE_TRACKER_MUTATION } from "@/graphql/client/track/updateTrackerMutation"
 import { useMutation } from "@apollo/client"
+import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 
 const OVERVIEW_CHAR_LIMIT = 480
 
@@ -20,7 +22,9 @@ export const UpdateTracker: React.FC = () => {
   const router = useRouter()
 
   const { overview, numberCreativeHours, rating, id } = lastPost!
-  const [updateTracker, { data: _data, loading }] = useMutation(UPDATE_TRACKER_MUTATION)
+  const [updateTracker, { data: _data, loading }] = useMutation(
+    UPDATE_TRACKER_MUTATION
+  )
 
   const [updatedOverview, setOverview] = useState(overview)
   const [updatedNumberCreativeHours, setNumberCreativeHours] =
@@ -70,14 +74,14 @@ export const UpdateTracker: React.FC = () => {
           disabled={!updatedOverview}
           onClick={() => {
             if (overview)
-            updateTracker({
+              updateTracker({
                 variables: {
                   tracker: {
                     user: session.data?.user.id || "",
                     numberCreativeHours: updatedNumberCreativeHours,
                     overview: updatedOverview,
                     rating: updatedRating,
-                    id
+                    id,
                   },
                 },
               })
