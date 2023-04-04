@@ -23,10 +23,12 @@ export default function Track() {
         mt="auto"
         flexDirection="column"
       >
-        <Button variant="outlined" onClick={() => setUpload(!upload)}>
-          upload
-        </Button>
-        {upload ? <UploadTracker /> : post}
+        {!upload && (
+          <Button variant="outlined" onClick={() => setUpload(!upload)}>
+            upload
+          </Button>
+        )}
+        {upload ? <UploadTracker setUpload={setUpload} /> : post}
       </Box>
     </>
   )
