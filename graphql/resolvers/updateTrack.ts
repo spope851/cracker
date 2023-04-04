@@ -24,7 +24,7 @@ class UpdateTrackerResolver {
       )
       .then((queryRes: PgQueryResponse<PgTrackerRow>) => {
         const returnRow = queryRes.rows[0]
-        console.log(returnRow)
+
         return {
           track: {
             id: returnRow.id.toString(),
