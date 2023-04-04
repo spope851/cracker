@@ -3,13 +3,20 @@ import { graphql } from "@/generated"
 export const ME_QUERY = graphql(`
   query Me($refetch: Boolean) {
     me(refetch: $refetch) {
-      error
-      user {
-        email
-        id
-        role
-        username
-        lastPost
+      me {
+        user {
+          email
+          username
+          role
+        }
+        lastPost {
+          id
+          overview
+          numberCreativeHours
+          rating
+          user
+          createdAt
+        }
       }
     }
   }
