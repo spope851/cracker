@@ -5,7 +5,7 @@ import client from "../graphql/client/apolloClient"
 import { ThemeProvider } from "@/components/themeProvider"
 import { SessionProvider } from "next-auth/react"
 import "animate.css"
-import { UserContextProvider } from "@/context/providers"
+import { SnackbarContextProvider, UserContextProvider } from "@/context/providers"
 
 export default function App({
   Component,
@@ -15,11 +15,13 @@ export default function App({
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
         <UserContextProvider>
-          <ThemeProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ThemeProvider>
+          <SnackbarContextProvider>
+            <ThemeProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
+          </SnackbarContextProvider>
         </UserContextProvider>
       </ApolloProvider>
     </SessionProvider>

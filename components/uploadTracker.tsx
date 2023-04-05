@@ -1,13 +1,14 @@
 import { UPLOAD_TRACKER_MUTATION } from "@/graphql/client/track/uploadTrackerMutation"
 import { useMutation } from "@apollo/client"
 import { Box, BoxProps, Button, Typography } from "@mui/material"
-import React, { PropsWithChildren, ReactNode, useState } from "react"
+import React, { PropsWithChildren, ReactNode, useContext, useState } from "react"
 import Dropzone from "react-dropzone"
 import * as csv from "csv"
 import { useSession } from "next-auth/react"
 import { TrackerInput } from "@/generated/graphql"
 import { OVERVIEW_CHAR_LIMIT } from "@/constants"
 import { useRouter } from "next/router"
+import { SnackbarContext } from "@/context/snackbarContext"
 
 const tableBorderProps = {
   p: 1,
@@ -28,8 +29,9 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
   setUpload,
 }) => {
   const router = useRouter()
+  const { setSnackbarMessage, setSnackbarOpen } = useContext(SnackbarContext)
   const [uploadedData, setUploadedData] = useState<TrackerInput[]>()
-  const [uploadTracker, { loading, data }] = useMutation(UPLOAD_TRACKER_MUTATION)
+  const [uploadTracker, { loading }] = useMutation(UPLOAD_TRACKER_MUTATION)
   const [dropzoneContent, setDropzoneContent] = useState<ReactNode>(
     <Typography>File type should be .csv</Typography>
   )
@@ -62,47 +64,39 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
               )
               setUploadedData(userData)
               setDropzoneContent(
-                <>
-                  {loading ? (
-                    "...processing"
-                  ) : (
-                    <Box
-                      component="table"
-                      bgcolor="#ddd"
-                      border="solid"
-                      sx={{ borderCollapse: "collapse" }}
-                    >
-                      <Box component="thead">
-                        <BorderedTableComponent component="th">
-                          hours
+                <Box
+                  component="table"
+                  bgcolor="#ddd"
+                  border="solid"
+                  sx={{ borderCollapse: "collapse" }}
+                >
+                  <Box component="thead">
+                    <BorderedTableComponent component="th">
+                      hours
+                    </BorderedTableComponent>
+                    <BorderedTableComponent component="th">
+                      rating
+                    </BorderedTableComponent>
+                    <BorderedTableComponent component="th">
+                      overview
+                    </BorderedTableComponent>
+                  </Box>
+                  <Box component="tbody">
+                    {userData.map(({ overview, numberCreativeHours, rating }) => (
+                      <Box component="tr">
+                        <BorderedTableComponent component="td">
+                          {numberCreativeHours}
                         </BorderedTableComponent>
-                        <BorderedTableComponent component="th">
-                          rating
+                        <BorderedTableComponent component="td">
+                          {rating}
                         </BorderedTableComponent>
-                        <BorderedTableComponent component="th">
-                          overview
+                        <BorderedTableComponent component="td">
+                          {overview}
                         </BorderedTableComponent>
                       </Box>
-                      <Box component="tbody">
-                        {userData.map(
-                          ({ overview, numberCreativeHours, rating }) => (
-                            <Box component="tr">
-                              <BorderedTableComponent component="td">
-                                {numberCreativeHours}
-                              </BorderedTableComponent>
-                              <BorderedTableComponent component="td">
-                                {rating}
-                              </BorderedTableComponent>
-                              <BorderedTableComponent component="td">
-                                {overview}
-                              </BorderedTableComponent>
-                            </Box>
-                          )
-                        )}
-                      </Box>
-                    </Box>
-                  )}
-                </>
+                    ))}
+                  </Box>
+                </Box>
               )
             })
           }
@@ -123,7 +117,7 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
               borderRadius: "12px",
               cursor: "pointer",
               maxHeight: "65vh",
-              overflow: "auto",
+              overflow: uploadedData && "scroll",
             }}
             m={3}
             p={3}
@@ -144,27 +138,38 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
         )}
       </Dropzone>
       {uploadedData && (
-        <Button
-          variant="outlined"
-          onClick={() =>
-            uploadTracker({
-              variables: {
-                data: uploadedData.reverse(),
-              },
-            })
-              .then(
-                () => setDropzoneContent(data?.uploadTracker.uploaded),
-                () =>
-                  setDropzoneContent(
-                    data?.uploadTracker.errors &&
-                      data.uploadTracker.errors[0].message
-                  )
-              )
-              .finally(() => router.push("/"))
-          }
-        >
-          upload
-        </Button>
+        <Box display="flex">
+          <Button
+            sx={{ m: 1 }}
+            variant="outlined"
+            onClick={() =>
+              uploadTracker({
+                variables: {
+                  data: uploadedData.reverse(),
+                },
+              })
+                .then(
+                  (res) => {
+                    setSnackbarOpen(true)
+                    setSnackbarMessage(res.data?.uploadTracker.uploaded!)
+                  },
+                  (res) =>
+                    setDropzoneContent(
+                      <Typography>
+                        {res.data?.uploadTracker.errors &&
+                          res.data.uploadTracker.errors[0].message}
+                      </Typography>
+                    )
+                )
+                .finally(() => router.push("/"))
+            }
+          >
+            {loading ? "...processing" : "upload"}
+          </Button>
+          <Button sx={{ m: 1 }} variant="outlined" onClick={() => setUpload(false)}>
+            cancel
+          </Button>
+        </Box>
       )}
     </>
   )
