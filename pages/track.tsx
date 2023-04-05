@@ -4,6 +4,7 @@ import { Box, Button } from "@mui/material"
 import { UserContext } from "@/context/userContext"
 import { Tracker, UpdateTracker } from "@/components/forms"
 import { UploadTracker } from "@/components/uploadTracker"
+import UploadFileIcon from "@mui/icons-material/UploadFile"
 
 export default function Track() {
   const { hasPostedToday } = useContext(UserContext)
@@ -20,15 +21,20 @@ export default function Track() {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        mt="auto"
         flexDirection="column"
+        flex={1}
+        p={5}
       >
         {!upload && (
-          <Button variant="outlined" onClick={() => setUpload(!upload)}>
-            upload
+          <Button
+            variant="outlined"
+            onClick={() => setUpload(!upload)}
+            sx={{ alignSelf: "flex-end", mb: "auto" }}
+          >
+            upload <UploadFileIcon />
           </Button>
         )}
-        {upload ? <UploadTracker setUpload={setUpload} /> : post}
+        <Box m="auto">{upload ? <UploadTracker setUpload={setUpload} /> : post}</Box>
       </Box>
     </>
   )

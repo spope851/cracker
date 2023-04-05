@@ -38,9 +38,13 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
   const session = useSession()
 
   return (
-    <>
+    <Box display="flex" flexDirection="column">
       {!uploadedData && (
-        <Button variant="outlined" onClick={() => setUpload(false)}>
+        <Button
+          variant="outlined"
+          onClick={() => setUpload(false)}
+          sx={{ alignSelf: "center" }}
+        >
           back
         </Button>
       )}
@@ -138,7 +142,7 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
         )}
       </Dropzone>
       {uploadedData && (
-        <Box display="flex">
+        <Box display="flex" alignSelf="center">
           <Button
             sx={{ m: 1 }}
             variant="outlined"
@@ -171,6 +175,6 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
           </Button>
         </Box>
       )}
-    </>
+    </Box>
   )
 }

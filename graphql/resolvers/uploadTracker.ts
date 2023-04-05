@@ -20,14 +20,20 @@ class UploadTrackerResolver {
         }-${today.getDate()}`
         return await pool
           .query(
-            `INSERT INTO tracker (overview, number_creative_hours, rating, created_at, "user")
-       VALUES (
-        $1,
-        $2,
-        $3,
-        TO_TIMESTAMP($4, 'YYYY-MM-DD'),
-        $5
-        );`,
+            `INSERT INTO tracker (
+                overview, 
+                number_creative_hours, 
+                rating, 
+                created_at, 
+                "user"
+              )
+              VALUES (
+                $1,
+                $2,
+                $3,
+                TO_TIMESTAMP($4, 'YYYY-MM-DD'),
+                $5
+              );`,
             [overview, numberCreativeHours, rating, createdAt, user]
           )
           .catch((e: PgQueryError) => {
