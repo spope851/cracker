@@ -1,9 +1,7 @@
-import { DashboardQueryQuery } from "@/generated/graphql"
+import { DashboardMetrics } from "@/generated/graphql"
 import { DashboardDatasets } from "@/types"
 
-const splitDashboardData = (
-  data: DashboardQueryQuery["dashboard"]["dashboard"]
-): DashboardDatasets => {
+const splitDashboardData = (data: DashboardMetrics): DashboardDatasets => {
   const {
     thirtyDayAvg,
     sixtyDayAvg,

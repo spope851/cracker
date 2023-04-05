@@ -6,6 +6,7 @@ interface PgQueryResponse<T> {
 
 type PgTrackerRow = Omit<Track, "numberCreativeHours"> & {
   number_creative_hours: string
+  created_at: string
 }
 
 interface PgQueryError {

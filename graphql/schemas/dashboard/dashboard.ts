@@ -1,7 +1,7 @@
 import { Field, Float, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
-class Dashboard {
+class DashboardMetrics {
   @Field(() => Int)
   daysOfUse!: number
   @Field(() => Float)
@@ -62,4 +62,4 @@ class Dashboard {
   yearWordcloud!: string
 }
 
-export { Dashboard }
+export { DashboardMetrics }

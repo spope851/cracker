@@ -53,7 +53,7 @@ const Entities: React.FC<{
   }
 
   return (
-    <Grid container md={7} justifyContent="space-evenly">
+    <Grid container item md={7} justifyContent="space-evenly">
       <Box
         border="solid"
         borderRadius={2}
@@ -62,19 +62,25 @@ const Entities: React.FC<{
         textAlign="left"
         width="100%"
         height="500px"
-        sx={{ overflowY: "auto", overflowX: "hidden" }}
+        overflow="auto"
       >
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
-            <TH>entity</TH>
-            <TH># mentions</TH>
-            <TH>salience</TH>
-            <TH>sentiment score</TH>
-            <TH>sentiment magnitude</TH>
+            <Box component="tr">
+              <TH>entity</TH>
+              <TH># mentions</TH>
+              <TH>salience</TH>
+              <TH>sentiment score</TH>
+              <TH>sentiment magnitude</TH>
+            </Box>
           </Box>
-          {loading
-            ? "...fetching"
-            : entities &&
+          <Box component="tbody">
+            {loading ? (
+              <Box component="tr">
+                <Box component="td">"...fetching"</Box>
+              </Box>
+            ) : (
+              entities &&
               entities.map((entity, idx) => {
                 return (
                   <Box
@@ -90,7 +96,9 @@ const Entities: React.FC<{
                     <TD>{Number(entity.sentiment.magnitude).toFixed(3)}</TD>
                   </Box>
                 )
-              })}
+              })
+            )}
+          </Box>
         </Box>
       </Box>
     </Grid>

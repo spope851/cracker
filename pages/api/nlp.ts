@@ -33,6 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // const [syntax] = await client.analyzeSyntax({ document })
   // const [classify] = await client.classifyText({ document })
   const [annotate] = await client.annotateText({ document, features })
-  await redis.set(`nlp${user}`, JSON.stringify(annotate))
+  await redis.set(`nlp/${user}`, JSON.stringify(annotate))
   res.json(annotate)
 }

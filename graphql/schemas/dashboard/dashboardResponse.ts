@@ -1,6 +1,16 @@
 import { PsqlError } from "@/graphql/error"
 import { Field, ObjectType } from "type-graphql"
-import { Dashboard } from "./dashboard"
+import { Track } from "../track"
+import { DashboardMetrics } from "./dashboard"
+
+@ObjectType()
+class Dashboard {
+  @Field(() => DashboardMetrics)
+  dashboardMetrics!: DashboardMetrics
+
+  @Field(() => [Track])
+  rawData!: Track[]
+}
 
 @ObjectType()
 class DashboardResponse {
@@ -11,4 +21,4 @@ class DashboardResponse {
   errors?: PsqlError[]
 }
 
-export { DashboardResponse }
+export { DashboardResponse, Dashboard }

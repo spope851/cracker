@@ -73,7 +73,7 @@ for item in spreadsheet['hours']:
     insertion_rows.append((
         spreadsheet['hours'][count],
         spreadsheet['rating'][count],
-        spreadsheet['overview'][count],
+        spreadsheet['overview'][count][:480], #first 480 characters
         dt-timedelta(days=count),
     ))
     count += 1

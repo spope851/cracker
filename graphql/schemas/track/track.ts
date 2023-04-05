@@ -16,6 +16,9 @@ class Track {
 
   @Field(() => String)
   user!: string
+
+  @Field(() => String, { nullable: true })
+  createdAt?: string
 }
 
 export { Track }
