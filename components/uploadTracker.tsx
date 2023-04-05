@@ -86,19 +86,21 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
                     </BorderedTableComponent>
                   </Box>
                   <Box component="tbody">
-                    {userData.map(({ overview, numberCreativeHours, rating }) => (
-                      <Box component="tr">
-                        <BorderedTableComponent component="td">
-                          {numberCreativeHours}
-                        </BorderedTableComponent>
-                        <BorderedTableComponent component="td">
-                          {rating}
-                        </BorderedTableComponent>
-                        <BorderedTableComponent component="td">
-                          {overview}
-                        </BorderedTableComponent>
-                      </Box>
-                    ))}
+                    {userData.map(
+                      ({ overview, numberCreativeHours, rating }, idx) => (
+                        <Box component="tr" key={idx}>
+                          <BorderedTableComponent component="td">
+                            {numberCreativeHours}
+                          </BorderedTableComponent>
+                          <BorderedTableComponent component="td">
+                            {rating}
+                          </BorderedTableComponent>
+                          <BorderedTableComponent component="td">
+                            {overview}
+                          </BorderedTableComponent>
+                        </Box>
+                      )
+                    )}
                   </Box>
                 </Box>
               )
