@@ -6,16 +6,17 @@ import { authOptions } from "./auth/[...nextauth]"
 
 // follow the documentation here to access the language api in your local environment: https://cloud.google.com/nodejs/docs/reference/language/latest#quickstart
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const body = JSON.parse(req.body)
   const {
     user: { id: user },
   } = await getServerSession(req, res, authOptions)
-  const cachedData = await redis.get(`nlp/${user}`)
+  const cachedData = await redis.get(`nlp/${user}/${body.runningAvg}`)
   if (cachedData) res.json(JSON.parse(cachedData))
   // Instantiates a client
   const client = new language.LanguageServiceClient()
 
   const document = {
-    content: req.body,
+    content: body.wordcloud,
     type: "PLAIN_TEXT" as "PLAIN_TEXT",
   }
 
@@ -33,6 +34,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // const [syntax] = await client.analyzeSyntax({ document })
   // const [classify] = await client.classifyText({ document })
   const [annotate] = await client.annotateText({ document, features })
-  await redis.set(`nlp/${user}`, JSON.stringify(annotate))
+  await redis.set(`nlp/${user}/${body.runningAvg}`, JSON.stringify(annotate))
   res.json(annotate)
 }

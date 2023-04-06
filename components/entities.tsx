@@ -1,12 +1,12 @@
 import { Box, Grid } from "@mui/material"
-import React, { ReactNode, useEffect, useState } from "react"
+import React, { ReactNode } from "react"
 
 type Sentiment = {
   magnitude: number
   score: number
 }
 
-type Entity = {
+export type Entity = {
   sentiment: Sentiment
   mentions: any[]
   name: string
@@ -19,50 +19,35 @@ const TH: React.FC<{ children: ReactNode }> = ({ children }) => (
   </Box>
 )
 
-const TD: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <Box component="td" border={2} p={1} borderColor="black">
+const TD: React.FC<{ children: ReactNode; bgcolor?: string }> = ({
+  children,
+  bgcolor = "#fff",
+}) => (
+  <Box component="td" border={2} p={1} borderColor="black" bgcolor={bgcolor}>
     {children}
   </Box>
 )
 
 const Entities: React.FC<{
-  data: string
-}> = ({ data }) => {
-  const [entities, setEntities] = useState<Entity[]>()
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    ;(async () => {
-      setLoading(true)
-      const req = await fetch("/api/nlp", { method: "post", body: data })
-        .then((res) => res.json())
-        .then((res) => {
-          console.log(res)
-
-          setEntities(res.entities)
-          setLoading(false)
-        })
-      return req
-    })()
-  }, [data])
-
-  const sentimentColor = (score: number): "red" | "green" | "grey" => {
-    if (score > 0) return "green"
-    if (score < 0) return "red"
-    return "grey"
+  entities?: Entity[]
+  loading: boolean
+}> = ({ entities, loading }) => {
+  const sentimentColor = (score: number): "lightCoral" | "paleGreen" | "#fff" => {
+    if (score > 0) return "paleGreen"
+    if (score < 0) return "lightCoral"
+    return "#fff"
   }
 
   return (
-    <Grid container item md={7} justifyContent="space-evenly">
+    <Grid container item md={6} justifyContent="space-evenly">
       <Box
         border="solid"
         borderRadius={2}
         p={5}
-        m={5}
         textAlign="left"
         width="100%"
-        height="500px"
         overflow="auto"
+        height="500px"
       >
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
@@ -77,23 +62,28 @@ const Entities: React.FC<{
           <Box component="tbody">
             {loading ? (
               <Box component="tr">
-                <Box component="td">"...fetching"</Box>
+                <Box component="td">...fetching</Box>
               </Box>
             ) : (
               entities &&
               entities.map((entity, idx) => {
+                const bgcolor = sentimentColor(entity.sentiment.score)
                 return (
                   <Box
                     key={idx}
                     component="tr"
-                    color={sentimentColor(entity.sentiment.score)}
+                    color={"#000"}
                     fontWeight={Math.abs(entity.sentiment.score) > 0 ? "bold" : ""}
                   >
-                    <TD>{entity.name}</TD>
-                    <TD>{entity.mentions.length}</TD>
-                    <TD>{Number(entity.salience).toFixed(3)}</TD>
-                    <TD>{Number(entity.sentiment.score).toFixed(3)}</TD>
-                    <TD>{Number(entity.sentiment.magnitude).toFixed(3)}</TD>
+                    <TD bgcolor={bgcolor}>{entity.name}</TD>
+                    <TD bgcolor={bgcolor}>{entity.mentions.length}</TD>
+                    <TD bgcolor={bgcolor}>{Number(entity.salience).toFixed(3)}</TD>
+                    <TD bgcolor={bgcolor}>
+                      {Number(entity.sentiment.score).toFixed(3)}
+                    </TD>
+                    <TD bgcolor={bgcolor}>
+                      {Number(entity.sentiment.magnitude).toFixed(3)}
+                    </TD>
                   </Box>
                 )
               })

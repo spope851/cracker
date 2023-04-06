@@ -13,12 +13,6 @@ const PieChart: React.FC<{
       color: "red",
     },
     {
-      id: "-1",
-      label: "not great (-1)",
-      value: neg1,
-      color: "orange",
-    },
-    {
       id: "0",
       label: "meh (0)",
       value: zero,
@@ -28,13 +22,19 @@ const PieChart: React.FC<{
       id: "+1",
       label: "great (+1)",
       value: one,
-      color: "lightGreen",
+      color: "paleGreen",
+    },
+    {
+      id: "-1",
+      label: "not great (-1)",
+      value: neg1,
+      color: "lightCoral",
     },
     {
       id: "+2",
       label: "excellent (+2)",
       value: two,
-      color: "green",
+      color: "lime",
     },
   ]
 
