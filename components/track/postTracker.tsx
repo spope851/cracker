@@ -35,7 +35,6 @@ export const PostTracker: React.FC = () => {
           track({
             variables: {
               tracker: {
-                user: session.data?.user.id || "",
                 numberCreativeHours,
                 overview,
                 rating,

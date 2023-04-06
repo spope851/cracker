@@ -12,7 +12,6 @@ import React, { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
-import { useSession } from "next-auth/react"
 import Entities, { Entity } from "./entities"
 import PieChart from "../pieChart"
 import { RunningAverage } from "@/types"
@@ -28,15 +27,12 @@ const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 const Dashboard: React.FC = () => {
   const router = useRouter()
-  const session = useSession()
   const [nlpLoading, setLoading] = useState(true)
   const [entities, setEntities] = useState<Entity[]>()
   const [tokens, setTokens] = useState<Token[]>()
   const [sentences, setSentences] = useState<any[]>()
   const [runningAvg, setRunningAvg] = useState<RunningAverage>("30")
-  const { data, loading } = useQuery(DASBOARD_QUERY, {
-    variables: { user: Number(session.data?.user.id) },
-  })
+  const { data, loading } = useQuery(DASBOARD_QUERY)
 
   useEffect(() => {
     ;(async () => {

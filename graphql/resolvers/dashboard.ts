@@ -1,13 +1,19 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { type MyContext } from "@/pages/api/graphql"
 import { PgDashboard, PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
-import { Arg, Int, Query, Resolver } from "type-graphql"
+import { getServerSession } from "next-auth"
+import { Ctx, Query, Resolver } from "type-graphql"
 import { DashboardMetrics, DashboardResponse } from "../schemas/dashboard"
 import { Track } from "../schemas/track"
 
 @Resolver(DashboardResponse)
 export class DashboardReslover {
   @Query(() => DashboardResponse)
-  async dashboard(@Arg("user", () => Int) user: number): Promise<DashboardResponse> {
+  async dashboard(@Ctx() { req, res }: MyContext): Promise<DashboardResponse> {
+    const {
+      user: { id: user },
+    } = await getServerSession(req, res, authOptions)
     const rawData: Promise<Track[]> = await pool
       .query(`SELECT * FROM tracker WHERE "user"=$1;`, [user])
       .then((res: PgQueryResponse<PgTrackerRow>) => {
@@ -17,7 +23,6 @@ export class DashboardReslover {
             rating,
             overview,
             created_at,
-            user,
             id,
           }: PgTrackerRow) => {
             return {
@@ -25,7 +30,6 @@ export class DashboardReslover {
               rating: Number(rating),
               overview: overview.toLowerCase(),
               createdAt: created_at.toString(),
-              user: user.toString(),
               id,
             }
           }

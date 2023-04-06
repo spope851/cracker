@@ -1,8 +1,8 @@
 import { graphql } from "@/generated"
 
 export const DASBOARD_QUERY = graphql(`
-  query DashboardQuery($user: Int!) {
-    dashboard(user: $user) {
+  query DashboardQuery {
+    dashboard {
       dashboard {
         dashboardMetrics {
           daysOfUse

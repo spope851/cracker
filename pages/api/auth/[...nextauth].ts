@@ -1,4 +1,3 @@
-import { User } from "@/graphql/schemas"
 import { PgQueryResponse, PgQueryError } from "@/types"
 import { pool } from "@/utils/postgres"
 import argon2 from "argon2"
@@ -26,23 +25,28 @@ export const authOptions = {
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
         const user = await pool
-          .query(`SELECT * FROM "user" WHERE username = $1;`, [
+          .query(`SELECT id, password, role FROM "user" WHERE username = $1;`, [
             credentials?.username,
           ])
-          .then(async (res: PgQueryResponse<User>) => {
-            if (res.rows.length === 0) return null
-            const { id, password } = res.rows[0]
+          .then(
+            async (
+              res: PgQueryResponse<{ id: number; password: string; role: number }>
+            ) => {
+              if (res.rows.length === 0) return null
+              const { id, password, role } = res.rows[0]
 
-            const correctPassword = await argon2.verify(
-              password!,
-              credentials!.password
-            )
-            if (!correctPassword) return null
+              const correctPassword = await argon2.verify(
+                password!,
+                credentials!.password
+              )
+              if (!correctPassword) return null
 
-            return {
-              id,
+              return {
+                id,
+                role,
+              }
             }
-          })
+          )
           .catch((e: PgQueryError) => {
             console.log(e)
             return null
@@ -60,29 +64,11 @@ export const authOptions = {
       return baseUrl
     },
     async jwt({ token, user }: any) {
-      user && (token.user = user)
-      // console.log("token", token)
-      // token {
-      //   sub: '6',
-      //   user: { id: 6 },
-      //   iat: 1676950152,
-      //   exp: 1679542152,
-      //   jti: 'cdce51a6-7d61-4e2d-9bbc-6ed288bf91a2'
-      // }
+      if (user) token.user = user
       return token
     },
     async session({ session, token }: any) {
-      session.user = {
-        id: String(token.user.id),
-        token: token.jti,
-      }
-      // console.log("session", session)
-      // session {
-      //   user: {
-      //     id: 6
-      //     token: 'cdce51a6-7d61-4e2d-9bbc-6ed288bf91a2'
-      //   }
-      // }
+      session.user = token.user
       return session
     },
   },
