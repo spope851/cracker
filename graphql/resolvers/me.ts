@@ -1,17 +1,23 @@
-import { PgMe, PgQueryError, PgQueryResponse } from "@/types"
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { type MyContext } from "@/pages/api/graphql"
+import { PgQueryError, PgQueryResponse, PgMe } from "@/types"
+import { getServerSession } from "next-auth"
+import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import { pool } from "@/utils/postgres"
 import redis from "@/utils/redis"
-import { Arg, Query, Resolver } from "type-graphql"
-import { UserAuthInput } from "../schemas"
 import { MeQueryResponse } from "../schemas/me/meQueryResponse"
 
 @Resolver(MeQueryResponse)
 export class MeReslover {
   @Query(() => MeQueryResponse)
   async me(
-    @Arg("user", () => UserAuthInput) { token, id }: UserAuthInput,
-    @Arg("refetch", { nullable: true }) refetch: boolean = false
+    @Arg("refetch", { nullable: true }) refetch: boolean = false,
+    @Ctx() { req, res }: MyContext
   ): Promise<MeQueryResponse> {
+    const {
+      user: { id: user },
+    } = await getServerSession(req, res, authOptions)
+
     // 1
     // check redis for token key
     // 2
@@ -28,7 +34,7 @@ export class MeReslover {
     // if you don't find them in the database, return an error
     const queryPostgres = (): Promise<MeQueryResponse> =>
       pool
-        .query(`CALL get_user_info($1);`, [id])
+        .query(`CALL get_user_info($1);`, [user])
         .then(async (res: PgQueryResponse<PgMe>) => {
           if (res.rows.length === 0)
             return {
@@ -65,7 +71,7 @@ export class MeReslover {
                     },
             },
           }
-          await redis.set(token, JSON.stringify(foundUser))
+          await redis.setex(user, 60 * 15, JSON.stringify(foundUser)) // expires in 15 minutes
           return foundUser
         })
         .catch((e: PgQueryError) => {
@@ -78,7 +84,7 @@ export class MeReslover {
     if (refetch) {
       return queryPostgres()
     } else {
-      const redisUser = await redis.get(token)
+      const redisUser = await redis.get(user)
       if (redisUser) return JSON.parse(redisUser)
       else return queryPostgres()
     }

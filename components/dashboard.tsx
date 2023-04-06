@@ -4,7 +4,6 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
-import { useSession } from "next-auth/react"
 
 const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Typography sx={{ float: "right" }} component="span">
@@ -14,10 +13,7 @@ const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 const Dashboard: React.FC = () => {
   const router = useRouter()
-  const session = useSession()
-  const { data, loading } = useQuery(DASBOARD_QUERY, {
-    variables: { user: Number(session.data?.user.id) },
-  })
+  const { data, loading } = useQuery(DASBOARD_QUERY)
 
   if (loading) return <>...loading</>
   if (data?.dashboard?.dashboard?.thirtyDayAvg === undefined)

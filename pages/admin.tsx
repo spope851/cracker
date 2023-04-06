@@ -1,15 +1,14 @@
 import React, { ReactNode, useEffect, useState } from "react"
 import Head from "next/head"
 import { Timeclock } from "react-timeclock"
-import { useSession } from "next-auth/react"
+import { ComponentWithAuth } from "@/types"
 
-export default function Admin() {
+const Admin: ComponentWithAuth = () => {
   const [timeclock, setTimeclock] = useState<ReactNode>()
-  const session = useSession()
 
   useEffect(() => {
-    session.status === "authenticated" && setTimeclock(<Timeclock />)
-  }, [session])
+    setTimeclock(<Timeclock />)
+  }, [])
 
   return (
     <>
@@ -20,3 +19,10 @@ export default function Admin() {
     </>
   )
 }
+
+Admin.auth = {
+  role: 2,
+  redirect: "/",
+}
+
+export default Admin

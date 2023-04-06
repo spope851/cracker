@@ -1,7 +1,10 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { type MyContext } from "@/pages/api/graphql"
 import { PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
 import { postgresErrorDetails } from "@/utils/stringUtils"
-import { Arg, Mutation, Resolver } from "type-graphql"
+import { getServerSession } from "next-auth"
+import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
 import { TrackerInput } from "../schemas/track/trackerInput"
 import { TrackerResponse } from "../schemas/track/trackerResponse"
 
@@ -9,10 +12,14 @@ import { TrackerResponse } from "../schemas/track/trackerResponse"
 class TrackerResolver {
   @Mutation(() => TrackerResponse)
   async track(
-    @Arg("tracker", () => TrackerInput) tracker: TrackerInput
+    @Arg("tracker", () => TrackerInput) tracker: TrackerInput,
+    @Ctx() { req, res }: MyContext
   ): Promise<TrackerResponse> {
-    const { overview, numberCreativeHours, rating, user } = tracker
-    const res: Promise<TrackerResponse> = await pool
+    const { overview, numberCreativeHours, rating } = tracker
+    const {
+      user: { id: user },
+    } = await getServerSession(req, res, authOptions)
+    const query: Promise<TrackerResponse> = await pool
       .query(
         `INSERT INTO tracker (overview, number_creative_hours, rating, "user")
        VALUES (
@@ -54,7 +61,7 @@ class TrackerResolver {
           errors: [{ field: "unknown", massage: "unhandled error" }],
         }
       })
-    return res
+    return query
   }
 }
 
