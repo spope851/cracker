@@ -67,15 +67,17 @@ def insert_many(list):
 
 spreadsheet = pandas.read_csv('/Users/spope/Desktop/dev/creativity-tracker/server/database/raw/creativity.csv')
 
+idx = len(spreadsheet['hours']) - 1
 count = 0
 insertion_rows = []
 for item in spreadsheet['hours']:
     insertion_rows.append((
-        spreadsheet['hours'][count],
-        spreadsheet['rating'][count],
-        spreadsheet['overview'][count][:480], #first 480 characters
+        spreadsheet['hours'][idx],
+        spreadsheet['rating'][idx],
+        spreadsheet['overview'][idx][:480], #first 480 characters
         dt-timedelta(days=count),
     ))
+    idx -= 1
     count += 1
 
 # print(insertion_rows)

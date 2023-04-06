@@ -145,7 +145,7 @@ const Tokens: React.FC<{
   return (
     <>
       <Grid container columnSpacing={5} justifyContent="space-between">
-        <Grid container item md={9}>
+        <Grid container item md={9} mb={{ md: 0, sm: 5 }}>
           <Grid
             flex={1}
             border="solid"

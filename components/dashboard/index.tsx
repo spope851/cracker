@@ -78,9 +78,8 @@ const Dashboard: React.FC = () => {
 
   const { daysOfUse } = data.dashboard.dashboard.dashboardMetrics
 
-  const dashboardDatasets = splitDashboardData(
-    data.dashboard.dashboard.dashboardMetrics
-  )
+  const { dashboardMetrics, rawData } = data.dashboard.dashboard
+  const dashboardDatasets = splitDashboardData(dashboardMetrics)
 
   const dataset = dashboardDatasets[runningAvg]
   const { neg2, neg1, zero, one, two, avg } = dataset
@@ -88,8 +87,8 @@ const Dashboard: React.FC = () => {
   return (
     <Box m={5}>
       <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
-        <Grid container item md={5} sm={6}>
-          <FormControl fullWidth>
+        <Grid container item md={5} mb={{ md: 0, sm: 5 }}>
+          <FormControl fullWidth sx={{ mb: { md: 0, sm: 5 } }}>
             <InputLabel>running average</InputLabel>
             <Select
               value={runningAvg}
@@ -141,13 +140,13 @@ const Dashboard: React.FC = () => {
       <Tokens
         tokens={tokens}
         loading={nlpLoading}
-        rawData={data.dashboard.dashboard.rawData.slice(0, Number(runningAvg))}
+        rawData={rawData.slice(0, Number(runningAvg))}
         avgHours={Number(avg.toFixed(2))}
       />
       <Sentences
         sentences={sentences}
         loading={nlpLoading}
-        rawData={data.dashboard.dashboard.rawData.slice(0, Number(runningAvg))}
+        rawData={rawData.slice(0, Number(runningAvg))}
         avgHours={Number(avg.toFixed(2))}
       />
     </Box>

@@ -1,0 +1,50 @@
+import React, { useContext, useState } from "react"
+import { useMutation } from "@apollo/client"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
+import { UserContext } from "@/context/userContext"
+import { TRACKER_MUTATION } from "@/graphql/client"
+import { Tracker } from "../forms"
+
+export const PostTracker: React.FC = () => {
+  const { refetch } = useContext(UserContext)
+  const session = useSession()
+  const router = useRouter()
+  const [overview, setOverview] = useState<string>()
+  const [numberCreativeHours, setNumberCreativeHours] = useState(0)
+  const [rating, setRating] = useState(0)
+  const [track, { data: _data, loading }] = useMutation(TRACKER_MUTATION)
+
+  return (
+    <Tracker
+      overview={{
+        value: overview,
+        setter: setOverview,
+      }}
+      numberCreativeHours={{
+        value: numberCreativeHours,
+        setter: setNumberCreativeHours,
+      }}
+      rating={{
+        value: rating,
+        setter: setRating,
+      }}
+      loading={loading}
+      onSubmit={() => {
+        if (overview)
+          track({
+            variables: {
+              tracker: {
+                user: session.data?.user.id || "",
+                numberCreativeHours,
+                overview,
+                rating,
+              },
+            },
+          })
+            .then(() => refetch({ refetch: true }))
+            .finally(() => router.push("/"))
+      }}
+    />
+  )
+}
