@@ -1,18 +1,25 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { type MyContext } from "@/pages/api/graphql"
 import { PgQueryError } from "@/types"
 import { pool } from "@/utils/postgres"
 import { postgresErrorDetails } from "@/utils/stringUtils"
-import { Arg, Mutation, Resolver } from "type-graphql"
+import { getServerSession } from "next-auth"
+import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
 import { TrackerInput, UploadTrackerResponse } from "../schemas/track"
 
 @Resolver(UploadTrackerResponse)
 class UploadTrackerResolver {
   @Mutation(() => UploadTrackerResponse)
   async uploadTracker(
-    @Arg("data", () => [TrackerInput]) data: TrackerInput[]
+    @Arg("data", () => [TrackerInput]) data: TrackerInput[],
+    @Ctx() { req, res }: MyContext
   ): Promise<UploadTrackerResponse> {
-    const res: Promise<UploadTrackerResponse> = Promise.all(
+    const {
+      user: { id: user },
+    } = await getServerSession(req, res, authOptions)
+    const insertRows: Promise<UploadTrackerResponse> = Promise.all(
       data.map(async (item: TrackerInput, idx: number) => {
-        const { overview, numberCreativeHours, rating, user } = item
+        const { overview, numberCreativeHours, rating } = item
         const today = new Date()
         today.setDate(today.getDate() - (idx + 1))
         const createdAt = `${today.getFullYear()}-${
@@ -74,7 +81,7 @@ class UploadTrackerResolver {
         }
       })
 
-    return res
+    return insertRows
   }
 }
 

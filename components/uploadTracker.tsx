@@ -4,7 +4,6 @@ import { Box, BoxProps, Button, Typography } from "@mui/material"
 import React, { PropsWithChildren, ReactNode, useContext, useState } from "react"
 import Dropzone from "react-dropzone"
 import * as csv from "csv"
-import { useSession } from "next-auth/react"
 import { TrackerInput } from "@/generated/graphql"
 import { OVERVIEW_CHAR_LIMIT } from "@/constants"
 import { useRouter } from "next/router"
@@ -35,7 +34,6 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
   const [dropzoneContent, setDropzoneContent] = useState<ReactNode>(
     <Typography>File type should be .csv</Typography>
   )
-  const session = useSession()
 
   return (
     <Box display="flex" flexDirection="column">
@@ -62,7 +60,6 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
                     numberCreativeHours: Number(numberCreativeHours),
                     rating: Number(rating),
                     overview: overview.slice(0, OVERVIEW_CHAR_LIMIT),
-                    user: session.data?.user.id,
                   }
                 }
               )
