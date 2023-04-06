@@ -142,125 +142,140 @@ const Tokens: React.FC<{
   }
 
   return (
-    <Grid container justifyContent="space-between" width="100%">
-      <Grid
-        item
-        border="solid"
-        borderRadius={2}
-        p={5}
-        textAlign="left"
-        height="500px"
-        sx={{ overflowY: "auto", overflowX: "hidden" }}
-        md={9}
-      >
-        {filteredTokens &&
-          (loading ? (
-            <Box component="tr">
-              <Box component="td">"...fetching"</Box>
-            </Box>
-          ) : (
-            <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
-              <Box component="thead">
+    <>
+      <Grid container columnSpacing={5} justifyContent="space-between">
+        <Grid container item md={10}>
+          <Grid
+            flex={1}
+            border="solid"
+            borderRadius={2}
+            p={5}
+            textAlign="left"
+            height="500px"
+            sx={{ overflowY: "auto", overflowX: "hidden" }}
+          >
+            {filteredTokens &&
+              (loading ? (
                 <Box component="tr">
-                  <TH>{""}</TH>
-                  <TH>token</TH>
-                  <TH>tag</TH>
-                  <TH
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    count{" "}
-                    <Input
-                      type="number"
-                      defaultValue={minCount}
-                      inputProps={{ min: 1 }}
-                      onChange={(e) => setMinCount(Number(e.target.value))}
-                    />
-                  </TH>
+                  <Box component="td">"...fetching"</Box>
                 </Box>
-              </Box>
-              <Box component="tbody">
-                {filteredTokens.map((filteredToken) => {
-                  const { token, count, hide } = filteredToken
-                  return (
-                    <Box component="tr" key={token.text.content}>
-                      <TD>
-                        <Checkbox
-                          sx={{ p: 0, mr: 1 }}
-                          defaultChecked={!hide}
-                          onChange={(e) => {
-                            const addOrRemove = (remove: boolean) =>
-                              setFilteredTokens([
-                                { token, count, hide: remove },
-                                ...filteredTokens.filter((t) => t !== filteredToken),
-                              ])
-                            e.target.checked ? addOrRemove(false) : addOrRemove(true)
-                          }}
+              ) : (
+                <Box
+                  component="table"
+                  width="100%"
+                  sx={{ borderCollapse: "collapse" }}
+                >
+                  <Box component="thead">
+                    <Box component="tr">
+                      <TH>{""}</TH>
+                      <TH>token</TH>
+                      <TH>tag</TH>
+                      <TH
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        count{" "}
+                        <Input
+                          type="number"
+                          defaultValue={minCount}
+                          inputProps={{ min: 1 }}
+                          onChange={(e) => setMinCount(Number(e.target.value))}
                         />
-                      </TD>
-                      <TD>{token.text.content}</TD>
-                      <TD>{token.partOfSpeech.tag}</TD>
-                      <TD textAlign="center">{count}</TD>
+                      </TH>
                     </Box>
-                  )
-                })}
-              </Box>
-            </Box>
-          ))}
-      </Grid>
-      <Grid
-        item
-        md={2}
-        border="solid"
-        borderRadius={2}
-        p={5}
-        textAlign="left"
-        height="500px"
-        sx={{ overflowY: "auto", overflowX: "hidden" }}
-      >
-        {loading ? (
-          "...fetching"
-        ) : (
-          <Stack flexDirection="column" justifyContent="space-evenly" height="100%">
-            {defaultTags.map((tag) => (
-              <React.Fragment key={tag}>
-                <Typography>
-                  <Checkbox
-                    sx={{ p: 0, mr: 1 }}
-                    defaultChecked={tags.indexOf(tag) > -1}
-                    onChange={(e) =>
-                      e.target.checked
-                        ? setTags([...tags, tag])
-                        : setTags(tags.filter((t) => t !== tag))
-                    }
-                  />
-                  {tag}:{" "}
+                  </Box>
+                  <Box component="tbody">
+                    {filteredTokens.map((filteredToken) => {
+                      const { token, count, hide } = filteredToken
+                      return (
+                        <Box component="tr" key={token.text.content}>
+                          <TD>
+                            <Checkbox
+                              sx={{ p: 0, mr: 1 }}
+                              defaultChecked={!hide}
+                              onChange={(e) => {
+                                const addOrRemove = (remove: boolean) =>
+                                  setFilteredTokens([
+                                    { token, count, hide: remove },
+                                    ...filteredTokens.filter(
+                                      (t) => t !== filteredToken
+                                    ),
+                                  ])
+                                e.target.checked
+                                  ? addOrRemove(false)
+                                  : addOrRemove(true)
+                              }}
+                            />
+                          </TD>
+                          <TD>{token.text.content}</TD>
+                          <TD>{token.partOfSpeech.tag}</TD>
+                          <TD textAlign="center">{count}</TD>
+                        </Box>
+                      )
+                    })}
+                  </Box>
+                </Box>
+              ))}
+          </Grid>
+        </Grid>
+        <Grid container item md={2}>
+          <Grid
+            container
+            flex={1}
+            border="solid"
+            borderRadius={2}
+            p={5}
+            textAlign="left"
+            height="500px"
+            sx={{ overflowY: "auto", overflowX: "hidden" }}
+            flexDirection="column"
+            justifyContent="space-evenly"
+          >
+            {loading ? (
+              "...fetching"
+            ) : (
+              <>
+                {defaultTags.map((tag) => (
+                  <React.Fragment key={tag}>
+                    <Typography>
+                      <Checkbox
+                        sx={{ p: 0, mr: 1 }}
+                        defaultChecked={tags.indexOf(tag) > -1}
+                        onChange={(e) =>
+                          e.target.checked
+                            ? setTags([...tags, tag])
+                            : setTags(tags.filter((t) => t !== tag))
+                        }
+                      />
+                      {tag}:{" "}
+                      <Typography
+                        fontWeight="bold"
+                        component="span"
+                        sx={{ float: "right" }}
+                      >
+                        {tokens?.filter((i) => i.partOfSpeech.tag === tag).length}
+                      </Typography>
+                    </Typography>
+                  </React.Fragment>
+                ))}
+                <Typography variant="h6">
+                  total:
                   <Typography
+                    variant="h6"
                     fontWeight="bold"
                     component="span"
                     sx={{ float: "right" }}
                   >
-                    {tokens?.filter((i) => i.partOfSpeech.tag === tag).length}
+                    {tokens?.length}
                   </Typography>
                 </Typography>
-              </React.Fragment>
-            ))}
-            <Typography variant="h6">
-              total:
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                component="span"
-                sx={{ float: "right" }}
-              >
-                {tokens?.length}
-              </Typography>
-            </Typography>
-          </Stack>
-        )}
+              </>
+            )}
+          </Grid>
+        </Grid>
       </Grid>
       <Grid
         item
@@ -376,7 +391,7 @@ const Tokens: React.FC<{
             )
           })}
       </Grid>
-    </Grid>
+    </>
   )
 }
 

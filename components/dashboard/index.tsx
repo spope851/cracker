@@ -14,7 +14,7 @@ import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 import { useSession } from "next-auth/react"
 import Entities, { Entity } from "./entities"
-import PieChart from "./pieChart"
+import PieChart from "../pieChart"
 import { RunningAverage } from "@/types"
 import { splitDashboardData } from "@/utils/dashboard"
 import Tokens, { Token } from "./tokens"
@@ -87,7 +87,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box m={5}>
-      <Grid container justifyContent="space-between" mb={5}>
+      <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
         <Grid container item md={5} sm={6}>
           <FormControl fullWidth>
             <InputLabel>running average</InputLabel>

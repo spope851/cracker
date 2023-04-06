@@ -39,7 +39,7 @@ const Entities: React.FC<{
   }
 
   return (
-    <Grid container item md={6} justifyContent="space-evenly">
+    <Grid container item md={7}>
       <Box
         border="solid"
         borderRadius={2}
