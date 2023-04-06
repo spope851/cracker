@@ -6,6 +6,7 @@ import {
   Input,
   Stack,
   SxProps,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material"
@@ -144,7 +145,7 @@ const Tokens: React.FC<{
   return (
     <>
       <Grid container columnSpacing={5} justifyContent="space-between">
-        <Grid container item md={10}>
+        <Grid container item md={9}>
           <Grid
             flex={1}
             border="solid"
@@ -167,7 +168,6 @@ const Tokens: React.FC<{
                 >
                   <Box component="thead">
                     <Box component="tr">
-                      <TH>{""}</TH>
                       <TH>token</TH>
                       <TH>tag</TH>
                       <TH
@@ -178,8 +178,9 @@ const Tokens: React.FC<{
                         }}
                       >
                         count{" "}
-                        <Input
+                        <TextField
                           type="number"
+                          label="min count"
                           defaultValue={minCount}
                           inputProps={{ min: 1 }}
                           onChange={(e) => setMinCount(Number(e.target.value))}
@@ -209,8 +210,8 @@ const Tokens: React.FC<{
                                   : addOrRemove(true)
                               }}
                             />
+                            {token.text.content}
                           </TD>
-                          <TD>{token.text.content}</TD>
                           <TD>{token.partOfSpeech.tag}</TD>
                           <TD textAlign="center">{count}</TD>
                         </Box>
@@ -221,7 +222,7 @@ const Tokens: React.FC<{
               ))}
           </Grid>
         </Grid>
-        <Grid container item md={2}>
+        <Grid container item md={3}>
           <Grid
             container
             flex={1}
@@ -234,6 +235,12 @@ const Tokens: React.FC<{
             flexDirection="column"
             justifyContent="space-evenly"
           >
+            <Box component="thead">
+              <Stack component="tr" justifyContent="space-between" direction="row">
+                <Box component="th">part of speech</Box>
+                <Box component="th">count</Box>
+              </Stack>
+            </Box>
             {loading ? (
               "...fetching"
             ) : (
@@ -250,7 +257,7 @@ const Tokens: React.FC<{
                             : setTags(tags.filter((t) => t !== tag))
                         }
                       />
-                      {tag}:{" "}
+                      {tag}
                       <Typography
                         fontWeight="bold"
                         component="span"

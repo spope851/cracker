@@ -94,9 +94,9 @@ const Sentences: React.FC<{
           <Box component="thead">
             <Box component="tr">
               <TH>sentence</TH>
-              <TH>begin offset</TH>
               <TH>sentiment score</TH>
               <TH>sentiment magnitude</TH>
+              <TH>begin offset</TH>
             </Box>
           </Box>
           <Box component="tbody">
@@ -123,9 +123,9 @@ const Sentences: React.FC<{
                       fontWeight={Math.abs(score) > 0 ? "bold" : ""}
                     >
                       <TD bgcolor={bgcolor}>{content}</TD>
-                      <TD bgcolor={bgcolor}>{beginOffset}</TD>
                       <TD bgcolor={bgcolor}>{Number(score).toFixed(3)}</TD>
                       <TD bgcolor={bgcolor}>{Number(magnitude).toFixed(3)}</TD>
+                      <TD bgcolor={bgcolor}>{beginOffset}</TD>
                     </Box>
                   )
                 }

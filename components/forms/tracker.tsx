@@ -1,11 +1,11 @@
 import React, { useContext, useState } from "react"
 import {
-  Box,
   Button,
   FormControl,
   FormLabel,
-  Input,
+  Grid,
   TextareaAutosize,
+  TextField,
   Typography,
 } from "@mui/material"
 import { useMutation } from "@apollo/client"
@@ -26,8 +26,8 @@ export const Tracker: React.FC = () => {
   const [track, { data: _data, loading }] = useMutation(TRACKER_MUTATION)
 
   return (
-    <form style={{ display: "flex", flexDirection: "column" }}>
-      <FormControl sx={{ width: "200%", alignSelf: "center", mb: 5 }}>
+    <Grid container flexDirection="column" rowGap={5} md={4}>
+      <FormControl>
         <FormLabel>overview</FormLabel>
         <TextareaAutosize
           minRows={10}
@@ -39,28 +39,30 @@ export const Tracker: React.FC = () => {
           OVERVIEW_CHAR_LIMIT - (overview?.length || 0)
         } }`}</Typography>
       </FormControl>
-      <FormControl sx={{ mb: 5 }}>
-        <FormLabel>number creative hours</FormLabel>
-        <Input
-          defaultValue={0}
-          type="number"
-          inputProps={{ min: 0, max: 24, step: 0.5 }}
-          onChange={(e) => setNumberCreativeHours(Number(e.target.value))}
-        />
-      </FormControl>
-      <FormControl sx={{ mb: 5 }}>
-        <FormLabel>rating</FormLabel>
-        <Box display="flex" alignItems="center">
-          {rating > 0 && "+"}
-          <Input
-            fullWidth
-            defaultValue={0}
-            type="number"
-            inputProps={{ min: -2, max: 2 }}
-            onChange={(e) => setRating(Number(e.target.value))}
-          />
-        </Box>
-      </FormControl>
+      <Grid container columnSpacing={5}>
+        <Grid container item md={6}>
+          <FormControl fullWidth>
+            <TextField
+              label="number creative hours"
+              defaultValue={0}
+              type="number"
+              inputProps={{ min: 0, max: 24, step: 0.5 }}
+              onChange={(e) => setNumberCreativeHours(Number(e.target.value))}
+            />
+          </FormControl>
+        </Grid>
+        <Grid container item md={6}>
+          <FormControl fullWidth>
+            <TextField
+              label="rating"
+              defaultValue={0}
+              type="number"
+              inputProps={{ min: -2, max: 2 }}
+              onChange={(e) => setRating(Number(e.target.value))}
+            />
+          </FormControl>
+        </Grid>
+      </Grid>
       <FormControl>
         <Button
           variant="outlined"
@@ -84,6 +86,6 @@ export const Tracker: React.FC = () => {
           {loading ? "...processing" : "submit"}
         </Button>
       </FormControl>
-    </form>
+    </Grid>
   )
 }
