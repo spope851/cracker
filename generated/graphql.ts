@@ -59,16 +59,33 @@ export type DashboardResponse = {
   errors?: Maybe<Array<PsqlError>>;
 };
 
-export type GetUserResponse = {
-  __typename?: 'GetUserResponse';
+export type LastPost = {
+  __typename?: 'LastPost';
+  createdAt: Scalars['String'];
+  id: Scalars['ID'];
+  numberCreativeHours: Scalars['Float'];
+  overview: Scalars['String'];
+  rating: Scalars['Int'];
+  user?: Maybe<Scalars['String']>;
+};
+
+export type Me = {
+  __typename?: 'Me';
+  lastPost?: Maybe<LastPost>;
+  user: User;
+};
+
+export type MeQueryResponse = {
+  __typename?: 'MeQueryResponse';
   error?: Maybe<Scalars['String']>;
-  user?: Maybe<UserInfo>;
+  me?: Maybe<Me>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   register: RegisterResponse;
   track: TrackerResponse;
+  updateTrack: TrackerResponse;
 };
 
 
@@ -81,6 +98,11 @@ export type MutationTrackArgs = {
   tracker: TrackerInput;
 };
 
+
+export type MutationUpdateTrackArgs = {
+  tracker: UpdateTrackerInput;
+};
+
 export type PsqlError = {
   __typename?: 'PsqlError';
   field: Scalars['String'];
@@ -90,7 +112,7 @@ export type PsqlError = {
 export type Query = {
   __typename?: 'Query';
   dashboard: DashboardResponse;
-  me: GetUserResponse;
+  me: MeQueryResponse;
 };
 
 
@@ -117,7 +139,7 @@ export type Track = {
   numberCreativeHours: Scalars['Float'];
   overview: Scalars['String'];
   rating: Scalars['Int'];
-  user: Scalars['String'];
+  user?: Maybe<Scalars['String']>;
 };
 
 export type TrackerInput = {
@@ -133,6 +155,14 @@ export type TrackerResponse = {
   track?: Maybe<Track>;
 };
 
+export type UpdateTrackerInput = {
+  id: Scalars['String'];
+  numberCreativeHours: Scalars['Float'];
+  overview: Scalars['String'];
+  rating: Scalars['Int'];
+  user: Scalars['String'];
+};
+
 export type User = {
   __typename?: 'User';
   email: Scalars['String'];
@@ -146,15 +176,6 @@ export type UserAuthInput = {
   token: Scalars['String'];
 };
 
-export type UserInfo = {
-  __typename?: 'UserInfo';
-  email: Scalars['String'];
-  id: Scalars['ID'];
-  lastPost: Scalars['String'];
-  role: Scalars['Int'];
-  username: Scalars['String'];
-};
-
 export type UserInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -166,7 +187,7 @@ export type DashboardQueryQueryVariables = Exact<{
 }>;
 
 
-export type DashboardQueryQuery = { __typename?: 'Query', dashboard: { __typename?: 'DashboardResponse', dashboard?: { __typename?: 'Dashboard', dashboardMetrics: { __typename?: 'DashboardMetrics', daysOfUse: number, thirtyDayAvg: number, sixtyDayAvg: number, ninetyDayAvg: number, yearAvg: number, thirtyDayCountNeg2: number, thirtyDayCountNeg1: number, thirtyDayCount0: number, thirtyDayCount1: number, thirtyDayCount2: number, sixtyDayCountNeg2: number, sixtyDayCountNeg1: number, sixtyDayCount0: number, sixtyDayCount1: number, sixtyDayCount2: number, ninetyDayCountNeg2: number, ninetyDayCountNeg1: number, ninetyDayCount0: number, ninetyDayCount1: number, ninetyDayCount2: number, yearCountNeg2: number, yearCountNeg1: number, yearCount0: number, yearCount1: number, yearCount2: number, thirtyDayWordcloud: string, sixtyDayWordcloud: string, ninetyDayWordcloud: string, yearWordcloud: string }, rawData: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, user: string, createdAt?: string | null }> } | null } };
+export type DashboardQueryQuery = { __typename?: 'Query', dashboard: { __typename?: 'DashboardResponse', dashboard?: { __typename?: 'Dashboard', dashboardMetrics: { __typename?: 'DashboardMetrics', daysOfUse: number, thirtyDayAvg: number, sixtyDayAvg: number, ninetyDayAvg: number, yearAvg: number, thirtyDayCountNeg2: number, thirtyDayCountNeg1: number, thirtyDayCount0: number, thirtyDayCount1: number, thirtyDayCount2: number, sixtyDayCountNeg2: number, sixtyDayCountNeg1: number, sixtyDayCount0: number, sixtyDayCount1: number, sixtyDayCount2: number, ninetyDayCountNeg2: number, ninetyDayCountNeg1: number, ninetyDayCount0: number, ninetyDayCount1: number, ninetyDayCount2: number, yearCountNeg2: number, yearCountNeg1: number, yearCount0: number, yearCount1: number, yearCount2: number, thirtyDayWordcloud: string, sixtyDayWordcloud: string, ninetyDayWordcloud: string, yearWordcloud: string }, rawData: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt?: string | null }> } | null } };
 
 export type RegisterMutationMutationVariables = Exact<{
   user: UserInput;
@@ -181,17 +202,25 @@ export type MeQueryVariables = Exact<{
 }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'GetUserResponse', error?: string | null, user?: { __typename?: 'UserInfo', email: string, id: string, role: number, username: string, lastPost: string } | null } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeQueryResponse', me?: { __typename?: 'Me', user: { __typename?: 'User', email: string, username: string, role: number }, lastPost?: { __typename?: 'LastPost', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt: string } | null } | null } };
 
 export type TrackerMutationMutationVariables = Exact<{
   tracker: TrackerInput;
 }>;
 
 
-export type TrackerMutationMutation = { __typename?: 'Mutation', track: { __typename?: 'TrackerResponse', errors?: Array<{ __typename?: 'PsqlError', message: string, field: string }> | null, track?: { __typename?: 'Track', numberCreativeHours: number, overview: string, rating: number, user: string, id: string } | null } };
+export type TrackerMutationMutation = { __typename?: 'Mutation', track: { __typename?: 'TrackerResponse', errors?: Array<{ __typename?: 'PsqlError', message: string, field: string }> | null, track?: { __typename?: 'Track', numberCreativeHours: number, overview: string, rating: number, user?: string | null, id: string } | null } };
+
+export type UpdateTrackerMutationVariables = Exact<{
+  tracker: UpdateTrackerInput;
+}>;
+
+
+export type UpdateTrackerMutation = { __typename?: 'Mutation', updateTrack: { __typename?: 'TrackerResponse', track?: { __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null } | null, errors?: Array<{ __typename?: 'PsqlError', field: string, message: string }> | null } };
 
 
 export const DashboardQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardMetrics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"daysOfUse"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayAvg"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayAvg"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayAvg"}},{"kind":"Field","name":{"kind":"Name","value":"yearAvg"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCount0"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCount1"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayCount2"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCount0"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCount1"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayCount2"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCount0"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCount1"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayCount2"}},{"kind":"Field","name":{"kind":"Name","value":"yearCountNeg2"}},{"kind":"Field","name":{"kind":"Name","value":"yearCountNeg1"}},{"kind":"Field","name":{"kind":"Name","value":"yearCount0"}},{"kind":"Field","name":{"kind":"Name","value":"yearCount1"}},{"kind":"Field","name":{"kind":"Name","value":"yearCount2"}},{"kind":"Field","name":{"kind":"Name","value":"thirtyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"sixtyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"ninetyDayWordcloud"}},{"kind":"Field","name":{"kind":"Name","value":"yearWordcloud"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rawData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardQueryQuery, DashboardQueryQueryVariables>;
 export const RegisterMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutationMutation, RegisterMutationMutationVariables>;
-export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserAuthInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}},{"kind":"Argument","name":{"kind":"Name","value":"refetch"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"lastPost"}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
+export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserAuthInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}},{"kind":"Argument","name":{"kind":"Name","value":"refetch"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastPost"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
 export const TrackerMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TrackerMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TrackerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"track"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tracker"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"field"}}]}},{"kind":"Field","name":{"kind":"Name","value":"track"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<TrackerMutationMutation, TrackerMutationMutationVariables>;
+export const UpdateTrackerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTracker"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateTrackerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTrack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tracker"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"track"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateTrackerMutation, UpdateTrackerMutationVariables>;

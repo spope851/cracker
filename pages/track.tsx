@@ -1,8 +1,8 @@
 import React, { useContext } from "react"
 import Head from "next/head"
-import { Box, Typography } from "@mui/material"
+import { Box } from "@mui/material"
 import { UserContext } from "@/context/userContext"
-import { Tracker } from "@/components/forms"
+import { Tracker, UpdateTracker } from "@/components/forms"
 
 export default function Track() {
   const { hasPostedToday } = useContext(UserContext)
@@ -13,12 +13,7 @@ export default function Track() {
         <title>creativity tracker</title>
       </Head>
       <Box display="flex" justifyContent="center" alignItems="center" mt="auto">
-        {hasPostedToday ? (
-          // TODO: <UpdateTracker /> component goes here
-          <Typography color="red">you have already posted today</Typography>
-        ) : (
-          <Tracker />
-        )}
+        {hasPostedToday ? <UpdateTracker /> : <Tracker />}
       </Box>
     </>
   )
