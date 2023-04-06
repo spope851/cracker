@@ -1,8 +1,8 @@
 import { graphql } from "@/generated"
 
 export const WORDCLOUD_QUERY = graphql(`
-  query WordcloudQuery($user: Int!) {
-    dashboard(user: $user) {
+  query WordcloudQuery {
+    dashboard {
       dashboard {
         thirtyDayWordcloud
         sixtyDayWordcloud

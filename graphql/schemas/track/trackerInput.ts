@@ -10,9 +10,6 @@ class TrackerInput {
 
   @Field(() => Int)
   rating!: number
-
-  @Field(() => String)
-  user!: string
 }
 
 export { TrackerInput }

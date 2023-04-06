@@ -1,5 +1,6 @@
 export * from "./next-auth"
 export * from "./postgres"
 export * from "./dashboard"
+export * from "./auth"
 export * from "./track"
 export * from "./me"
