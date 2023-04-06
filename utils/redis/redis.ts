@@ -1,5 +1,5 @@
 import Redis from "ioredis"
-import * as keys from "./keys"
+import * as keys from "../keys"
 
 const redis = new Redis(`${keys.serverHost}:${keys.redisPort}`)
 

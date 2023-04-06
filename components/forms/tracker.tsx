@@ -30,7 +30,7 @@ export const Tracker: React.FC<TrackerProps> = ({
   loading,
   onSubmit,
 }) => (
-  <Grid container item flexDirection="column" rowGap={5} md={4}>
+  <Grid container item flexDirection="column" rowGap={5} md={4} sm={8} xs={11}>
     <FormControl>
       <FormLabel>overview</FormLabel>
       <TextareaAutosize
@@ -45,7 +45,7 @@ export const Tracker: React.FC<TrackerProps> = ({
       } }`}</Typography>
     </FormControl>
     <Grid container columnSpacing={5}>
-      <Grid container item md={6}>
+      <Grid container item md={6} mb={{ md: 0, sm: 5, xs: 5 }}>
         <FormControl fullWidth>
           <TextField
             label="number creative hours"

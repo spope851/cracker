@@ -87,7 +87,7 @@ const Sentences: React.FC<{
         p={5}
         textAlign="left"
         width="100%"
-        height="500px"
+        maxHeight="500px"
         overflow="auto"
       >
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>

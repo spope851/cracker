@@ -1,18 +1,27 @@
 import { PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
 import { postgresErrorDetails } from "@/utils/stringUtils"
-import { Arg, Mutation, Resolver } from "type-graphql"
+import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
 import { UpdateTrackerInput } from "../schemas/track/updateTrackerInput"
 import { TrackerResponse } from "../schemas/track/trackerResponse"
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { type MyContext } from "@/pages/api/graphql"
+import { deleteNlpCache } from "@/utils/redis"
+import { getServerSession } from "next-auth"
 
 @Resolver(TrackerResponse)
 class UpdateTrackerResolver {
   @Mutation(() => TrackerResponse)
   async updateTrack(
-    @Arg("tracker", () => UpdateTrackerInput) tracker: UpdateTrackerInput
+    @Arg("tracker", () => UpdateTrackerInput) tracker: UpdateTrackerInput,
+    @Ctx() { req, res }: MyContext
   ): Promise<TrackerResponse> {
     const { overview, numberCreativeHours, rating, id } = tracker
-    const res: Promise<TrackerResponse> = await pool
+    const {
+      user: { id: user },
+    } = await getServerSession(req, res, authOptions)
+    await deleteNlpCache(user)
+    const query: Promise<TrackerResponse> = await pool
       .query(
         `UPDATE tracker SET 
         overview=$1,
@@ -54,7 +63,7 @@ class UpdateTrackerResolver {
           errors: [{ field: "unknown", massage: "unhandled error" }],
         }
       })
-    return res
+    return query
   }
 }
 

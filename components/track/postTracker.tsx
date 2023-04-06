@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react"
 import { useMutation } from "@apollo/client"
-import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
 import { TRACKER_MUTATION } from "@/graphql/client"
@@ -8,7 +7,6 @@ import { Tracker } from "../forms"
 
 export const PostTracker: React.FC = () => {
   const { refetch } = useContext(UserContext)
-  const session = useSession()
   const router = useRouter()
   const [overview, setOverview] = useState<string>()
   const [numberCreativeHours, setNumberCreativeHours] = useState(0)

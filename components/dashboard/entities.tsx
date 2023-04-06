@@ -47,7 +47,7 @@ const Entities: React.FC<{
         textAlign="left"
         width="100%"
         overflow="auto"
-        height="500px"
+        maxHeight="500px"
       >
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">

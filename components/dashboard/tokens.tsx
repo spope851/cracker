@@ -3,7 +3,6 @@ import {
   Box,
   Checkbox,
   Grid,
-  Input,
   Stack,
   SxProps,
   TextField,
@@ -152,74 +151,70 @@ const Tokens: React.FC<{
             borderRadius={2}
             p={5}
             textAlign="left"
-            height="500px"
+            maxHeight="500px"
             sx={{ overflowY: "auto", overflowX: "hidden" }}
           >
-            {filteredTokens &&
-              (loading ? (
+            <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
+              <Box component="thead">
                 <Box component="tr">
-                  <Box component="td">"...fetching"</Box>
+                  <TH>token</TH>
+                  <TH>tag</TH>
+                  <TH
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    count{" "}
+                    <TextField
+                      type="number"
+                      label="min count"
+                      defaultValue={minCount}
+                      inputProps={{ min: 1 }}
+                      onChange={(e) => setMinCount(Number(e.target.value))}
+                    />
+                  </TH>
                 </Box>
-              ) : (
-                <Box
-                  component="table"
-                  width="100%"
-                  sx={{ borderCollapse: "collapse" }}
-                >
-                  <Box component="thead">
-                    <Box component="tr">
-                      <TH>token</TH>
-                      <TH>tag</TH>
-                      <TH
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        count{" "}
-                        <TextField
-                          type="number"
-                          label="min count"
-                          defaultValue={minCount}
-                          inputProps={{ min: 1 }}
-                          onChange={(e) => setMinCount(Number(e.target.value))}
-                        />
-                      </TH>
-                    </Box>
+              </Box>
+              <Box component="tbody">
+                {loading ? (
+                  <Box component="tr">
+                    <Box component="td">...fetching</Box>
                   </Box>
-                  <Box component="tbody">
-                    {filteredTokens.map((filteredToken) => {
-                      const { token, count, hide } = filteredToken
-                      return (
-                        <Box component="tr" key={token.text.content}>
-                          <TD>
-                            <Checkbox
-                              sx={{ p: 0, mr: 1 }}
-                              defaultChecked={!hide}
-                              onChange={(e) => {
-                                const addOrRemove = (remove: boolean) =>
-                                  setFilteredTokens([
-                                    { token, count, hide: remove },
-                                    ...filteredTokens.filter(
-                                      (t) => t !== filteredToken
-                                    ),
-                                  ])
-                                e.target.checked
-                                  ? addOrRemove(false)
-                                  : addOrRemove(true)
-                              }}
-                            />
-                            {token.text.content}
-                          </TD>
-                          <TD>{token.partOfSpeech.tag}</TD>
-                          <TD textAlign="center">{count}</TD>
-                        </Box>
-                      )
-                    })}
-                  </Box>
-                </Box>
-              ))}
+                ) : (
+                  filteredTokens &&
+                  filteredTokens.map((filteredToken, idx) => {
+                    const { token, count, hide } = filteredToken
+                    return (
+                      <Box component="tr" key={idx}>
+                        <TD>
+                          <Checkbox
+                            sx={{ p: 0, mr: 1 }}
+                            defaultChecked={!hide}
+                            onChange={(e) => {
+                              const addOrRemove = (remove: boolean) =>
+                                setFilteredTokens([
+                                  { token, count, hide: remove },
+                                  ...filteredTokens.filter(
+                                    (t) => t !== filteredToken
+                                  ),
+                                ])
+                              e.target.checked
+                                ? addOrRemove(false)
+                                : addOrRemove(true)
+                            }}
+                          />
+                          {token.text.content}
+                        </TD>
+                        <TD>{token.partOfSpeech.tag}</TD>
+                        <TD textAlign="center">{count}</TD>
+                      </Box>
+                    )
+                  })
+                )}
+              </Box>
+            </Box>
           </Grid>
         </Grid>
         <Grid container item md={3}>
@@ -230,7 +225,7 @@ const Tokens: React.FC<{
             borderRadius={2}
             p={5}
             textAlign="left"
-            height="500px"
+            maxHeight="500px"
             sx={{ overflowY: "auto", overflowX: "hidden" }}
             flexDirection="column"
             justifyContent="space-evenly"
@@ -293,110 +288,116 @@ const Tokens: React.FC<{
         textAlign="left"
         my={5}
       >
-        {filteredTokens &&
-          filteredTokens.map(({ token, count, hide }) => {
-            const foundTokens = rawData.filter((datum) =>
-              new RegExp(`(\\b)${token.text.content}(\\b)`, "g").test(datum.overview)
-            )
-            if (hide) return <></>
-            return (
-              <Tooltip
-                title={
-                  <>
-                    {(foundTokens.length > 0
-                      ? foundTokens
-                      : [{ overview: "", rating: 0 } as Track]
-                    ).map((datum) => (
-                      <Tooltip
-                        key={datum.id}
-                        placement="right"
-                        title={
-                          foundTokens.length > 0 && (
-                            <>
-                              <Typography
-                                display="flex"
-                                mb={"2px"}
-                                alignItems="center"
-                              >
-                                rating:{" "}
+        {filteredTokens
+          ? filteredTokens.map(({ token, count, hide }, idx) => {
+              const foundTokens = rawData.filter((datum) =>
+                new RegExp(`(\\b)${token.text.content}(\\b)`, "g").test(
+                  datum.overview
+                )
+              )
+              if (hide) return <></>
+              return (
+                <Tooltip
+                  key={idx}
+                  title={
+                    <>
+                      {(foundTokens.length > 0
+                        ? foundTokens
+                        : [{ overview: "", rating: 0 } as Track]
+                      ).map((datum) => (
+                        <Tooltip
+                          key={datum.id}
+                          placement="right"
+                          title={
+                            foundTokens.length > 0 && (
+                              <>
                                 <Typography
-                                  p={1}
-                                  ml={1}
-                                  component="span"
-                                  bgcolor={sentimentColor(datum.rating)}
-                                  color="#000"
-                                  flex={1}
                                   display="flex"
-                                  justifyContent="center"
+                                  mb={"2px"}
+                                  alignItems="center"
                                 >
-                                  {datum.rating > 0 && "+"}
-                                  {datum.rating}
+                                  rating:{" "}
+                                  <Typography
+                                    p={1}
+                                    ml={1}
+                                    component="span"
+                                    bgcolor={sentimentColor(datum.rating)}
+                                    color="#000"
+                                    flex={1}
+                                    display="flex"
+                                    justifyContent="center"
+                                  >
+                                    {datum.rating > 0 && "+"}
+                                    {datum.rating}
+                                  </Typography>
                                 </Typography>
-                              </Typography>
-                              <Typography display="flex" alignItems="center">
-                                hours:{" "}
-                                <Typography
-                                  p={1}
-                                  ml={1}
-                                  component="span"
-                                  bgcolor={
-                                    datum.numberCreativeHours > avgHours
-                                      ? "lime"
-                                      : "red"
-                                  }
-                                  color="#000"
-                                  flex={1}
-                                  display="flex"
-                                  justifyContent="center"
+                                <Typography display="flex" alignItems="center">
+                                  hours:{" "}
+                                  <Typography
+                                    p={1}
+                                    ml={1}
+                                    component="span"
+                                    bgcolor={
+                                      datum.numberCreativeHours > avgHours
+                                        ? "lime"
+                                        : "red"
+                                    }
+                                    color="#000"
+                                    flex={1}
+                                    display="flex"
+                                    justifyContent="center"
+                                  >
+                                    {datum.numberCreativeHours}
+                                  </Typography>
+                                </Typography>
+                                <Tooltip
+                                  placement="right"
+                                  title={datum.overview
+                                    .split(token.text.content)
+                                    .map((part, idx, arr) => (
+                                      <Typography component="span" key={idx}>
+                                        {part}
+                                        {idx < arr.length - 1 && (
+                                          <Typography
+                                            component="span"
+                                            color="yellow"
+                                            fontWeight="bold"
+                                          >
+                                            {token.text.content}
+                                          </Typography>
+                                        )}
+                                      </Typography>
+                                    ))}
                                 >
-                                  {datum.numberCreativeHours}
-                                </Typography>
-                              </Typography>
-                              <Tooltip
-                                placement="right"
-                                title={datum.overview
-                                  .split(token.text.content)
-                                  .map((part, idx, arr) => (
-                                    <Typography component="span" key={idx}>
-                                      {part}
-                                      {idx < arr.length - 1 && (
-                                        <Typography
-                                          component="span"
-                                          color="yellow"
-                                          fontWeight="bold"
-                                        >
-                                          {token.text.content}
-                                        </Typography>
-                                      )}
-                                    </Typography>
-                                  ))}
-                              >
-                                <Typography>{`overview >`}</Typography>
-                              </Tooltip>
-                            </>
-                          )
-                        }
-                      >
-                        <Typography color={sentimentColor(datum.rating)}>
-                          {foundTokens.length > 0
-                            ? new Date(String(datum.createdAt)).toLocaleDateString()
-                            : "[IGNORED]"}
-                        </Typography>
-                      </Tooltip>
-                    ))}
-                  </>
-                }
-              >
-                <Typography
-                  component="span"
-                  fontSize={Math.sqrt(count * 100)}
-                  key={token.text.content}
+                                  <Typography>{`overview >`}</Typography>
+                                </Tooltip>
+                              </>
+                            )
+                          }
+                        >
+                          <Typography color={sentimentColor(datum.rating)}>
+                            {foundTokens.length > 0
+                              ? new Date(
+                                  String(datum.createdAt)
+                                ).toLocaleDateString()
+                              : "[IGNORED]"}
+                          </Typography>
+                        </Tooltip>
+                      ))}
+                    </>
+                  }
                 >
-                  {` ${token.text.content} `}
-                </Typography>
-              </Tooltip>
-            )
-          })}
+                  <Typography
+                    component="span"
+                    fontSize={Math.sqrt(count * 100)}
+                    key={token.text.content}
+                  >
+                    {` ${token.text.content} `}
+                  </Typography>
+                </Tooltip>
+              )
+            })
+          : "...fetching"}
       </Grid>
     </>
   )
