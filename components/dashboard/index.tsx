@@ -53,7 +53,6 @@ const Dashboard: React.FC = () => {
         })
           .then((res) => res.json())
           .then((res) => {
-            console.log(res)
             setEntities(res.entities)
             setTokens(res.tokens)
             setSentences(res.sentences)

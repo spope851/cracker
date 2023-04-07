@@ -1,6 +1,7 @@
 import { Track } from "@/generated/graphql"
 import {
   Box,
+  Button,
   Checkbox,
   Grid,
   Stack,
@@ -129,7 +130,6 @@ const Tokens: React.FC<{
         )
     })()
   }, [tokens, tags, minCount])
-  console.log(rawData)
 
   const sentimentColor = (
     score: number
@@ -139,6 +139,17 @@ const Tokens: React.FC<{
     else if (score === 0) return "yellow"
     else if (score === -1) return "lightCoral"
     else return "red"
+  }
+
+  const hideToken = (hide: boolean, idx: number) => {
+    setFilteredTokens((oldTokens) => {
+      let newTokens
+      if (oldTokens) {
+        newTokens = [...oldTokens]
+        newTokens[idx].hide = hide
+      }
+      return newTokens
+    })
   }
 
   return (
@@ -191,18 +202,10 @@ const Tokens: React.FC<{
                         <TD>
                           <Checkbox
                             sx={{ p: 0, mr: 1 }}
-                            defaultChecked={!hide}
+                            checked={!hide}
                             onChange={(e) => {
-                              const addOrRemove = (remove: boolean) =>
-                                setFilteredTokens([
-                                  { token, count, hide: remove },
-                                  ...filteredTokens.filter(
-                                    (t) => t !== filteredToken
-                                  ),
-                                ])
-                              e.target.checked
-                                ? addOrRemove(false)
-                                : addOrRemove(true)
+                              if (e.target.checked) hideToken(false, idx)
+                              else hideToken(true, idx)
                             }}
                           />
                           {token.text.content}
@@ -230,11 +233,13 @@ const Tokens: React.FC<{
             flexDirection="column"
             justifyContent="space-evenly"
           >
-            <Box component="thead">
-              <Stack component="tr" justifyContent="space-between" direction="row">
-                <Box component="th">part of speech</Box>
-                <Box component="th">count</Box>
-              </Stack>
+            <Box component="table">
+              <Box component="thead">
+                <Stack component="tr" justifyContent="space-between" direction="row">
+                  <Box component="th">part of speech</Box>
+                  <Box component="th">count</Box>
+                </Stack>
+              </Box>
             </Box>
             {loading ? (
               "...fetching"
@@ -290,17 +295,26 @@ const Tokens: React.FC<{
       >
         {filteredTokens
           ? filteredTokens.map(({ token, count, hide }, idx) => {
+              if (hide) return <React.Fragment key={idx}></React.Fragment>
               const foundTokens = rawData.filter((datum) =>
                 new RegExp(`(\\b)${token.text.content}(\\b)`, "g").test(
                   datum.overview
                 )
               )
-              if (hide) return <></>
               return (
                 <Tooltip
                   key={idx}
                   title={
                     <>
+                      <Button
+                        onClick={() => hideToken(true, idx)}
+                        variant="outlined"
+                        // TODO: hover background color
+                        sx={{ bgcolor: "#fff" }}
+                        size="small"
+                      >
+                        hide
+                      </Button>
                       {(foundTokens.length > 0
                         ? foundTokens
                         : [{ overview: "", rating: 0 } as Track]
