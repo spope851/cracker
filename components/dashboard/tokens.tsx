@@ -10,6 +10,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material"
+import { Text } from "./types"
 import React, { ReactNode, useEffect, useState } from "react"
 
 const TH: React.FC<{ children: ReactNode; sx?: SxProps }> = ({ children, sx }) => (
@@ -58,10 +59,6 @@ type PartOfSpeech = {
   tag: Tag
 }
 
-type Text = {
-  content: string
-}
-
 export type Token = {
   partOfSpeech: PartOfSpeech
   text: Text
@@ -87,6 +84,7 @@ const Tokens: React.FC<{
     ;(async () => {
       await fetch("/api/getCachedTokens", { method: "get" })
         .then((res) => res.json())
+        // TODO: implement token caching
         .then((res) => {
           setFilteredTokens(
             tokens
