@@ -150,6 +150,11 @@ const Tokens: React.FC<{
     })
   }
 
+  const findTokens = (content: string) =>
+    rawData.filter((datum) =>
+      new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
+    )
+
   return (
     <>
       <Grid container columnSpacing={5} justifyContent="space-between">
@@ -294,11 +299,7 @@ const Tokens: React.FC<{
         {filteredTokens
           ? filteredTokens.map(({ token, count, hide }, idx) => {
               if (hide) return <React.Fragment key={idx}></React.Fragment>
-              const foundTokens = rawData.filter((datum) =>
-                new RegExp(`(\\b)${token.text.content}(\\b)`, "g").test(
-                  datum.overview
-                )
-              )
+              const foundTokens = findTokens(token.text.content)
               return (
                 <Tooltip
                   key={idx}
@@ -321,7 +322,7 @@ const Tokens: React.FC<{
                           key={datum.id}
                           placement="right"
                           title={
-                            foundTokens.length > 0 && (
+                            findTokens.length > 0 && (
                               <>
                                 <Typography
                                   display="flex"
