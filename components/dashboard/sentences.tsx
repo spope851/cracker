@@ -44,9 +44,10 @@ const Sentences: React.FC<{
   }
 
   const ratingColor = (
-    rating: number
-  ): "red" | "lime" | "paleGreen" | "yellow" | "lightCoral" => {
-    if (rating === 2) return "lime"
+    rating?: number
+  ): "red" | "lime" | "paleGreen" | "yellow" | "lightCoral" | "#fff" => {
+    if (!rating) return "#fff"
+    else if (rating === 2) return "lime"
     else if (rating === 1) return "paleGreen"
     else if (rating === 0) return "yellow"
     else if (rating === -1) return "lightCoral"
