@@ -185,111 +185,106 @@ const Tokens: React.FC<{
   }
 
   return (
-    <Grid container item md={8} columnSpacing={5} justifyContent="space-between">
-      <Grid container item mb={{ md: 0, sm: 5 }}>
-        <Grid
-          flex={1}
-          border="solid"
-          borderRadius={2}
-          p={5}
-          textAlign="left"
-          maxHeight="500px"
-          sx={{ overflowY: "auto", overflowX: "hidden" }}
-        >
-          <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
-            <Box component="thead">
-              <Box component="tr">
-                <TH>token</TH>
-                <TH>tag</TH>
-                <TH
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                  }}
-                >
-                  count{" "}
-                  <TextField
-                    type="number"
-                    label="min count"
-                    defaultValue={minCount}
-                    inputProps={{ min: 1 }}
-                    onChange={(e) => setMinCount(Number(e.target.value))}
-                    sx={{ ml: "auto", width: "80px" }}
-                  />
-                  <FormControl sx={{ ml: 1 }}>
-                    <InputLabel id="demo-multiple-checkbox-label">
-                      part of speech
-                    </InputLabel>
-                    <Select
-                      labelId="demo-multiple-checkbox-label"
-                      id="demo-multiple-checkbox"
-                      multiple
-                      value={tags}
-                      onChange={handleChange}
-                      input={<OutlinedInput label="part of speech" />}
-                      renderValue={(selected) => selected.join(", ")}
-                      // MenuProps={MenuProps}
+    <Grid container item md={8}>
+      <Box
+        border="solid"
+        borderRadius={2}
+        p={5}
+        textAlign="left"
+        width="100%"
+        overflow="auto"
+        maxHeight="500px"
+      >
+        <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
+          <Box component="thead">
+            <Box component="tr">
+              <TH>token</TH>
+              <TH>tag</TH>
+              <TH
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                count{" "}
+                <TextField
+                  type="number"
+                  label="min count"
+                  defaultValue={minCount}
+                  inputProps={{ min: 1 }}
+                  onChange={(e) => setMinCount(Number(e.target.value))}
+                  sx={{ ml: "auto", width: "80px" }}
+                />
+                <FormControl sx={{ ml: 1 }}>
+                  <InputLabel id="demo-multiple-checkbox-label">
+                    part of speech
+                  </InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={tags}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="part of speech" />}
+                    renderValue={(selected) => selected.join(", ")}
+                    // MenuProps={MenuProps}
+                  >
+                    <ListSubheader
+                      sx={{ display: "flex", justifyContent: "space-between" }}
                     >
-                      <ListSubheader
-                        sx={{ display: "flex", justifyContent: "space-between" }}
-                      >
-                        <Typography>part of speech</Typography>
-                        <Typography>count</Typography>
-                      </ListSubheader>
-                      {defaultTags.map((tag) => (
-                        <MenuItem key={tag} value={tag}>
-                          <Checkbox checked={tags.indexOf(tag) > -1} />
-                          <ListItemText primary={tag} />
-                          <Typography
-                            fontWeight="bold"
-                            component="span"
-                            sx={{ float: "right" }}
-                          >
-                            {
-                              tokens?.filter((i) => i.partOfSpeech.tag === tag)
-                                .length
-                            }
-                          </Typography>
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </TH>
-              </Box>
-            </Box>
-            <Box component="tbody">
-              {loading ? (
-                <Box component="tr">
-                  <Box component="td">...fetching</Box>
-                </Box>
-              ) : (
-                filteredTokens &&
-                filteredTokens.map((filteredToken, idx) => {
-                  const { token, count, hide } = filteredToken
-                  return (
-                    <Box component="tr" key={idx}>
-                      <TD>
-                        <Checkbox
-                          sx={{ p: 0, mr: 1 }}
-                          checked={!hide}
-                          onChange={(e) => {
-                            if (e.target.checked) hideToken(false, idx)
-                            else hideToken(true, idx)
-                          }}
-                        />
-                        {token.text.content}
-                      </TD>
-                      <TD>{token.partOfSpeech.tag}</TD>
-                      <TD textAlign="center">{count}</TD>
-                    </Box>
-                  )
-                })
-              )}
+                      <Typography>part of speech</Typography>
+                      <Typography>count</Typography>
+                    </ListSubheader>
+                    {defaultTags.map((tag) => (
+                      <MenuItem key={tag} value={tag}>
+                        <Checkbox checked={tags.indexOf(tag) > -1} />
+                        <ListItemText primary={tag} />
+                        <Typography
+                          fontWeight="bold"
+                          component="span"
+                          sx={{ float: "right" }}
+                        >
+                          {tokens?.filter((i) => i.partOfSpeech.tag === tag).length}
+                        </Typography>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </TH>
             </Box>
           </Box>
-        </Grid>
-      </Grid>
+          <Box component="tbody">
+            {loading ? (
+              <Box component="tr">
+                <Box component="td">...fetching</Box>
+              </Box>
+            ) : (
+              filteredTokens &&
+              filteredTokens.map((filteredToken, idx) => {
+                const { token, count, hide } = filteredToken
+                return (
+                  <Box component="tr" key={idx}>
+                    <TD>
+                      <Checkbox
+                        sx={{ p: 0, mr: 1 }}
+                        checked={!hide}
+                        onChange={(e) => {
+                          if (e.target.checked) hideToken(false, idx)
+                          else hideToken(true, idx)
+                        }}
+                      />
+                      {token.text.content}
+                    </TD>
+                    <TD>{token.partOfSpeech.tag}</TD>
+                    <TD textAlign="center">{count}</TD>
+                  </Box>
+                )
+              })
+            )}
+          </Box>
+        </Box>
+      </Box>
     </Grid>
   )
 }

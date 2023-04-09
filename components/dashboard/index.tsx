@@ -6,6 +6,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Stack,
+  Tab,
+  Tabs,
   Typography,
 } from "@mui/material"
 import React, { useEffect, useState } from "react"
@@ -83,21 +86,31 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box m={5}>
+      <Stack flexDirection="row" mb={1}>
+        <FormControl sx={{ width: 150, mr: 5 }}>
+          <InputLabel>running average</InputLabel>
+          <Select
+            value={runningAvg}
+            label="Running Average"
+            onChange={(e) => setRunningAvg(e.target.value as RunningAverage)}
+          >
+            <MenuItem value={"30"}>30 days</MenuItem>
+            {daysOfUse > 30 && <MenuItem value={"60"}>60 days</MenuItem>}
+            {daysOfUse > 60 && <MenuItem value={"90"}>90 days</MenuItem>}
+            {daysOfUse > 90 && <MenuItem value={"365"}>1 year</MenuItem>}
+          </Select>
+        </FormControl>
+        <Tabs
+          value={analizeEntities ? 0 : 1}
+          onChange={() => setAnalizeEntities(!analizeEntities)}
+          sx={{ borderBottom: 1, borderColor: "divider", width: "100%" }}
+        >
+          <Tab label="analize entities" />
+          <Tab label="analize tokens" />
+        </Tabs>
+      </Stack>
       <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
         <Grid container item md={4} mb={{ md: 0, sm: 5 }}>
-          <FormControl fullWidth sx={{ mb: { md: 0, sm: 5 } }}>
-            <InputLabel>running average</InputLabel>
-            <Select
-              value={runningAvg}
-              label="Running Average"
-              onChange={(e) => setRunningAvg(e.target.value as RunningAverage)}
-            >
-              <MenuItem value={"30"}>30 days</MenuItem>
-              {daysOfUse > 30 && <MenuItem value={"60"}>60 days</MenuItem>}
-              {daysOfUse > 60 && <MenuItem value={"90"}>90 days</MenuItem>}
-              {daysOfUse > 90 && <MenuItem value={"365"}>1 year</MenuItem>}
-            </Select>
-          </FormControl>
           <Grid
             item
             flex={1}
