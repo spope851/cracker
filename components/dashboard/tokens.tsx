@@ -3,7 +3,15 @@ import {
   Box,
   Button,
   Checkbox,
+  FormControl,
   Grid,
+  InputLabel,
+  ListItemText,
+  ListSubheader,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  SelectChangeEvent,
   Stack,
   SxProps,
   TextField,
@@ -70,6 +78,17 @@ type FilteredToken = {
   hide: boolean
 }
 
+// const ITEM_HEIGHT = 48
+// const ITEM_PADDING_TOP = 8
+// const MenuProps = {
+//   PaperProps: {
+//     style: {
+//       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+//       width: 250,
+//     },
+//   },
+// }
+
 const Tokens: React.FC<{
   tokens?: Token[]
   loading: boolean
@@ -77,7 +96,7 @@ const Tokens: React.FC<{
   avgHours: number
 }> = ({ tokens, loading, rawData, avgHours }) => {
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
-  const [tags, setTags] = useState<Tag[]>(defaultTags.slice(0, 4))
+  const [tags, setTags] = useState<string[]>(defaultTags.slice(0, 4))
   const [minCount, setMinCount] = useState(2)
 
   useEffect(() => {
@@ -155,264 +174,123 @@ const Tokens: React.FC<{
       new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
     )
 
+  const handleChange = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event
+    setTags(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    )
+  }
+
   return (
-    <>
-      <Grid container columnSpacing={5} justifyContent="space-between">
-        <Grid container item md={9} mb={{ md: 0, sm: 5 }}>
-          <Grid
-            flex={1}
-            border="solid"
-            borderRadius={2}
-            p={5}
-            textAlign="left"
-            maxHeight="500px"
-            sx={{ overflowY: "auto", overflowX: "hidden" }}
-          >
-            <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
-              <Box component="thead">
-                <Box component="tr">
-                  <TH>token</TH>
-                  <TH>tag</TH>
-                  <TH
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    count{" "}
-                    <TextField
-                      type="number"
-                      label="min count"
-                      defaultValue={minCount}
-                      inputProps={{ min: 1 }}
-                      onChange={(e) => setMinCount(Number(e.target.value))}
-                    />
-                  </TH>
-                </Box>
-              </Box>
-              <Box component="tbody">
-                {loading ? (
-                  <Box component="tr">
-                    <Box component="td">...fetching</Box>
-                  </Box>
-                ) : (
-                  filteredTokens &&
-                  filteredTokens.map((filteredToken, idx) => {
-                    const { token, count, hide } = filteredToken
-                    return (
-                      <Box component="tr" key={idx}>
-                        <TD>
-                          <Checkbox
-                            sx={{ p: 0, mr: 1 }}
-                            checked={!hide}
-                            onChange={(e) => {
-                              if (e.target.checked) hideToken(false, idx)
-                              else hideToken(true, idx)
-                            }}
-                          />
-                          {token.text.content}
-                        </TD>
-                        <TD>{token.partOfSpeech.tag}</TD>
-                        <TD textAlign="center">{count}</TD>
-                      </Box>
-                    )
-                  })
-                )}
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
-        <Grid container item md={3}>
-          <Grid
-            container
-            flex={1}
-            border="solid"
-            borderRadius={2}
-            p={5}
-            textAlign="left"
-            maxHeight="500px"
-            sx={{ overflowY: "auto", overflowX: "hidden" }}
-            flexDirection="column"
-            justifyContent="space-evenly"
-          >
-            <Box component="table">
-              <Box component="thead">
-                <Stack component="tr" justifyContent="space-between" direction="row">
-                  <Box component="th">part of speech</Box>
-                  <Box component="th">count</Box>
-                </Stack>
-              </Box>
-            </Box>
-            {loading ? (
-              "...fetching"
-            ) : (
-              <>
-                {defaultTags.map((tag) => (
-                  <React.Fragment key={tag}>
-                    <Typography>
-                      <Checkbox
-                        sx={{ p: 0, mr: 1 }}
-                        defaultChecked={tags.indexOf(tag) > -1}
-                        onChange={(e) =>
-                          e.target.checked
-                            ? setTags([...tags, tag])
-                            : setTags(tags.filter((t) => t !== tag))
-                        }
-                      />
-                      {tag}
-                      <Typography
-                        fontWeight="bold"
-                        component="span"
-                        sx={{ float: "right" }}
-                      >
-                        {tokens?.filter((i) => i.partOfSpeech.tag === tag).length}
-                      </Typography>
-                    </Typography>
-                  </React.Fragment>
-                ))}
-                <Typography variant="h6">
-                  total:
-                  <Typography
-                    variant="h6"
-                    fontWeight="bold"
-                    component="span"
-                    sx={{ float: "right" }}
-                  >
-                    {tokens?.length}
-                  </Typography>
-                </Typography>
-              </>
-            )}
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid
-        item
-        md={12}
-        border="solid"
-        borderRadius={2}
-        p={5}
-        textAlign="left"
-        my={5}
-      >
-        {filteredTokens
-          ? filteredTokens.map(({ token, count, hide }, idx) => {
-              if (hide) return <React.Fragment key={idx}></React.Fragment>
-              const foundTokens = findTokens(token.text.content)
-              return (
-                <Tooltip
-                  key={idx}
-                  title={
-                    <>
-                      <Button
-                        onClick={() => hideToken(true, idx)}
-                        variant="outlined"
-                        // TODO: hover background color
-                        sx={{ bgcolor: "#fff" }}
-                        size="small"
-                      >
-                        hide
-                      </Button>
-                      {(foundTokens.length > 0
-                        ? foundTokens
-                        : [{ overview: "", rating: 0 } as Track]
-                      ).map((datum) => (
-                        <Tooltip
-                          key={datum.id}
-                          placement="right"
-                          title={
-                            findTokens.length > 0 && (
-                              <>
-                                <Typography
-                                  display="flex"
-                                  mb={"2px"}
-                                  alignItems="center"
-                                >
-                                  rating:{" "}
-                                  <Typography
-                                    p={1}
-                                    ml={1}
-                                    component="span"
-                                    bgcolor={sentimentColor(datum.rating)}
-                                    color="#000"
-                                    flex={1}
-                                    display="flex"
-                                    justifyContent="center"
-                                  >
-                                    {datum.rating > 0 && "+"}
-                                    {datum.rating}
-                                  </Typography>
-                                </Typography>
-                                <Typography display="flex" alignItems="center">
-                                  hours:{" "}
-                                  <Typography
-                                    p={1}
-                                    ml={1}
-                                    component="span"
-                                    bgcolor={
-                                      datum.numberCreativeHours > avgHours
-                                        ? "lime"
-                                        : "red"
-                                    }
-                                    color="#000"
-                                    flex={1}
-                                    display="flex"
-                                    justifyContent="center"
-                                  >
-                                    {datum.numberCreativeHours}
-                                  </Typography>
-                                </Typography>
-                                <Tooltip
-                                  placement="right"
-                                  title={datum.overview
-                                    .split(token.text.content)
-                                    .map((part, idx, arr) => (
-                                      <Typography component="span" key={idx}>
-                                        {part}
-                                        {idx < arr.length - 1 && (
-                                          <Typography
-                                            component="span"
-                                            color="yellow"
-                                            fontWeight="bold"
-                                          >
-                                            {token.text.content}
-                                          </Typography>
-                                        )}
-                                      </Typography>
-                                    ))}
-                                >
-                                  <Typography>{`overview >`}</Typography>
-                                </Tooltip>
-                              </>
-                            )
-                          }
-                        >
-                          <Typography color={sentimentColor(datum.rating)}>
-                            {foundTokens.length > 0
-                              ? new Date(
-                                  String(datum.createdAt)
-                                ).toLocaleDateString()
-                              : "[IGNORED]"}
-                          </Typography>
-                        </Tooltip>
-                      ))}
-                    </>
-                  }
+    <Grid container item md={8} columnSpacing={5} justifyContent="space-between">
+      <Grid container item mb={{ md: 0, sm: 5 }}>
+        <Grid
+          flex={1}
+          border="solid"
+          borderRadius={2}
+          p={5}
+          textAlign="left"
+          maxHeight="500px"
+          sx={{ overflowY: "auto", overflowX: "hidden" }}
+        >
+          <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
+            <Box component="thead">
+              <Box component="tr">
+                <TH>token</TH>
+                <TH>tag</TH>
+                <TH
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
                 >
-                  <Typography
-                    component="span"
-                    fontSize={Math.sqrt(count * 100)}
-                    key={token.text.content}
-                  >
-                    {` ${token.text.content} `}
-                  </Typography>
-                </Tooltip>
-              )
-            })
-          : "...fetching"}
+                  count{" "}
+                  <TextField
+                    type="number"
+                    label="min count"
+                    defaultValue={minCount}
+                    inputProps={{ min: 1 }}
+                    onChange={(e) => setMinCount(Number(e.target.value))}
+                    sx={{ ml: "auto", width: "80px" }}
+                  />
+                  <FormControl sx={{ ml: 1 }}>
+                    <InputLabel id="demo-multiple-checkbox-label">
+                      part of speech
+                    </InputLabel>
+                    <Select
+                      labelId="demo-multiple-checkbox-label"
+                      id="demo-multiple-checkbox"
+                      multiple
+                      value={tags}
+                      onChange={handleChange}
+                      input={<OutlinedInput label="part of speech" />}
+                      renderValue={(selected) => selected.join(", ")}
+                      // MenuProps={MenuProps}
+                    >
+                      <ListSubheader
+                        sx={{ display: "flex", justifyContent: "space-between" }}
+                      >
+                        <Typography>part of speech</Typography>
+                        <Typography>count</Typography>
+                      </ListSubheader>
+                      {defaultTags.map((tag) => (
+                        <MenuItem key={tag} value={tag}>
+                          <Checkbox checked={tags.indexOf(tag) > -1} />
+                          <ListItemText primary={tag} />
+                          <Typography
+                            fontWeight="bold"
+                            component="span"
+                            sx={{ float: "right" }}
+                          >
+                            {
+                              tokens?.filter((i) => i.partOfSpeech.tag === tag)
+                                .length
+                            }
+                          </Typography>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </TH>
+              </Box>
+            </Box>
+            <Box component="tbody">
+              {loading ? (
+                <Box component="tr">
+                  <Box component="td">...fetching</Box>
+                </Box>
+              ) : (
+                filteredTokens &&
+                filteredTokens.map((filteredToken, idx) => {
+                  const { token, count, hide } = filteredToken
+                  return (
+                    <Box component="tr" key={idx}>
+                      <TD>
+                        <Checkbox
+                          sx={{ p: 0, mr: 1 }}
+                          checked={!hide}
+                          onChange={(e) => {
+                            if (e.target.checked) hideToken(false, idx)
+                            else hideToken(true, idx)
+                          }}
+                        />
+                        {token.text.content}
+                      </TD>
+                      <TD>{token.partOfSpeech.tag}</TD>
+                      <TD textAlign="center">{count}</TD>
+                    </Box>
+                  )
+                })
+              )}
+            </Box>
+          </Box>
+        </Grid>
       </Grid>
-    </>
+    </Grid>
   )
 }
 

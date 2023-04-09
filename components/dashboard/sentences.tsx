@@ -55,7 +55,7 @@ const Sentences: React.FC<{
   }
 
   return (
-    <Grid container item md={12} justifyContent="space-evenly">
+    <Grid container item md={7}>
       <Box
         border="solid"
         borderRadius={2}
@@ -69,10 +69,10 @@ const Sentences: React.FC<{
           <Box component="thead">
             <Box component="tr">
               <TH>sentence</TH>
-              <TH>begin offset</TH>
-              <TH>sentiment magnitude</TH>
-              <TH>sentiment score</TH>
-              <TH>number creative hours</TH>
+              <TH>offset</TH>
+              <TH>magnitude</TH>
+              <TH>score</TH>
+              <TH>hours</TH>
               <TH>rating</TH>
               <TH>date</TH>
             </Box>
@@ -109,6 +109,7 @@ const Sentences: React.FC<{
                         {foundSentence?.numberCreativeHours}
                       </TD>
                       <TD bgcolor={ratingColor(foundSentence?.rating)}>
+                        {foundSentence?.rating && foundSentence.rating > 0 && "+"}
                         {foundSentence?.rating}
                       </TD>
                       <TD>

@@ -34,7 +34,7 @@ const Entities: React.FC<{
   entities?: Entity[]
   loading: boolean
 }> = ({ entities, loading }) => (
-  <Grid container item md={7}>
+  <Grid container item md={8}>
     <Box
       border="solid"
       borderRadius={2}

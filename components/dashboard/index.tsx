@@ -18,6 +18,7 @@ import { RunningAverage } from "@/types"
 import { splitDashboardData } from "@/utils/dashboard"
 import Tokens, { Token } from "./tokens"
 import Sentences from "./sentences"
+import Wordcloud from "./wordcloud"
 
 const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Typography sx={{ float: "right" }} component="span" fontWeight="bold">
@@ -28,6 +29,7 @@ const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const Dashboard: React.FC = () => {
   const router = useRouter()
   const [nlpLoading, setLoading] = useState(true)
+  const [analizeEntities, setAnalizeEntities] = useState(true)
   const [entities, setEntities] = useState<Entity[]>()
   const [tokens, setTokens] = useState<Token[]>()
   const [sentences, setSentences] = useState<any[]>()
@@ -82,7 +84,7 @@ const Dashboard: React.FC = () => {
   return (
     <Box m={5}>
       <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
-        <Grid container item md={5} mb={{ md: 0, sm: 5 }}>
+        <Grid container item md={4} mb={{ md: 0, sm: 5 }}>
           <FormControl fullWidth sx={{ mb: { md: 0, sm: 5 } }}>
             <InputLabel>running average</InputLabel>
             <Select
@@ -130,20 +132,31 @@ const Dashboard: React.FC = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Entities entities={entities} loading={nlpLoading} />
+        {analizeEntities ? (
+          <Entities entities={entities} loading={nlpLoading} />
+        ) : (
+          <Tokens
+            tokens={tokens}
+            loading={nlpLoading}
+            rawData={rawData.slice(0, Number(runningAvg))}
+            avgHours={Number(avg.toFixed(2))}
+          />
+        )}
       </Grid>
-      <Tokens
-        tokens={tokens}
-        loading={nlpLoading}
-        rawData={rawData.slice(0, Number(runningAvg))}
-        avgHours={Number(avg.toFixed(2))}
-      />
-      <Sentences
-        sentences={sentences}
-        loading={nlpLoading}
-        rawData={rawData.slice(0, Number(runningAvg))}
-        avgHours={Number(avg.toFixed(2))}
-      />
+      <Grid container columnSpacing={5}>
+        <Sentences
+          sentences={sentences}
+          loading={nlpLoading}
+          rawData={rawData.slice(0, Number(runningAvg))}
+          avgHours={Number(avg.toFixed(2))}
+        />
+        <Wordcloud
+          tokens={tokens}
+          loading={nlpLoading}
+          rawData={rawData.slice(0, Number(runningAvg))}
+          avgHours={Number(avg.toFixed(2))}
+        />
+      </Grid>
     </Box>
   )
 }
