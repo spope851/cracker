@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>creativity tracker</title>
+        <title>creativity trackerr</title>
       </Head>
       <Box
         display="flex"
