@@ -19,9 +19,12 @@ import Entities, { Entity } from "./entities"
 import PieChart from "../pieChart"
 import { RunningAverage } from "@/types"
 import { splitDashboardData } from "@/utils/dashboard"
-import Tokens, { Token } from "./tokens"
+import Tokens from "./tokens"
 import Sentences from "./sentences"
-import Wordcloud from "./wordcloud"
+import TokenWordcloud from "./tokenWordcloud"
+import EntityWordcloud from "./entityWordcloud"
+import { DashboardFilterContextProvider } from "./context"
+import { type Token } from "./types"
 
 const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Typography sx={{ float: "right" }} component="span" fontWeight="bold">
@@ -86,90 +89,97 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box m={5}>
-      <Stack flexDirection="row" mb={1}>
-        <FormControl sx={{ width: 150, mr: 5 }}>
-          <InputLabel>running average</InputLabel>
-          <Select
-            value={runningAvg}
-            label="Running Average"
-            onChange={(e) => setRunningAvg(e.target.value as RunningAverage)}
-          >
-            <MenuItem value={"30"}>30 days</MenuItem>
-            {daysOfUse > 30 && <MenuItem value={"60"}>60 days</MenuItem>}
-            {daysOfUse > 60 && <MenuItem value={"90"}>90 days</MenuItem>}
-            {daysOfUse > 90 && <MenuItem value={"365"}>1 year</MenuItem>}
-          </Select>
-        </FormControl>
-        <Tabs
-          value={analizeEntities ? 0 : 1}
-          onChange={() => setAnalizeEntities(!analizeEntities)}
-          sx={{ borderBottom: 1, borderColor: "divider", width: "100%" }}
-        >
-          <Tab label="analize entities" />
-          <Tab label="analize tokens" />
-        </Tabs>
-      </Stack>
-      <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
-        <Grid container item md={4} mb={{ md: 0, sm: 5 }}>
-          <Grid
-            item
-            flex={1}
-            border="solid"
-            borderRadius={2}
-            p={5}
-            display="flex"
-            flexDirection="column"
-          >
-            <Typography>
-              {`avg daily creative hours:`}
-              <DashboardDatum>{avg.toFixed(1)}</DashboardDatum>
-            </Typography>
-            <br />
-            <Typography>
-              {`on track for `}
-              <Typography fontWeight="bold" component="span">
-                {(Number(avg) * 356).toFixed()}
-              </Typography>
-              {` creative hours this year`}
-            </Typography>
-            <br />
-            <Typography
-              variant="h6"
-              textAlign="center"
-              sx={{ textDecoration: "underline" }}
+      <DashboardFilterContextProvider
+        tokens={tokens}
+        loading={nlpLoading}
+        rawData={rawData}
+        avgHours={Number(avg.toFixed(2))}
+        entities={entities}
+      >
+        <Stack flexDirection="row" mb={1}>
+          <FormControl sx={{ width: 150, mr: 5 }}>
+            <InputLabel>running average</InputLabel>
+            <Select
+              value={runningAvg}
+              label="Running Average"
+              onChange={(e) => setRunningAvg(e.target.value as RunningAverage)}
             >
-              Ratings
-            </Typography>
-            <Grid item height={300} width={350} alignSelf="center">
-              <PieChart data={{ neg2, neg1, zero, one, two }} />
+              <MenuItem value={"30"}>30 days</MenuItem>
+              {daysOfUse > 30 && <MenuItem value={"60"}>60 days</MenuItem>}
+              {daysOfUse > 60 && <MenuItem value={"90"}>90 days</MenuItem>}
+              {daysOfUse > 90 && <MenuItem value={"365"}>1 year</MenuItem>}
+            </Select>
+          </FormControl>
+          <Tabs
+            value={analizeEntities ? 0 : 1}
+            onChange={() => setAnalizeEntities(!analizeEntities)}
+            sx={{ borderBottom: 1, borderColor: "divider", width: "100%" }}
+          >
+            <Tab label="analize entities" />
+            <Tab label="analize tokens" />
+          </Tabs>
+        </Stack>
+        <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
+          <Grid container item md={4} mb={{ md: 0, sm: 5 }}>
+            <Grid
+              item
+              flex={1}
+              border="solid"
+              borderRadius={2}
+              p={5}
+              display="flex"
+              flexDirection="column"
+            >
+              <Typography>
+                {`avg daily creative hours:`}
+                <DashboardDatum>{avg.toFixed(1)}</DashboardDatum>
+              </Typography>
+              <br />
+              <Typography>
+                {`on track for `}
+                <Typography fontWeight="bold" component="span">
+                  {(Number(avg) * 356).toFixed()}
+                </Typography>
+                {` creative hours this year`}
+              </Typography>
+              <br />
+              <Typography
+                variant="h6"
+                textAlign="center"
+                sx={{ textDecoration: "underline" }}
+              >
+                Ratings
+              </Typography>
+              <Grid item height={300} width={350} alignSelf="center">
+                <PieChart data={{ neg2, neg1, zero, one, two }} />
+              </Grid>
             </Grid>
           </Grid>
+          {analizeEntities ? (
+            <Entities entities={entities} loading={nlpLoading} />
+          ) : (
+            <Tokens />
+          )}
         </Grid>
-        {analizeEntities ? (
-          <Entities entities={entities} loading={nlpLoading} />
-        ) : (
-          <Tokens
-            tokens={tokens}
+        <Grid container columnSpacing={5}>
+          <Sentences
+            sentences={sentences}
             loading={nlpLoading}
             rawData={rawData.slice(0, Number(runningAvg))}
             avgHours={Number(avg.toFixed(2))}
           />
-        )}
-      </Grid>
-      <Grid container columnSpacing={5}>
-        <Sentences
-          sentences={sentences}
-          loading={nlpLoading}
-          rawData={rawData.slice(0, Number(runningAvg))}
-          avgHours={Number(avg.toFixed(2))}
-        />
-        <Wordcloud
-          tokens={tokens}
-          loading={nlpLoading}
-          rawData={rawData.slice(0, Number(runningAvg))}
-          avgHours={Number(avg.toFixed(2))}
-        />
-      </Grid>
+          {analizeEntities ? (
+            <EntityWordcloud
+              entities={entities}
+              loading={nlpLoading}
+              rawData={rawData.slice(0, Number(runningAvg))}
+              avgHours={Number(avg.toFixed(2))}
+            />
+          ) : (
+            <TokenWordcloud />
+          )}
+        </Grid>
+      </DashboardFilterContextProvider>
     </Box>
   )
 }

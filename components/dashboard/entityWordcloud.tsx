@@ -1,152 +1,15 @@
 import { Track } from "@/generated/graphql"
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControl,
-  Grid,
-  InputLabel,
-  ListItemText,
-  ListSubheader,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-  Stack,
-  SxProps,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material"
-import { Text } from "./types"
-import React, { ReactNode, useEffect, useState } from "react"
+import { Box, Button, Grid, Tooltip, Typography } from "@mui/material"
+import React, { useContext } from "react"
+import { DashboardFilterContext } from "./context"
 
-const TH: React.FC<{ children: ReactNode; sx?: SxProps }> = ({ children, sx }) => (
-  <Box component="th" whiteSpace="nowrap" p={1} sx={sx}>
-    {children}
-  </Box>
-)
-
-const TD: React.FC<{ children: ReactNode; textAlign?: "center" }> = ({
-  children,
-  textAlign,
-}) => (
-  <Box component="td" border={2} p={1} borderColor="black" textAlign={textAlign}>
-    {children}
-  </Box>
-)
-
-type Tag =
-  | "ADJ"
-  | "VERB"
-  | "NOUN"
-  | "ADV"
-  | "ADP"
-  | "PRON"
-  | "CONJ"
-  | "DET"
-  | "NUM"
-  | "PRT"
-  | "PUNCT"
-
-const defaultTags: Tag[] = [
-  "ADJ",
-  "VERB",
-  "NOUN",
-  "ADV",
-  "ADP",
-  "PRON",
-  "CONJ",
-  "DET",
-  "NUM",
-  "PRT",
-  "PUNCT",
-]
-
-type PartOfSpeech = {
-  tag: Tag
-}
-
-export type Token = {
-  partOfSpeech: PartOfSpeech
-  text: Text
-}
-
-type FilteredToken = {
-  token: Token
-  count: number
-  hide: boolean
-}
-
-// const ITEM_HEIGHT = 48
-// const ITEM_PADDING_TOP = 8
-// const MenuProps = {
-//   PaperProps: {
-//     style: {
-//       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-//       width: 250,
-//     },
-//   },
-// }
-
-const Wordcloud: React.FC<{
-  tokens?: Token[]
-  loading: boolean
-  rawData: Track[]
-  avgHours: number
-}> = ({ tokens, loading, rawData, avgHours }) => {
-  const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
-  const [tags, setTags] = useState<string[]>(defaultTags.slice(0, 4))
-  const [minCount, setMinCount] = useState(2)
-
-  useEffect(() => {
-    ;(async () => {
-      await fetch("/api/getCachedTokens", { method: "get" })
-        .then((res) => res.json())
-        // TODO: implement token caching
-        .then((res) => {
-          setFilteredTokens(
-            tokens
-              // filter by tag
-              ?.filter((i) => tags.indexOf(i.partOfSpeech.tag) > -1)
-              // get counts
-              .reduce((p: any[], c) => {
-                const r = p
-                const exists = p.find(
-                  (i) =>
-                    i.token.text.content.toLowerCase() ===
-                    c.text.content.toLowerCase()
-                )
-                if (!exists)
-                  r.push({
-                    token: c,
-                    count: 1,
-                    hide:
-                      // filteredTokens?.find((t) => t.token === c)?.hide ||
-                      // res[c.text.content].hide ||
-                      false,
-                  })
-                else r[p.indexOf(exists)].count += 1
-                return r
-              }, [])
-              // filter by minCount
-              .filter((i) => i.count >= minCount)
-              .sort((a, b) => (a.count < b.count ? 1 : -1))
-          )
-        })
-        .finally(
-          async () =>
-            await fetch("/api/cacheTokens", {
-              method: "post",
-              body: JSON.stringify(
-                filteredTokens?.reduce((p, c) => {
-                  return { ...p, [c.token.text.content]: { hide: c.hide } }
-                }, {})
-              ),
-            })
-        )
-    })()
-  }, [tokens, tags, minCount])
+const EntityWordcloud: React.FC = () => {
+  const {
+    filteredEntities: entities,
+    avgHours,
+    findTokens,
+    hideEntity,
+  } = useContext(DashboardFilterContext)
 
   const sentimentColor = (
     score: number
@@ -158,46 +21,20 @@ const Wordcloud: React.FC<{
     else return "red"
   }
 
-  const hideToken = (hide: boolean, idx: number) => {
-    setFilteredTokens((oldTokens) => {
-      let newTokens
-      if (oldTokens) {
-        newTokens = [...oldTokens]
-        newTokens[idx].hide = hide
-      }
-      return newTokens
-    })
-  }
-
-  const findTokens = (content: string) =>
-    rawData.filter((datum) =>
-      new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
-    )
-
-  const handleChange = (event: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = event
-    setTags(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    )
-  }
-
   return (
     <Grid container item md={5} alignItems="stretch">
       <Box border="solid" borderRadius={2} p={5} textAlign="left" width="100%">
-        {filteredTokens
-          ? filteredTokens.map(({ token, count, hide }, idx) => {
+        {entities
+          ? entities.map(({ entity: { name }, count, hide }, idx) => {
               if (hide) return <React.Fragment key={idx}></React.Fragment>
-              const foundTokens = findTokens(token.text.content)
+              const foundTokens = findTokens(name)
               return (
                 <Tooltip
                   key={idx}
                   title={
                     <>
                       <Button
-                        onClick={() => hideToken(true, idx)}
+                        onClick={() => hideEntity(true, idx)}
                         variant="outlined"
                         // TODO: hover background color
                         sx={{ bgcolor: "#fff" }}
@@ -213,7 +50,7 @@ const Wordcloud: React.FC<{
                           key={datum.id}
                           placement="right"
                           title={
-                            findTokens.length > 0 && (
+                            foundTokens.length > 0 && (
                               <>
                                 <Typography
                                   display="flex"
@@ -257,7 +94,7 @@ const Wordcloud: React.FC<{
                                 <Tooltip
                                   placement="right"
                                   title={datum.overview
-                                    .split(token.text.content)
+                                    .split(name)
                                     .map((part, idx, arr) => (
                                       <Typography component="span" key={idx}>
                                         {part}
@@ -267,7 +104,7 @@ const Wordcloud: React.FC<{
                                             color="yellow"
                                             fontWeight="bold"
                                           >
-                                            {token.text.content}
+                                            {name}
                                           </Typography>
                                         )}
                                       </Typography>
@@ -294,9 +131,9 @@ const Wordcloud: React.FC<{
                   <Typography
                     component="span"
                     fontSize={Math.sqrt(count * 100)}
-                    key={token.text.content}
+                    key={idx}
                   >
-                    {` ${token.text.content} `}
+                    {` ${name} `}
                   </Typography>
                 </Tooltip>
               )
@@ -307,4 +144,4 @@ const Wordcloud: React.FC<{
   )
 }
 
-export default Wordcloud
+export default EntityWordcloud

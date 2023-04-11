@@ -1,7 +1,5 @@
-import { Track } from "@/generated/graphql"
 import {
   Box,
-  Button,
   Checkbox,
   FormControl,
   Grid,
@@ -11,15 +9,13 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
-  SelectChangeEvent,
-  Stack,
   SxProps,
   TextField,
-  Tooltip,
   Typography,
 } from "@mui/material"
-import { Text } from "./types"
-import React, { ReactNode, useEffect, useState } from "react"
+import React, { ReactNode, useContext } from "react"
+import { defaultTags } from "./constants"
+import { DashboardFilterContext } from "./context"
 
 const TH: React.FC<{ children: ReactNode; sx?: SxProps }> = ({ children, sx }) => (
   <Box component="th" whiteSpace="nowrap" p={1} sx={sx}>
@@ -36,48 +32,6 @@ const TD: React.FC<{ children: ReactNode; textAlign?: "center" }> = ({
   </Box>
 )
 
-type Tag =
-  | "ADJ"
-  | "VERB"
-  | "NOUN"
-  | "ADV"
-  | "ADP"
-  | "PRON"
-  | "CONJ"
-  | "DET"
-  | "NUM"
-  | "PRT"
-  | "PUNCT"
-
-const defaultTags: Tag[] = [
-  "ADJ",
-  "VERB",
-  "NOUN",
-  "ADV",
-  "ADP",
-  "PRON",
-  "CONJ",
-  "DET",
-  "NUM",
-  "PRT",
-  "PUNCT",
-]
-
-type PartOfSpeech = {
-  tag: Tag
-}
-
-export type Token = {
-  partOfSpeech: PartOfSpeech
-  text: Text
-}
-
-type FilteredToken = {
-  token: Token
-  count: number
-  hide: boolean
-}
-
 // const ITEM_HEIGHT = 48
 // const ITEM_PADDING_TOP = 8
 // const MenuProps = {
@@ -89,100 +43,16 @@ type FilteredToken = {
 //   },
 // }
 
-const Tokens: React.FC<{
-  tokens?: Token[]
-  loading: boolean
-  rawData: Track[]
-  avgHours: number
-}> = ({ tokens, loading, rawData, avgHours }) => {
-  const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
-  const [tags, setTags] = useState<string[]>(defaultTags.slice(0, 4))
-  const [minCount, setMinCount] = useState(2)
-
-  useEffect(() => {
-    ;(async () => {
-      await fetch("/api/getCachedTokens", { method: "get" })
-        .then((res) => res.json())
-        // TODO: implement token caching
-        .then((res) => {
-          setFilteredTokens(
-            tokens
-              // filter by tag
-              ?.filter((i) => tags.indexOf(i.partOfSpeech.tag) > -1)
-              // get counts
-              .reduce((p: any[], c) => {
-                const r = p
-                const exists = p.find(
-                  (i) =>
-                    i.token.text.content.toLowerCase() ===
-                    c.text.content.toLowerCase()
-                )
-                if (!exists)
-                  r.push({
-                    token: c,
-                    count: 1,
-                    hide:
-                      // filteredTokens?.find((t) => t.token === c)?.hide ||
-                      // res[c.text.content].hide ||
-                      false,
-                  })
-                else r[p.indexOf(exists)].count += 1
-                return r
-              }, [])
-              // filter by minCount
-              .filter((i) => i.count >= minCount)
-              .sort((a, b) => (a.count < b.count ? 1 : -1))
-          )
-        })
-        .finally(
-          async () =>
-            await fetch("/api/cacheTokens", {
-              method: "post",
-              body: JSON.stringify(
-                filteredTokens?.reduce((p, c) => {
-                  return { ...p, [c.token.text.content]: { hide: c.hide } }
-                }, {})
-              ),
-            })
-        )
-    })()
-  }, [tokens, tags, minCount])
-
-  const sentimentColor = (
-    score: number
-  ): "red" | "lime" | "paleGreen" | "yellow" | "lightCoral" => {
-    if (score === 2) return "lime"
-    else if (score === 1) return "paleGreen"
-    else if (score === 0) return "yellow"
-    else if (score === -1) return "lightCoral"
-    else return "red"
-  }
-
-  const hideToken = (hide: boolean, idx: number) => {
-    setFilteredTokens((oldTokens) => {
-      let newTokens
-      if (oldTokens) {
-        newTokens = [...oldTokens]
-        newTokens[idx].hide = hide
-      }
-      return newTokens
-    })
-  }
-
-  const findTokens = (content: string) =>
-    rawData.filter((datum) =>
-      new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
-    )
-
-  const handleChange = (event: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = event
-    setTags(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    )
-  }
+const Tokens: React.FC = () => {
+  const {
+    minTokenCount: minCount,
+    setMinTokenCount: setMinCount,
+    filteredTokens: tokens,
+    loading,
+    handleTokenTagsChange: handleTagsChange,
+    hideToken,
+    tokenTags: tags,
+  } = useContext(DashboardFilterContext)
 
   return (
     <Grid container item md={8}>
@@ -225,7 +95,7 @@ const Tokens: React.FC<{
                     id="demo-multiple-checkbox"
                     multiple
                     value={tags}
-                    onChange={handleChange}
+                    onChange={handleTagsChange}
                     input={<OutlinedInput label="part of speech" />}
                     renderValue={(selected) => selected.join(", ")}
                     // MenuProps={MenuProps}
@@ -245,7 +115,10 @@ const Tokens: React.FC<{
                           component="span"
                           sx={{ float: "right" }}
                         >
-                          {tokens?.filter((i) => i.partOfSpeech.tag === tag).length}
+                          {
+                            tokens?.filter((i) => i.token.partOfSpeech.tag === tag)
+                              .length
+                          }
                         </Typography>
                       </MenuItem>
                     ))}
@@ -260,8 +133,8 @@ const Tokens: React.FC<{
                 <Box component="td">...fetching</Box>
               </Box>
             ) : (
-              filteredTokens &&
-              filteredTokens.map((filteredToken, idx) => {
+              tokens &&
+              tokens.map((filteredToken, idx) => {
                 const { token, count, hide } = filteredToken
                 return (
                   <Box component="tr" key={idx}>
