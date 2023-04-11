@@ -33,8 +33,8 @@ const EntityTable: React.FC = () => {
               <TH>entity</TH>
               <TH>count</TH>
               <TH>salience</TH>
-              <TH>sentiment score</TH>
-              <TH>sentiment magnitude</TH>
+              <TH>score</TH>
+              <TH>magnitude</TH>
             </Box>
           </Box>
           <Box component="tbody">

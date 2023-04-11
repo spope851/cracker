@@ -70,8 +70,8 @@ const Sentences: React.FC<{
             <Box component="tr">
               <TH>sentence</TH>
               <TH>offset</TH>
-              <TH>magnitude</TH>
               <TH>score</TH>
+              <TH>magnitude</TH>
               <TH>hours</TH>
               <TH>rating</TH>
               <TH>date</TH>
@@ -103,8 +103,8 @@ const Sentences: React.FC<{
                     >
                       <TD>{content}</TD>
                       <TD>{beginOffset}</TD>
-                      <TD>{Number(magnitude).toFixed(3)}</TD>
                       <TD bgcolor={bgcolor}>{Number(score).toFixed(3)}</TD>
+                      <TD>{Number(magnitude).toFixed(3)}</TD>
                       <TD bgcolor={aboveAverage(foundSentence?.numberCreativeHours)}>
                         {foundSentence?.numberCreativeHours}
                       </TD>
