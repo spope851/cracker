@@ -36,7 +36,7 @@ const TrackerSubmitted: React.FC = () => {
       <Box>{overview}</Box>
       <Box>Number of creative hours: {numberCreativeHours}</Box>
       <Box>Rating: {rating}</Box>
-      <Button>Update today's data</Button>
+      <Button>Update todays data</Button>
     </Stack>
     
   //   <form style={{ display: "flex", flexDirection: "column" }}>
