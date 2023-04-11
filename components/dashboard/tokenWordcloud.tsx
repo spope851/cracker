@@ -2,6 +2,7 @@ import { Track } from "@/generated/graphql"
 import { Box, Button, Grid, Tooltip, Typography } from "@mui/material"
 import React, { useContext } from "react"
 import { DashboardFilterContext } from "./context"
+import { sentimentColor } from "./functions"
 
 const TokenWordcloud: React.FC = () => {
   const {
@@ -10,16 +11,6 @@ const TokenWordcloud: React.FC = () => {
     findTokens,
     avgHours,
   } = useContext(DashboardFilterContext)
-
-  const sentimentColor = (
-    score: number
-  ): "red" | "lime" | "paleGreen" | "yellow" | "lightCoral" => {
-    if (score === 2) return "lime"
-    else if (score === 1) return "paleGreen"
-    else if (score === 0) return "yellow"
-    else if (score === -1) return "lightCoral"
-    else return "red"
-  }
 
   return (
     <Grid container item md={5} alignItems="stretch">

@@ -1,21 +1,7 @@
 import { Box, Checkbox, Grid } from "@mui/material"
-import React, { ReactNode, useContext } from "react"
+import React, { useContext } from "react"
+import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
-
-const TH: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <Box component="th" whiteSpace="nowrap" p={1}>
-    {children}
-  </Box>
-)
-
-const TD: React.FC<{ children: ReactNode; bgcolor?: string }> = ({
-  children,
-  bgcolor = "#fff",
-}) => (
-  <Box component="td" border={2} p={1} borderColor="black" bgcolor={bgcolor}>
-    {children}
-  </Box>
-)
 
 const sentimentColor = (score: number): "lightCoral" | "paleGreen" | "#fff" => {
   if (score > 0) return "paleGreen"

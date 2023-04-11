@@ -9,28 +9,13 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
-  SxProps,
   TextField,
   Typography,
 } from "@mui/material"
-import React, { ReactNode, useContext } from "react"
+import React, { useContext } from "react"
+import { TH, TD } from "./components"
 import { defaultTags } from "./constants"
 import { DashboardFilterContext } from "./context"
-
-const TH: React.FC<{ children: ReactNode; sx?: SxProps }> = ({ children, sx }) => (
-  <Box component="th" whiteSpace="nowrap" p={1} sx={sx}>
-    {children}
-  </Box>
-)
-
-const TD: React.FC<{ children: ReactNode; textAlign?: "center" }> = ({
-  children,
-  textAlign,
-}) => (
-  <Box component="td" border={2} p={1} borderColor="black" textAlign={textAlign}>
-    {children}
-  </Box>
-)
 
 // const ITEM_HEIGHT = 48
 // const ITEM_PADDING_TOP = 8
