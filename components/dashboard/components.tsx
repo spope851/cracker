@@ -11,7 +11,8 @@ const TD: React.FC<{
   children: ReactNode
   textAlign?: "center"
   bgcolor?: string
-}> = ({ children, textAlign, bgcolor }) => (
+  sx?: SxProps
+}> = ({ children, textAlign, bgcolor, sx }) => (
   <Box
     component="td"
     border={2}
@@ -19,6 +20,7 @@ const TD: React.FC<{
     borderColor="black"
     textAlign={textAlign}
     bgcolor={bgcolor}
+    sx={sx}
   >
     {children}
   </Box>
