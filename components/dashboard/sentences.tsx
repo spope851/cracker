@@ -11,8 +11,8 @@ const Sentences: React.FC = () => {
     loading,
     findSentence,
     avgHours,
-    sentenceTerm,
-    setSentenceTerm,
+    sentenceTerms,
+    removeSentenceTerm,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -26,10 +26,16 @@ const Sentences: React.FC = () => {
         maxHeight="500px"
         overflow="auto"
       >
-        {sentenceTerm && (
+        {sentenceTerms.length > 0 && (
           <Stack flexDirection="row" alignItems="center" columnGap={1}>
             <Typography>term:</Typography>
-            <Chip label={sentenceTerm} onDelete={() => setSentenceTerm(undefined)} />
+            {sentenceTerms.map((term, idx) => (
+              <Chip
+                key={idx}
+                label={term}
+                onDelete={() => removeSentenceTerm(term)}
+              />
+            ))}
           </Stack>
         )}
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>

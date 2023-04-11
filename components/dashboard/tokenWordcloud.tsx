@@ -10,8 +10,8 @@ const TokenWordcloud: React.FC = () => {
     hideToken,
     findTokens,
     avgHours,
-    sentenceTerm,
-    setSentenceTerm,
+    sentenceTerms,
+    addSentenceTerm,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -37,7 +37,7 @@ const TokenWordcloud: React.FC = () => {
                           hide
                         </Button>
                         <Button
-                          onClick={() => setSentenceTerm(token.text.content)}
+                          onClick={() => addSentenceTerm(token.text.content)}
                           variant="outlined"
                           // TODO: hover background color
                           sx={{ bgcolor: "#fff" }}
@@ -136,10 +136,12 @@ const TokenWordcloud: React.FC = () => {
                     fontSize={Math.sqrt(count * 100)}
                     key={token.text.content}
                     border={
-                      sentenceTerm === token.text.content ? "solid lime" : "none"
+                      sentenceTerms.includes(token.text.content)
+                        ? "solid lime"
+                        : "none"
                     }
-                    p={sentenceTerm === token.text.content ? 1 : 0}
-                    m={sentenceTerm === token.text.content ? 1 : 0}
+                    p={sentenceTerms.includes(token.text.content) ? 1 : 0}
+                    m={sentenceTerms.includes(token.text.content) ? 1 : 0}
                   >
                     {` ${token.text.content} `}
                   </Typography>

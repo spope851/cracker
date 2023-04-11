@@ -22,8 +22,9 @@ type DashboardFilterContextProps = {
   filteredSentences?: Sentence[]
   setFilteredSentences: Dispatch<SetStateAction<Sentence[] | undefined>>
   findSentence: (content: string) => Track | undefined
-  sentenceTerm?: string
-  setSentenceTerm: Dispatch<SetStateAction<string | undefined>>
+  sentenceTerms: string[]
+  addSentenceTerm: (term: string) => void
+  removeSentenceTerm: (term: string) => void
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(

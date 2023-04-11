@@ -10,8 +10,8 @@ const EntityWordcloud: React.FC = () => {
     avgHours,
     findTokens,
     hideEntity,
-    sentenceTerm,
-    setSentenceTerm,
+    sentenceTerms,
+    addSentenceTerm,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -37,7 +37,7 @@ const EntityWordcloud: React.FC = () => {
                           hide
                         </Button>
                         <Button
-                          onClick={() => setSentenceTerm(name)}
+                          onClick={() => addSentenceTerm(name)}
                           variant="outlined"
                           // TODO: hover background color
                           sx={{ bgcolor: "#fff" }}
@@ -135,9 +135,9 @@ const EntityWordcloud: React.FC = () => {
                     component="span"
                     fontSize={Math.sqrt(count * 100)}
                     key={idx}
-                    border={sentenceTerm === name ? "solid lime" : "none"}
-                    p={sentenceTerm === name ? 1 : 0}
-                    m={sentenceTerm === name ? 1 : 0}
+                    border={sentenceTerms.includes(name) ? "solid lime" : "none"}
+                    p={sentenceTerms.includes(name) ? 1 : 0}
+                    m={sentenceTerms.includes(name) ? 1 : 0}
                   >
                     {` ${name} `}
                   </Typography>
