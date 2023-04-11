@@ -16,7 +16,15 @@ const TokenWordcloud: React.FC = () => {
 
   return (
     <Grid container item md={5} alignItems="stretch">
-      <Box border="solid" borderRadius={2} p={5} textAlign="left" width="100%">
+      <Box
+        border="solid"
+        borderRadius={2}
+        p={5}
+        textAlign="left"
+        width="100%"
+        overflow="auto"
+        maxHeight="500px"
+      >
         {tokens
           ? tokens.map(({ token, count, hide }, idx) => {
               if (hide) return <React.Fragment key={idx}></React.Fragment>

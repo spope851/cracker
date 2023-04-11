@@ -5,7 +5,7 @@ import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
 import { ratingColor, sentimentColor, aboveAverage } from "./functions"
 
-const Sentences: React.FC = () => {
+const SentencesTable: React.FC = () => {
   const {
     filteredSentences: sentences,
     loading,
@@ -16,7 +16,7 @@ const Sentences: React.FC = () => {
   } = useContext(DashboardFilterContext)
 
   return (
-    <Grid container item md={7} mb={{ md: 0, sm: 5 }}>
+    <Grid container item md={7} mb={{ md: 0, sm: 5, xs: 5 }}>
       <Box
         border="solid"
         borderRadius={2}
@@ -42,7 +42,6 @@ const Sentences: React.FC = () => {
           <Box component="thead">
             <Box component="tr">
               <TH>sentence</TH>
-              <TH>offset</TH>
               <TH>score</TH>
               <TH>magnitude</TH>
               <TH>hours</TH>
@@ -58,13 +57,7 @@ const Sentences: React.FC = () => {
             ) : (
               sentences &&
               sentences.map(
-                (
-                  {
-                    text: { beginOffset, content },
-                    sentiment: { magnitude, score },
-                  },
-                  idx
-                ) => {
+                ({ text: { content }, sentiment: { magnitude, score } }, idx) => {
                   const bgcolor = sentimentColor(score)
                   const foundSentence = findSentence(content)
                   return (
@@ -74,8 +67,9 @@ const Sentences: React.FC = () => {
                       color={"#000"}
                       fontWeight={Math.abs(score) > 0 ? "bold" : ""}
                     >
-                      <TD>{content}</TD>
-                      <TD>{beginOffset}</TD>
+                      <TD>
+                        <Typography>{content}</Typography>
+                      </TD>
                       <TD bgcolor={bgcolor}>{Number(score).toFixed(3)}</TD>
                       <TD>{Number(magnitude).toFixed(3)}</TD>
                       <TD
@@ -106,4 +100,4 @@ const Sentences: React.FC = () => {
   )
 }
 
-export default Sentences
+export default SentencesTable

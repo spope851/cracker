@@ -9,22 +9,21 @@ import {
   Stack,
   Tab,
   Tabs,
-  Typography,
 } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 import EntityTable from "./entityTable"
-import PieChart from "../pieChart"
 import { RunningAverage } from "@/types"
 import { splitDashboardData } from "@/utils/dashboard"
 import TokenTable from "./tokenTable"
-import Sentences from "./sentences"
+import SentencesTable from "./sentencesTable"
 import TokenWordcloud from "./tokenWordcloud"
 import EntityWordcloud from "./entityWordcloud"
 import { DashboardFilterContextProvider } from "./context"
 import type { Entity, Sentence, Token } from "./types"
+import Metrics from "./metrics"
 
 const Dashboard: React.FC = () => {
   const router = useRouter()
@@ -85,11 +84,12 @@ const Dashboard: React.FC = () => {
     <Box m={5}>
       <DashboardFilterContextProvider
         tokens={tokens}
-        loading={nlpLoading}
-        rawData={rawData}
-        avgHours={Number(avg.toFixed(2))}
         entities={entities}
         sentences={sentences}
+        rawData={rawData}
+        loading={nlpLoading}
+        avgHours={Number(avg)}
+        ratings={{ neg2, neg1, zero, one, two }}
       >
         <Stack flexDirection="row" mb={1}>
           <FormControl sx={{ width: 150, mr: 5 }}>
@@ -115,51 +115,11 @@ const Dashboard: React.FC = () => {
           </Tabs>
         </Stack>
         <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
-          <Grid container item md={4} mb={{ md: 0, sm: 5 }}>
-            <Grid
-              item
-              flex={1}
-              border="solid"
-              borderRadius={2}
-              p={5}
-              display="flex"
-              flexDirection="column"
-            >
-              <Typography>
-                {`avg daily creative hours:`}
-                <Typography
-                  sx={{ float: "right" }}
-                  component="span"
-                  fontWeight="bold"
-                >
-                  {avg.toFixed(1)}
-                </Typography>
-              </Typography>
-              <br />
-              <Typography>
-                {`on track for `}
-                <Typography fontWeight="bold" component="span">
-                  {(Number(avg) * 356).toFixed()}
-                </Typography>
-                {` creative hours this year`}
-              </Typography>
-              <br />
-              <Typography
-                variant="h6"
-                textAlign="center"
-                sx={{ textDecoration: "underline" }}
-              >
-                Ratings
-              </Typography>
-              <Grid item height={300} width={350} alignSelf="center">
-                <PieChart data={{ neg2, neg1, zero, one, two }} />
-              </Grid>
-            </Grid>
-          </Grid>
+          <Metrics />
           {analizeEntities ? <EntityTable /> : <TokenTable />}
         </Grid>
         <Grid container columnSpacing={5}>
-          <Sentences />
+          <SentencesTable />
           {analizeEntities ? <EntityWordcloud /> : <TokenWordcloud />}
         </Grid>
       </DashboardFilterContextProvider>

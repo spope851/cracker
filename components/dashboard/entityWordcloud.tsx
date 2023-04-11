@@ -15,8 +15,16 @@ const EntityWordcloud: React.FC = () => {
   } = useContext(DashboardFilterContext)
 
   return (
-    <Grid container item md={5} alignItems="stretch">
-      <Box border="solid" borderRadius={2} p={5} textAlign="left" width="100%">
+    <Grid container item md={5} alignItems="stretch" overflow="auto">
+      <Box
+        border="solid"
+        borderRadius={2}
+        p={5}
+        textAlign="left"
+        width="100%"
+        overflow="auto"
+        maxHeight="500px"
+      >
         {entities
           ? entities.map(({ entity: { name }, count, hide }, idx) => {
               if (hide) return <React.Fragment key={idx}></React.Fragment>

@@ -44,4 +44,12 @@ interface PgDashboard {
   _year_wordcloud: string
 }
 
-export type { PgDashboard, RunningAverage, DashboardDataset, DashboardDatasets }
+type Ratings = { neg2: number; neg1: number; zero: number; one: number; two: number }
+
+export type {
+  PgDashboard,
+  RunningAverage,
+  DashboardDataset,
+  DashboardDatasets,
+  Ratings,
+}

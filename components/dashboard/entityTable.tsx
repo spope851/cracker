@@ -24,6 +24,14 @@ const EntityTable: React.FC = () => {
         overflow="auto"
         maxHeight="500px"
       >
+        <TextField
+          type="number"
+          label="min count"
+          defaultValue={minCount}
+          inputProps={{ min: 1 }}
+          onChange={(e) => setMinCount(Number(e.target.value))}
+          sx={{ float: "right", width: "80px" }}
+        />
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
@@ -38,15 +46,7 @@ const EntityTable: React.FC = () => {
                   alignItems: "center",
                 }}
               >
-                count{" "}
-                <TextField
-                  type="number"
-                  label="min count"
-                  defaultValue={minCount}
-                  inputProps={{ min: 1 }}
-                  onChange={(e) => setMinCount(Number(e.target.value))}
-                  sx={{ ml: "auto", width: "80px" }}
-                />
+                count
               </TH>
             </Box>
           </Box>

@@ -36,15 +36,22 @@ type Tag =
   | "PRT"
   | "PUNCT"
 
+type TagCount = { tag: Tag; count: number }
+
 type FilteredEntity = {
   entity: Entity
   count: number
   hide: boolean
 }
 
+type Mentions = {
+  sentiment: Sentiment
+  text: Text
+}
+
 type Entity = {
   sentiment: Sentiment
-  mentions: any[]
+  mentions: Mentions[]
   name: string
   salience: number
 }
@@ -59,6 +66,7 @@ export type {
   Text,
   FilteredToken,
   Tag,
+  TagCount,
   Token,
   FilteredEntity,
   Entity,

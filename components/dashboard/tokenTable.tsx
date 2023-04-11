@@ -9,12 +9,12 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material"
 import React, { useContext } from "react"
 import { TH, TD } from "./components"
-import { defaultTags } from "./constants"
 import { DashboardFilterContext } from "./context"
 
 // const ITEM_HEIGHT = 48
@@ -37,6 +37,7 @@ const TokenTable: React.FC = () => {
     handleTokenTagsChange: handleTagsChange,
     hideToken,
     tokenTags: tags,
+    tokenTagCounts: tagCounts,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -50,66 +51,64 @@ const TokenTable: React.FC = () => {
         overflow="auto"
         maxHeight="500px"
       >
+        <Stack flexDirection="row" columnGap={1} justifyContent="flex-end">
+          <TextField
+            type="number"
+            label="min count"
+            defaultValue={minCount}
+            inputProps={{ min: 1 }}
+            onChange={(e) => setMinCount(Number(e.target.value))}
+            sx={{ width: "80px" }}
+          />
+          <FormControl>
+            <InputLabel id="demo-multiple-checkbox-label">part of speech</InputLabel>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={tags}
+              onChange={handleTagsChange}
+              input={<OutlinedInput label="part of speech" />}
+              renderValue={(selected) => selected.join(", ")}
+              // MenuProps={MenuProps}
+            >
+              <ListSubheader
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <Typography>part of speech</Typography>
+                <Typography>count</Typography>
+              </ListSubheader>
+              {tagCounts &&
+                tagCounts.map(({ tag, count }) => (
+                  <MenuItem key={tag} value={tag}>
+                    <Checkbox checked={tags.indexOf(tag) > -1} />
+                    <ListItemText primary={tag} />
+                    <Typography
+                      fontWeight="bold"
+                      component="span"
+                      sx={{ float: "right" }}
+                    >
+                      {count}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              <ListSubheader
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <Typography variant="h6">total:</Typography>
+                <Typography variant="h6">
+                  {tagCounts?.reduce((p, c) => p + c.count, 0)}
+                </Typography>
+              </ListSubheader>
+            </Select>
+          </FormControl>
+        </Stack>
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
               <TH>token</TH>
               <TH>tag</TH>
-              <TH
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                count{" "}
-                <TextField
-                  type="number"
-                  label="min count"
-                  defaultValue={minCount}
-                  inputProps={{ min: 1 }}
-                  onChange={(e) => setMinCount(Number(e.target.value))}
-                  sx={{ ml: "auto", width: "80px" }}
-                />
-                <FormControl sx={{ ml: 1 }}>
-                  <InputLabel id="demo-multiple-checkbox-label">
-                    part of speech
-                  </InputLabel>
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={tags}
-                    onChange={handleTagsChange}
-                    input={<OutlinedInput label="part of speech" />}
-                    renderValue={(selected) => selected.join(", ")}
-                    // MenuProps={MenuProps}
-                  >
-                    <ListSubheader
-                      sx={{ display: "flex", justifyContent: "space-between" }}
-                    >
-                      <Typography>part of speech</Typography>
-                      <Typography>count</Typography>
-                    </ListSubheader>
-                    {defaultTags.map((tag) => (
-                      <MenuItem key={tag} value={tag}>
-                        <Checkbox checked={tags.indexOf(tag) > -1} />
-                        <ListItemText primary={tag} />
-                        <Typography
-                          fontWeight="bold"
-                          component="span"
-                          sx={{ float: "right" }}
-                        >
-                          {
-                            tokens?.filter((i) => i.token.partOfSpeech.tag === tag)
-                              .length
-                          }
-                        </Typography>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </TH>
+              <TH>count</TH>
             </Box>
           </Box>
           <Box component="tbody">

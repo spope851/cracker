@@ -1,4 +1,5 @@
 import { Track } from "@/generated/graphql"
+import type { Ratings } from "@/types"
 import { SelectChangeEvent } from "@mui/material"
 import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
@@ -8,6 +9,7 @@ import type {
   Entity,
   FilteredEntity,
   Sentence,
+  TagCount,
 } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
 
@@ -17,42 +19,39 @@ export const DashboardFilterContextProvider: React.FC<{
   loading: boolean
   rawData: Track[]
   avgHours: number
+  ratings: Ratings
   entities?: Entity[]
   sentences?: Sentence[]
-}> = ({ children, tokens, rawData, loading, avgHours, entities, sentences }) => {
+}> = ({
+  children,
+  tokens,
+  rawData,
+  loading,
+  avgHours,
+  ratings,
+  entities,
+  sentences,
+}) => {
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
   const [tokenTags, setTokenTags] = useState<string[]>(defaultTags.slice(0, 4))
+  const [tokenTagCounts, setTokenTagCounts] = useState<TagCount[]>()
   const [minTokenCount, setMinTokenCount] = useState(2)
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
   const [minEntityCount, setMinEntityCount] = useState(2)
   const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
   const [sentenceTerms, setSentenceTerms] = useState<string[]>([])
 
-  const hideToken = (hide: boolean, idx: number) => {
-    setFilteredTokens((oldTokens) => {
-      let newTokens
-      if (oldTokens) {
-        newTokens = [...oldTokens]
-        newTokens[idx].hide = hide
-      }
-      return newTokens
-    })
-  }
-
-  const findTokens = (content: string) =>
-    rawData.filter((datum) =>
-      new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
-    )
-
-  const handleTokenTagsChange = (event: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = event
-    setTokenTags(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    )
-  }
+  useEffect(() => {
+    if (tokens)
+      setTokenTagCounts(
+        defaultTags.map((tag) => {
+          return {
+            tag,
+            count: tokens?.filter((t) => t.partOfSpeech.tag === tag).length,
+          }
+        })
+      )
+  }, [tokens])
 
   useEffect(() => {
     ;(async () => {
@@ -103,6 +102,32 @@ export const DashboardFilterContextProvider: React.FC<{
     })()
   }, [tokens, tokenTags, minTokenCount])
 
+  const hideToken = (hide: boolean, idx: number) => {
+    setFilteredTokens((oldTokens) => {
+      let newTokens
+      if (oldTokens) {
+        newTokens = [...oldTokens]
+        newTokens[idx].hide = hide
+      }
+      return newTokens
+    })
+  }
+
+  const findTokens = (content: string) =>
+    rawData.filter((datum) =>
+      new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
+    )
+
+  const handleTokenTagsChange = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event
+    setTokenTags(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    )
+  }
+
   useEffect(() => {
     setFilteredEntities(
       entities
@@ -115,6 +140,9 @@ export const DashboardFilterContextProvider: React.FC<{
         })
         // filter by minCount
         .filter((i) => i.count >= minEntityCount)
+        // order by count
+        .sort((a, b) => (a.entity.name < b.entity.name ? 1 : -1))
+        .sort((a, b) => (isNaN(Number(a.entity.name)) ? 1 : -1))
         .sort((a, b) => (a.count < b.count ? 1 : -1))
     )
   }, [entities, minEntityCount])
@@ -155,11 +183,13 @@ export const DashboardFilterContextProvider: React.FC<{
         filteredTokens,
         setFilteredTokens,
         tokenTags,
+        tokenTagCounts,
         setTokenTags,
         minTokenCount,
         setMinTokenCount,
         loading,
         avgHours,
+        ratings,
         hideToken,
         findTokens,
         handleTokenTagsChange,
