@@ -2,12 +2,7 @@ import { Box, Checkbox, Grid, TextField } from "@mui/material"
 import React, { useContext } from "react"
 import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
-
-const sentimentColor = (score: number): "lightCoral" | "paleGreen" | "#fff" => {
-  if (score > 0) return "paleGreen"
-  if (score < 0) return "lightCoral"
-  return "#fff"
-}
+import { sentimentColor } from "./functions"
 
 const EntityTable: React.FC = () => {
   const {

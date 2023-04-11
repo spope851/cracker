@@ -2,7 +2,7 @@ import { Track } from "@/generated/graphql"
 import { Box, Button, Grid, Tooltip, Typography } from "@mui/material"
 import React, { useContext } from "react"
 import { DashboardFilterContext } from "./context"
-import { sentimentColor } from "./functions"
+import { aboveAverage, ratingColor } from "./functions"
 
 const EntityWordcloud: React.FC = () => {
   const {
@@ -53,7 +53,7 @@ const EntityWordcloud: React.FC = () => {
                                     p={1}
                                     ml={1}
                                     component="span"
-                                    bgcolor={sentimentColor(datum.rating)}
+                                    bgcolor={ratingColor(datum.rating)}
                                     color="#000"
                                     flex={1}
                                     display="flex"
@@ -69,11 +69,10 @@ const EntityWordcloud: React.FC = () => {
                                     p={1}
                                     ml={1}
                                     component="span"
-                                    bgcolor={
-                                      datum.numberCreativeHours > avgHours
-                                        ? "lime"
-                                        : "red"
-                                    }
+                                    bgcolor={aboveAverage(
+                                      avgHours,
+                                      datum.numberCreativeHours
+                                    )}
                                     color="#000"
                                     flex={1}
                                     display="flex"
@@ -107,7 +106,7 @@ const EntityWordcloud: React.FC = () => {
                             )
                           }
                         >
-                          <Typography color={sentimentColor(datum.rating)}>
+                          <Typography color={ratingColor(datum.rating)}>
                             {foundTokens.length > 0
                               ? new Date(
                                   String(datum.createdAt)

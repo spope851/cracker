@@ -24,13 +24,7 @@ import Sentences from "./sentences"
 import TokenWordcloud from "./tokenWordcloud"
 import EntityWordcloud from "./entityWordcloud"
 import { DashboardFilterContextProvider } from "./context"
-import type { Entity, Token } from "./types"
-
-const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Typography sx={{ float: "right" }} component="span" fontWeight="bold">
-    {children}
-  </Typography>
-)
+import type { Entity, Sentence, Token } from "./types"
 
 const Dashboard: React.FC = () => {
   const router = useRouter()
@@ -38,7 +32,7 @@ const Dashboard: React.FC = () => {
   const [analizeEntities, setAnalizeEntities] = useState(true)
   const [entities, setEntities] = useState<Entity[]>()
   const [tokens, setTokens] = useState<Token[]>()
-  const [sentences, setSentences] = useState<any[]>()
+  const [sentences, setSentences] = useState<Sentence[]>()
   const [runningAvg, setRunningAvg] = useState<RunningAverage>("30")
   const { data, loading } = useQuery(DASBOARD_QUERY)
 
@@ -95,6 +89,7 @@ const Dashboard: React.FC = () => {
         rawData={rawData}
         avgHours={Number(avg.toFixed(2))}
         entities={entities}
+        sentences={sentences}
       >
         <Stack flexDirection="row" mb={1}>
           <FormControl sx={{ width: 150, mr: 5 }}>
@@ -132,7 +127,13 @@ const Dashboard: React.FC = () => {
             >
               <Typography>
                 {`avg daily creative hours:`}
-                <DashboardDatum>{avg.toFixed(1)}</DashboardDatum>
+                <Typography
+                  sx={{ float: "right" }}
+                  component="span"
+                  fontWeight="bold"
+                >
+                  {avg.toFixed(1)}
+                </Typography>
               </Typography>
               <br />
               <Typography>
@@ -158,12 +159,7 @@ const Dashboard: React.FC = () => {
           {analizeEntities ? <EntityTable /> : <TokenTable />}
         </Grid>
         <Grid container columnSpacing={5}>
-          <Sentences
-            sentences={sentences}
-            loading={nlpLoading}
-            rawData={rawData.slice(0, Number(runningAvg))}
-            avgHours={Number(avg.toFixed(2))}
-          />
+          <Sentences />
           {analizeEntities ? <EntityWordcloud /> : <TokenWordcloud />}
         </Grid>
       </DashboardFilterContextProvider>

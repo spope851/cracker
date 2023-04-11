@@ -1,58 +1,16 @@
-import { Track } from "@/generated/graphql"
 import { Box, Grid } from "@mui/material"
-import React, { ReactNode } from "react"
-import { Sentiment, Text } from "./types"
+import React, { useContext } from "react"
+import { TH, TD } from "./components"
+import { DashboardFilterContext } from "./context"
+import { ratingColor, sentimentColor, aboveAverage } from "./functions"
 
-const TH: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <Box component="th" whiteSpace="nowrap" p={1}>
-    {children}
-  </Box>
-)
-
-const TD: React.FC<{ children: ReactNode; bgcolor?: string }> = ({
-  children,
-  bgcolor = "#fff",
-}) => (
-  <Box component="td" border={2} p={1} borderColor="black" bgcolor={bgcolor}>
-    {children}
-  </Box>
-)
-
-export type Sentence = {
-  sentiment: Sentiment
-  text: Text
-}
-
-const sentimentColor = (score: number): "lightCoral" | "paleGreen" | "#fff" => {
-  if (score > 0) return "paleGreen"
-  if (score < 0) return "lightCoral"
-  return "#fff"
-}
-
-const Sentences: React.FC<{
-  sentences?: Sentence[]
-  loading: boolean
-  rawData: Track[]
-  avgHours: number
-}> = ({ sentences, loading, rawData, avgHours }) => {
-  const findSentence = (content: string) =>
-    rawData.find((datum) => datum.overview.search(content) > -1)
-
-  const aboveAverage = (numberCreativeHours?: number) => {
-    if (!numberCreativeHours) return "#fff"
-    else return numberCreativeHours > avgHours ? "paleGreen" : "lightCoral"
-  }
-
-  const ratingColor = (
-    rating?: number
-  ): "red" | "lime" | "paleGreen" | "yellow" | "lightCoral" | "#fff" => {
-    if (!rating) return "#fff"
-    else if (rating === 2) return "lime"
-    else if (rating === 1) return "paleGreen"
-    else if (rating === 0) return "yellow"
-    else if (rating === -1) return "lightCoral"
-    else return "red"
-  }
+const Sentences: React.FC = () => {
+  const {
+    filteredSentences: sentences,
+    loading,
+    findSentence,
+    avgHours,
+  } = useContext(DashboardFilterContext)
 
   return (
     <Grid container item md={7} mb={{ md: 0, sm: 5 }}>
@@ -105,7 +63,12 @@ const Sentences: React.FC<{
                       <TD>{beginOffset}</TD>
                       <TD bgcolor={bgcolor}>{Number(score).toFixed(3)}</TD>
                       <TD>{Number(magnitude).toFixed(3)}</TD>
-                      <TD bgcolor={aboveAverage(foundSentence?.numberCreativeHours)}>
+                      <TD
+                        bgcolor={aboveAverage(
+                          avgHours,
+                          foundSentence?.numberCreativeHours
+                        )}
+                      >
                         {foundSentence?.numberCreativeHours}
                       </TD>
                       <TD bgcolor={ratingColor(foundSentence?.rating)}>

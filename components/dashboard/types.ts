@@ -49,4 +49,18 @@ type Entity = {
   salience: number
 }
 
-export type { Sentiment, Text, FilteredToken, Tag, Token, FilteredEntity, Entity }
+type Sentence = {
+  sentiment: Sentiment
+  text: Text
+}
+
+export type {
+  Sentiment,
+  Text,
+  FilteredToken,
+  Tag,
+  Token,
+  FilteredEntity,
+  Entity,
+  Sentence,
+}

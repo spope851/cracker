@@ -2,7 +2,13 @@ import { Track } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
-import type { Token, FilteredToken, Entity, FilteredEntity } from "../../types"
+import type {
+  Token,
+  FilteredToken,
+  Entity,
+  FilteredEntity,
+  Sentence,
+} from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
 
 export const DashboardFilterContextProvider: React.FC<{
@@ -12,12 +18,14 @@ export const DashboardFilterContextProvider: React.FC<{
   rawData: Track[]
   avgHours: number
   entities?: Entity[]
-}> = ({ children, tokens, rawData, loading, avgHours, entities }) => {
+  sentences?: Sentence[]
+}> = ({ children, tokens, rawData, loading, avgHours, entities, sentences }) => {
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
   const [tokenTags, setTokenTags] = useState<string[]>(defaultTags.slice(0, 4))
   const [minTokenCount, setMinTokenCount] = useState(2)
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
   const [minEntityCount, setMinEntityCount] = useState(2)
+  const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
 
   const hideToken = (hide: boolean, idx: number) => {
     setFilteredTokens((oldTokens) => {
@@ -121,6 +129,13 @@ export const DashboardFilterContextProvider: React.FC<{
     })
   }
 
+  useEffect(() => {
+    setFilteredSentences(sentences)
+  }, [sentences])
+
+  const findSentence = (content: string) =>
+    rawData.find((datum) => datum.overview.search(content) > -1)
+
   return (
     <DashboardFilterContext.Provider
       value={{
@@ -139,6 +154,9 @@ export const DashboardFilterContextProvider: React.FC<{
         hideEntity,
         minEntityCount,
         setMinEntityCount,
+        filteredSentences,
+        setFilteredSentences,
+        findSentence,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 import { Track } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import { createContext, Dispatch, SetStateAction } from "react"
-import type { FilteredEntity, FilteredToken } from "../types"
+import type { FilteredEntity, FilteredToken, Sentence } from "../types"
 
 type DashboardFilterContextProps = {
   filteredTokens?: FilteredToken[]
@@ -19,6 +19,9 @@ type DashboardFilterContextProps = {
   hideEntity: (hide: boolean, idx: number) => void
   minEntityCount: number
   setMinEntityCount: Dispatch<SetStateAction<number>>
+  filteredSentences?: Sentence[]
+  setFilteredSentences?: Dispatch<SetStateAction<Sentence[] | undefined>>
+  findSentence: (content: string) => Track | undefined
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(
