@@ -1,7 +1,7 @@
 import { Track } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import { createContext, Dispatch, SetStateAction } from "react"
-import { FilteredEntity, FilteredToken } from "../types"
+import type { FilteredEntity, FilteredToken } from "../types"
 
 type DashboardFilterContextProps = {
   filteredTokens?: FilteredToken[]

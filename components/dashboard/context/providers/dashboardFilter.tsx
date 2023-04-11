@@ -2,7 +2,7 @@ import { Track } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
-import { type Token, FilteredToken, Entity, FilteredEntity } from "../../types"
+import type { Token, FilteredToken, Entity, FilteredEntity } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
 
 export const DashboardFilterContextProvider: React.FC<{

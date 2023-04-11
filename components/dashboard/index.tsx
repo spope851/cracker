@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
-import Entities, { Entity } from "./entities"
+import Entities from "./entities"
 import PieChart from "../pieChart"
 import { RunningAverage } from "@/types"
 import { splitDashboardData } from "@/utils/dashboard"
@@ -24,7 +24,7 @@ import Sentences from "./sentences"
 import TokenWordcloud from "./tokenWordcloud"
 import EntityWordcloud from "./entityWordcloud"
 import { DashboardFilterContextProvider } from "./context"
-import { type Token } from "./types"
+import type { Entity, Token } from "./types"
 
 const DashboardDatum: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Typography sx={{ float: "right" }} component="span" fontWeight="bold">
@@ -155,11 +155,7 @@ const Dashboard: React.FC = () => {
               </Grid>
             </Grid>
           </Grid>
-          {analizeEntities ? (
-            <Entities entities={entities} loading={nlpLoading} />
-          ) : (
-            <Tokens />
-          )}
+          {analizeEntities ? <Entities /> : <Tokens />}
         </Grid>
         <Grid container columnSpacing={5}>
           <Sentences
@@ -168,16 +164,7 @@ const Dashboard: React.FC = () => {
             rawData={rawData.slice(0, Number(runningAvg))}
             avgHours={Number(avg.toFixed(2))}
           />
-          {analizeEntities ? (
-            <EntityWordcloud
-              entities={entities}
-              loading={nlpLoading}
-              rawData={rawData.slice(0, Number(runningAvg))}
-              avgHours={Number(avg.toFixed(2))}
-            />
-          ) : (
-            <TokenWordcloud />
-          )}
+          {analizeEntities ? <EntityWordcloud /> : <TokenWordcloud />}
         </Grid>
       </DashboardFilterContextProvider>
     </Box>

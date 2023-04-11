@@ -13,7 +13,7 @@ export const Auth: React.FC<{
 
   useEffect(() => {
     if (status === "authenticated" && data?.user.role !== role) router.push(redirect)
-  }, [status])
+  })
 
   if (status === "loading") {
     return <>...loading</>
