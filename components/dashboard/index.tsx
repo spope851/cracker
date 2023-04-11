@@ -15,11 +15,11 @@ import React, { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
-import Entities from "./entities"
+import EntityTable from "./entityTable"
 import PieChart from "../pieChart"
 import { RunningAverage } from "@/types"
 import { splitDashboardData } from "@/utils/dashboard"
-import Tokens from "./tokens"
+import TokenTable from "./tokenTable"
 import Sentences from "./sentences"
 import TokenWordcloud from "./tokenWordcloud"
 import EntityWordcloud from "./entityWordcloud"
@@ -155,7 +155,7 @@ const Dashboard: React.FC = () => {
               </Grid>
             </Grid>
           </Grid>
-          {analizeEntities ? <Entities /> : <Tokens />}
+          {analizeEntities ? <EntityTable /> : <TokenTable />}
         </Grid>
         <Grid container columnSpacing={5}>
           <Sentences

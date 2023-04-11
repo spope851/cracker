@@ -23,7 +23,7 @@ const sentimentColor = (score: number): "lightCoral" | "paleGreen" | "#fff" => {
   return "#fff"
 }
 
-const Entities: React.FC = () => {
+const EntityTable: React.FC = () => {
   const {
     loading,
     filteredEntities: entities,
@@ -97,4 +97,4 @@ const Entities: React.FC = () => {
   )
 }
 
-export default Entities
+export default EntityTable

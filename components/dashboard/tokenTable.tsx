@@ -43,7 +43,7 @@ const TD: React.FC<{ children: ReactNode; textAlign?: "center" }> = ({
 //   },
 // }
 
-const Tokens: React.FC = () => {
+const TokenTable: React.FC = () => {
   const {
     minTokenCount: minCount,
     setMinTokenCount: setMinCount,
@@ -162,4 +162,4 @@ const Tokens: React.FC = () => {
   )
 }
 
-export default Tokens
+export default TokenTable
