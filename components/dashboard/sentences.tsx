@@ -55,7 +55,7 @@ const Sentences: React.FC<{
   }
 
   return (
-    <Grid container item md={7} mb={{ sm: 5 }}>
+    <Grid container item md={7} mb={{ md: 0, sm: 5 }}>
       <Box
         border="solid"
         borderRadius={2}
