@@ -1,5 +1,5 @@
 import { Track } from "@/generated/graphql"
-import { Box, Button, Grid, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Grid, Stack, Tooltip, Typography } from "@mui/material"
 import React, { useContext } from "react"
 import { DashboardFilterContext } from "./context"
 import { aboveAverage, ratingColor } from "./functions"
@@ -10,6 +10,8 @@ const TokenWordcloud: React.FC = () => {
     hideToken,
     findTokens,
     avgHours,
+    sentenceTerm,
+    setSentenceTerm,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -24,15 +26,26 @@ const TokenWordcloud: React.FC = () => {
                   key={idx}
                   title={
                     <>
-                      <Button
-                        onClick={() => hideToken(true, idx)}
-                        variant="outlined"
-                        // TODO: hover background color
-                        sx={{ bgcolor: "#fff" }}
-                        size="small"
-                      >
-                        hide
-                      </Button>
+                      <Stack rowGap={1}>
+                        <Button
+                          onClick={() => hideToken(true, idx)}
+                          variant="outlined"
+                          // TODO: hover background color
+                          sx={{ bgcolor: "#fff" }}
+                          size="small"
+                        >
+                          hide
+                        </Button>
+                        <Button
+                          onClick={() => setSentenceTerm(token.text.content)}
+                          variant="outlined"
+                          // TODO: hover background color
+                          sx={{ bgcolor: "#fff" }}
+                          size="small"
+                        >
+                          filter sentences
+                        </Button>
+                      </Stack>
                       {(foundTokens.length > 0
                         ? foundTokens
                         : [{ overview: "", rating: 0 } as Track]
@@ -122,6 +135,11 @@ const TokenWordcloud: React.FC = () => {
                     component="span"
                     fontSize={Math.sqrt(count * 100)}
                     key={token.text.content}
+                    border={
+                      sentenceTerm === token.text.content ? "solid lime" : "none"
+                    }
+                    p={sentenceTerm === token.text.content ? 1 : 0}
+                    m={sentenceTerm === token.text.content ? 1 : 0}
                   >
                     {` ${token.text.content} `}
                   </Typography>

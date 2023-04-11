@@ -26,6 +26,7 @@ export const DashboardFilterContextProvider: React.FC<{
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
   const [minEntityCount, setMinEntityCount] = useState(2)
   const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
+  const [sentenceTerm, setSentenceTerm] = useState<string>()
 
   const hideToken = (hide: boolean, idx: number) => {
     setFilteredTokens((oldTokens) => {
@@ -130,8 +131,14 @@ export const DashboardFilterContextProvider: React.FC<{
   }
 
   useEffect(() => {
-    setFilteredSentences(sentences)
-  }, [sentences])
+    setFilteredSentences(
+      sentenceTerm
+        ? sentences?.filter(
+            (sentence) => sentence.text.content.search(sentenceTerm) > -1
+          )
+        : sentences
+    )
+  }, [sentences, sentenceTerm])
 
   const findSentence = (content: string) =>
     rawData.find((datum) => datum.overview.search(content) > -1)
@@ -157,6 +164,8 @@ export const DashboardFilterContextProvider: React.FC<{
         filteredSentences,
         setFilteredSentences,
         findSentence,
+        sentenceTerm,
+        setSentenceTerm,
       }}
     >
       {children}

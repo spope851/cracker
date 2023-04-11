@@ -1,5 +1,5 @@
 import { Track } from "@/generated/graphql"
-import { Box, Button, Grid, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Grid, Stack, Tooltip, Typography } from "@mui/material"
 import React, { useContext } from "react"
 import { DashboardFilterContext } from "./context"
 import { aboveAverage, ratingColor } from "./functions"
@@ -10,6 +10,8 @@ const EntityWordcloud: React.FC = () => {
     avgHours,
     findTokens,
     hideEntity,
+    sentenceTerm,
+    setSentenceTerm,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -24,15 +26,26 @@ const EntityWordcloud: React.FC = () => {
                   key={idx}
                   title={
                     <>
-                      <Button
-                        onClick={() => hideEntity(true, idx)}
-                        variant="outlined"
-                        // TODO: hover background color
-                        sx={{ bgcolor: "#fff" }}
-                        size="small"
-                      >
-                        hide
-                      </Button>
+                      <Stack rowGap={1}>
+                        <Button
+                          onClick={() => hideEntity(true, idx)}
+                          variant="outlined"
+                          // TODO: hover background color
+                          sx={{ bgcolor: "#fff" }}
+                          size="small"
+                        >
+                          hide
+                        </Button>
+                        <Button
+                          onClick={() => setSentenceTerm(name)}
+                          variant="outlined"
+                          // TODO: hover background color
+                          sx={{ bgcolor: "#fff" }}
+                          size="small"
+                        >
+                          filter sentences
+                        </Button>
+                      </Stack>
                       {(foundTokens.length > 0
                         ? foundTokens
                         : [{ overview: "", rating: 0 } as Track]
@@ -122,6 +135,9 @@ const EntityWordcloud: React.FC = () => {
                     component="span"
                     fontSize={Math.sqrt(count * 100)}
                     key={idx}
+                    border={sentenceTerm === name ? "solid lime" : "none"}
+                    p={sentenceTerm === name ? 1 : 0}
+                    m={sentenceTerm === name ? 1 : 0}
                   >
                     {` ${name} `}
                   </Typography>

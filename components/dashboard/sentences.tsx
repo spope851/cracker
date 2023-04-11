@@ -1,4 +1,5 @@
-import { Box, Grid } from "@mui/material"
+import { Box, Chip, Grid, Typography } from "@mui/material"
+import { Stack } from "@mui/system"
 import React, { useContext } from "react"
 import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
@@ -10,6 +11,8 @@ const Sentences: React.FC = () => {
     loading,
     findSentence,
     avgHours,
+    sentenceTerm,
+    setSentenceTerm,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -23,6 +26,12 @@ const Sentences: React.FC = () => {
         maxHeight="500px"
         overflow="auto"
       >
+        {sentenceTerm && (
+          <Stack flexDirection="row" alignItems="center" columnGap={1}>
+            <Typography>term:</Typography>
+            <Chip label={sentenceTerm} onDelete={() => setSentenceTerm(undefined)} />
+          </Stack>
+        )}
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
