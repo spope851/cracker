@@ -17,6 +17,7 @@ export const DashboardFilterContextProvider: React.FC<{
   const [tokenTags, setTokenTags] = useState<string[]>(defaultTags.slice(0, 4))
   const [minTokenCount, setMinTokenCount] = useState(2)
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
+  const [minEntityCount, setMinEntityCount] = useState(2)
 
   const hideToken = (hide: boolean, idx: number) => {
     setFilteredTokens((oldTokens) => {
@@ -95,15 +96,19 @@ export const DashboardFilterContextProvider: React.FC<{
 
   useEffect(() => {
     setFilteredEntities(
-      entities?.map((entity) => {
-        return {
-          entity,
-          count: entity.mentions.length,
-          hide: false,
-        }
-      })
+      entities
+        ?.map((entity) => {
+          return {
+            entity,
+            count: entity.mentions.length,
+            hide: false,
+          }
+        })
+        // filter by minCount
+        .filter((i) => i.count >= minEntityCount)
+        .sort((a, b) => (a.count < b.count ? 1 : -1))
     )
-  }, [entities])
+  }, [entities, minEntityCount])
 
   const hideEntity = (hide: boolean, idx: number) => {
     setFilteredEntities((oldTokens) => {
@@ -132,6 +137,8 @@ export const DashboardFilterContextProvider: React.FC<{
         handleTokenTagsChange,
         filteredEntities,
         hideEntity,
+        minEntityCount,
+        setMinEntityCount,
       }}
     >
       {children}

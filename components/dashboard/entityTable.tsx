@@ -1,4 +1,4 @@
-import { Box, Checkbox, Grid } from "@mui/material"
+import { Box, Checkbox, Grid, TextField } from "@mui/material"
 import React, { useContext } from "react"
 import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
@@ -14,6 +14,8 @@ const EntityTable: React.FC = () => {
     loading,
     filteredEntities: entities,
     hideEntity,
+    minEntityCount: minCount,
+    setMinEntityCount: setMinCount,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -31,10 +33,26 @@ const EntityTable: React.FC = () => {
           <Box component="thead">
             <Box component="tr">
               <TH>entity</TH>
-              <TH>count</TH>
               <TH>salience</TH>
               <TH>score</TH>
               <TH>magnitude</TH>
+              <TH
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                count{" "}
+                <TextField
+                  type="number"
+                  label="min count"
+                  defaultValue={minCount}
+                  inputProps={{ min: 1 }}
+                  onChange={(e) => setMinCount(Number(e.target.value))}
+                  sx={{ ml: "auto", width: "80px" }}
+                />
+              </TH>
             </Box>
           </Box>
           <Box component="tbody">
@@ -64,13 +82,15 @@ const EntityTable: React.FC = () => {
                       />
                       {entity.name}
                     </TD>
-                    <TD bgcolor={bgcolor}>{count}</TD>
                     <TD bgcolor={bgcolor}>{Number(entity.salience).toFixed(3)}</TD>
                     <TD bgcolor={bgcolor}>
                       {Number(entity.sentiment.score).toFixed(3)}
                     </TD>
                     <TD bgcolor={bgcolor}>
                       {Number(entity.sentiment.magnitude).toFixed(3)}
+                    </TD>
+                    <TD bgcolor={bgcolor} textAlign="center">
+                      {count}
                     </TD>
                   </Box>
                 )

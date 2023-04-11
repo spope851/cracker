@@ -17,6 +17,8 @@ type DashboardFilterContextProps = {
   handleTokenTagsChange: (event: SelectChangeEvent<string[]>) => void
   filteredEntities?: FilteredEntity[]
   hideEntity: (hide: boolean, idx: number) => void
+  minEntityCount: number
+  setMinEntityCount: Dispatch<SetStateAction<number>>
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(
