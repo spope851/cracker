@@ -76,7 +76,32 @@ const SentencesTable: React.FC = () => {
                       fontWeight={Math.abs(score) > 0 ? "bold" : ""}
                     >
                       <TD>
-                        <Typography>{content}</Typography>
+                        <Typography>
+                          {sentenceTerms.length > 0
+                            ? content
+                                .split(
+                                  new RegExp(
+                                    `(\\b)(?=${sentenceTerms.join(
+                                      "|"
+                                    )})|(?<=${sentenceTerms.join("|")})(\\b)`,
+                                    "g"
+                                  )
+                                )
+                                .map((part, idx) => (
+                                  <Typography
+                                    key={idx}
+                                    component="span"
+                                    fontWeight={
+                                      sentenceTerms.includes(part)
+                                        ? "bold"
+                                        : "normal"
+                                    }
+                                  >
+                                    {part}
+                                  </Typography>
+                                ))
+                            : content}
+                        </Typography>
                       </TD>
                       <TD bgcolor={bgcolor} sx={tableCellMobileSx}>
                         {Number(score).toFixed(3)}
