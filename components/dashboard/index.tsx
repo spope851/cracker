@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
         tokens={tokens}
         entities={entities}
         sentences={sentences}
-        rawData={rawData}
+        rawData={rawData.slice(0, Number(runningAvg))}
         loading={nlpLoading}
         avgHours={Number(avg)}
         ratings={{ neg2, neg1, zero, one, two }}
