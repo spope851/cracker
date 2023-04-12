@@ -13,7 +13,7 @@ export default function Track() {
       <Head>
         <title>creativity tracker</title>
       </Head>
-      <Box display="flex" justifyContent="center" alignItems="center" mt="auto">
+      <Box display="flex" justifyContent="center" alignItems="center">
         {hasPostedToday ? <TrackerSubmitted /> : <Tracker />}
       </Box>
     </>
