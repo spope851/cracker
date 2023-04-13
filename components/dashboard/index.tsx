@@ -16,7 +16,6 @@ import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 import EntityTable from "./entityTable"
 import { RunningAverage } from "@/types"
-import { splitDashboardData } from "@/utils/dashboard"
 import TokenTable from "./tokenTable"
 import SentencesTable from "./sentencesTable"
 import TokenWordcloud from "./tokenWordcloud"
@@ -33,24 +32,18 @@ const Dashboard: React.FC = () => {
   const [tokens, setTokens] = useState<Token[]>()
   const [sentences, setSentences] = useState<Sentence[]>()
   const [runningAvg, setRunningAvg] = useState<RunningAverage>("30")
-  const { data, loading } = useQuery(DASBOARD_QUERY)
+  const { data, loading } = useQuery(DASBOARD_QUERY, { variables: { runningAvg } })
 
   useEffect(() => {
     ;(async () => {
       if (!loading) {
-        const wordcloud = () => {
-          if (runningAvg === "30")
-            return data?.dashboard.dashboard?.dashboardMetrics.thirtyDayWordcloud
-          else if (runningAvg === "60")
-            return data?.dashboard.dashboard?.dashboardMetrics.sixtyDayWordcloud
-          else if (runningAvg === "90")
-            return data?.dashboard.dashboard?.dashboardMetrics.ninetyDayWordcloud
-          else return data?.dashboard.dashboard?.dashboardMetrics.yearWordcloud
-        }
         setLoading(true)
         const req = await fetch("/api/nlp", {
           method: "post",
-          body: JSON.stringify({ wordcloud: wordcloud(), runningAvg }),
+          body: JSON.stringify({
+            wordcloud: data?.dashboard.dashboard?.dashboardMetrics.overviews,
+            runningAvg,
+          }),
         })
           .then((res) => res.json())
           .then((res) => {
@@ -65,7 +58,7 @@ const Dashboard: React.FC = () => {
   }, [runningAvg, loading])
 
   if (loading) return <>...loading</>
-  if (data?.dashboard?.dashboard?.dashboardMetrics.thirtyDayAvg === undefined)
+  if (data?.dashboard?.dashboard?.dashboardMetrics.avgHours === undefined)
     return (
       <Button onClick={() => router.push("/track")} variant="outlined">
         no data... click to track
@@ -75,10 +68,15 @@ const Dashboard: React.FC = () => {
   const { daysOfUse } = data.dashboard.dashboard.dashboardMetrics
 
   const { dashboardMetrics, rawData } = data.dashboard.dashboard
-  const dashboardDatasets = splitDashboardData(dashboardMetrics)
 
-  const dataset = dashboardDatasets[runningAvg]
-  const { neg2, neg1, zero, one, two, avg } = dataset
+  const {
+    countNegTwo,
+    countNegOne,
+    countZero,
+    countPlusOne,
+    countPlusTwo,
+    avgHours,
+  } = dashboardMetrics
 
   return (
     <Box m={5}>
@@ -88,8 +86,8 @@ const Dashboard: React.FC = () => {
         sentences={sentences}
         rawData={rawData.slice(0, Number(runningAvg))}
         loading={nlpLoading}
-        avgHours={Number(avg)}
-        ratings={{ neg2, neg1, zero, one, two }}
+        avgHours={Number(avgHours)}
+        ratings={{ countNegTwo, countNegOne, countZero, countPlusOne, countPlusTwo }}
       >
         <Stack flexDirection="row" mb={1}>
           <FormControl sx={{ width: 150, mr: 5 }}>

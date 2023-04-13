@@ -6,7 +6,7 @@ import { DashboardFilterContext } from "./context"
 const Metrics: React.FC = () => {
   const {
     avgHours,
-    ratings: { neg2, neg1, zero, one, two },
+    ratings: { countNegTwo, countNegOne, countZero, countPlusOne, countPlusTwo },
   } = useContext(DashboardFilterContext)
 
   return (
@@ -44,7 +44,15 @@ const Metrics: React.FC = () => {
           Ratings
         </Typography>
         <Grid item height={300} width={350} alignSelf="center">
-          <PieChart data={{ neg2, neg1, zero, one, two }} />
+          <PieChart
+            data={{
+              countNegTwo,
+              countNegOne,
+              countZero,
+              countPlusOne,
+              countPlusTwo,
+            }}
+          />
         </Grid>
       </Grid>
     </Grid>

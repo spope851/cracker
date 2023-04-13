@@ -1,39 +1,41 @@
-import { DashboardDataset } from "@/types"
+import { Ratings } from "@/types"
 import { ResponsivePie } from "@nivo/pie"
 import React from "react"
 
 const PieChart: React.FC<{
-  data: Partial<DashboardDataset>
-}> = ({ data: { neg2, neg1, zero, one, two } }) => {
+  data: Ratings
+}> = ({
+  data: { countNegTwo, countNegOne, countZero, countPlusOne, countPlusTwo },
+}) => {
   const pieData = [
     {
       id: "-2",
       label: "not very good (-2)",
-      value: neg2,
+      value: countNegTwo,
       color: "red",
     },
     {
       id: "0",
       label: "meh (0)",
-      value: zero,
+      value: countZero,
       color: "yellow",
     },
     {
       id: "+1",
       label: "great (+1)",
-      value: one,
+      value: countPlusOne,
       color: "paleGreen",
     },
     {
       id: "-1",
       label: "not great (-1)",
-      value: neg1,
+      value: countNegOne,
       color: "lightCoral",
     },
     {
       id: "+2",
       label: "excellent (+2)",
-      value: two,
+      value: countPlusTwo,
       color: "lime",
     },
   ]
