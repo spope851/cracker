@@ -27,8 +27,9 @@ const TokenWordcloud: React.FC = () => {
       >
         {tokens
           ? tokens.map(({ token, count, hide }, idx) => {
-              if (hide) return <React.Fragment key={idx}></React.Fragment>
-              const foundTokens = findTokens(token.text.content)
+              if (hide || !token.text?.content)
+                return <React.Fragment key={idx}></React.Fragment>
+              const foundTokens = findTokens(token.text?.content)
               return (
                 <Tooltip
                   key={idx}
@@ -45,7 +46,7 @@ const TokenWordcloud: React.FC = () => {
                           hide
                         </Button>
                         <Button
-                          onClick={() => addSentenceTerm(token.text.content)}
+                          onClick={() => addSentenceTerm(token.text?.content)}
                           variant="outlined"
                           // TODO: hover background color
                           sx={{ bgcolor: "#fff" }}
@@ -104,22 +105,25 @@ const TokenWordcloud: React.FC = () => {
                                 </Typography>
                                 <Tooltip
                                   placement="right"
-                                  title={datum.overview
-                                    .split(token.text.content)
-                                    .map((part, idx, arr) => (
-                                      <Typography component="span" key={idx}>
-                                        {part}
-                                        {idx < arr.length - 1 && (
-                                          <Typography
-                                            component="span"
-                                            color="yellow"
-                                            fontWeight="bold"
-                                          >
-                                            {token.text.content}
-                                          </Typography>
-                                        )}
-                                      </Typography>
-                                    ))}
+                                  title={
+                                    token.text?.content &&
+                                    datum.overview
+                                      .split(token.text.content)
+                                      .map((part, idx, arr) => (
+                                        <Typography component="span" key={idx}>
+                                          {part}
+                                          {idx < arr.length - 1 && (
+                                            <Typography
+                                              component="span"
+                                              color="yellow"
+                                              fontWeight="bold"
+                                            >
+                                              {token.text?.content}
+                                            </Typography>
+                                          )}
+                                        </Typography>
+                                      ))
+                                  }
                                 >
                                   <Typography>{`overview >`}</Typography>
                                 </Tooltip>

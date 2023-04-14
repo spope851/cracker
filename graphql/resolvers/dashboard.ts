@@ -6,6 +6,8 @@ import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import { DashboardMetrics, DashboardResponse } from "../schemas/dashboard"
 import { Track } from "../schemas/track"
+import language from "@google-cloud/language"
+import redis from "@/utils/redis"
 
 @Resolver(DashboardResponse)
 export class DashboardReslover {
@@ -18,7 +20,14 @@ export class DashboardReslover {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
     const rawData: Promise<Track[]> = await pool
-      .query(`SELECT * FROM tracker WHERE "user"=$1;`, [user])
+      .query(
+        `
+        SELECT * FROM tracker
+        WHERE "user"=$1
+        AND created_at > now() - ($2 || ' day')::interval;
+        `,
+        [user, runningAvg]
+      )
       .then((res: PgQueryResponse<PgTrackerRow>) => {
         return res.rows.map(
           ({
@@ -88,11 +97,57 @@ export class DashboardReslover {
         }
       })
 
-    return {
-      dashboard: {
-        dashboardMetrics: await dashboardMetrics,
-        rawData: await rawData,
-      },
+    const fetchNlpData = async () => {
+      const client = new language.LanguageServiceClient()
+
+      const document = {
+        content: (await dashboardMetrics).overviews,
+        type: "PLAIN_TEXT" as "PLAIN_TEXT",
+      }
+
+      const features = {
+        extractSyntax: true,
+        extractEntities: true,
+        extractDocumentSentiment: true,
+        extractEntitySentiment: true,
+      }
+
+      const [annotate] = await client.annotateText({ document, features })
+
+      const nlpData = {
+        sentences: annotate.sentences,
+        tokens: annotate.tokens,
+        entities: annotate.entities,
+      }
+
+      await redis.set(`nlp/${user}/${runningAvg}`, JSON.stringify(nlpData))
+
+      return nlpData
+    }
+
+    const cachedNlpData = await redis.get(`nlp/${user}/${runningAvg}`)
+    if (cachedNlpData)
+      return {
+        dashboard: {
+          dashboardMetrics: await dashboardMetrics,
+          rawData: await rawData,
+          sentences: JSON.parse(cachedNlpData).sentences,
+          entities: JSON.parse(cachedNlpData).entities,
+          tokens: JSON.parse(cachedNlpData).tokens,
+        },
+      }
+    else {
+      return await fetchNlpData().then(async ({ sentences, entities, tokens }) => {
+        return {
+          dashboard: {
+            dashboardMetrics: await dashboardMetrics,
+            rawData: await rawData,
+            sentences,
+            entities,
+            tokens,
+          },
+        }
+      })
     }
   }
 }

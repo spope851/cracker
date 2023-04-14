@@ -58,13 +58,17 @@ const EntityTable: React.FC = () => {
             ) : (
               entities &&
               entities.map(({ entity, count, hide }, idx) => {
-                const bgcolor = sentimentColor(entity.sentiment.score)
+                const bgcolor = sentimentColor(entity.sentiment?.score)
                 return (
                   <Box
                     key={idx}
                     component="tr"
                     color={"#000"}
-                    fontWeight={Math.abs(entity.sentiment.score) > 0 ? "bold" : ""}
+                    fontWeight={
+                      entity.sentiment?.score && Math.abs(entity.sentiment.score) > 0
+                        ? "bold"
+                        : ""
+                    }
                   >
                     <TD bgcolor={bgcolor}>
                       <Checkbox
@@ -79,10 +83,10 @@ const EntityTable: React.FC = () => {
                     </TD>
                     <TD bgcolor={bgcolor}>{Number(entity.salience).toFixed(3)}</TD>
                     <TD bgcolor={bgcolor}>
-                      {Number(entity.sentiment.score).toFixed(3)}
+                      {Number(entity.sentiment?.score).toFixed(3)}
                     </TD>
                     <TD bgcolor={bgcolor}>
-                      {Number(entity.sentiment.magnitude).toFixed(3)}
+                      {Number(entity.sentiment?.magnitude).toFixed(3)}
                     </TD>
                     <TD bgcolor={bgcolor} textAlign="center">
                       {count}

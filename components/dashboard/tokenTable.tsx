@@ -80,8 +80,8 @@ const TokenTable: React.FC = () => {
               </ListSubheader>
               {tagCounts &&
                 tagCounts.map(({ tag, count }) => (
-                  <MenuItem key={tag} value={tag}>
-                    <Checkbox checked={tags.indexOf(tag) > -1} />
+                  <MenuItem key={tag} value={tag || ""}>
+                    <Checkbox checked={tag ? tags.indexOf(tag) > -1 : false} />
                     <ListItemText primary={tag} />
                     <Typography
                       fontWeight="bold"
@@ -131,9 +131,9 @@ const TokenTable: React.FC = () => {
                           else hideToken(true, idx)
                         }}
                       />
-                      {token.text.content}
+                      {token.text?.content}
                     </TD>
-                    <TD>{token.partOfSpeech.tag}</TD>
+                    <TD>{token.partOfSpeech?.tag}</TD>
                     <TD textAlign="center">{count}</TD>
                   </Box>
                 )

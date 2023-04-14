@@ -1,27 +1,21 @@
-import { Track } from "@/generated/graphql"
+import { PartOfSpeech, Sentence, Track } from "@/generated/graphql"
 import type { Ratings } from "@/types"
 import { SelectChangeEvent } from "@mui/material"
 import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
-import type {
-  Token,
-  FilteredToken,
-  Entity,
-  FilteredEntity,
-  Sentence,
-  TagCount,
-} from "../../types"
+import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
+import { Dashboard } from "@/generated/graphql"
 
 export const DashboardFilterContextProvider: React.FC<{
   children: ReactNode
-  tokens?: Token[]
+  tokens: Dashboard["tokens"]
   loading: boolean
   rawData: Track[]
   avgHours: number
   ratings: Ratings
-  entities?: Entity[]
-  sentences?: Sentence[]
+  entities: Dashboard["entities"]
+  sentences: Dashboard["sentences"]
 }> = ({
   children,
   tokens,
@@ -33,7 +27,9 @@ export const DashboardFilterContextProvider: React.FC<{
   sentences,
 }) => {
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
-  const [tokenTags, setTokenTags] = useState<string[]>(defaultTags.slice(0, 4))
+  const [tokenTags, setTokenTags] = useState<PartOfSpeech["tag"][]>(
+    defaultTags.slice(0, 4)
+  )
   const [tokenTagCounts, setTokenTagCounts] = useState<TagCount[]>()
   const [minTokenCount, setMinTokenCount] = useState(2)
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
@@ -47,7 +43,7 @@ export const DashboardFilterContextProvider: React.FC<{
         defaultTags.map((tag) => {
           return {
             tag,
-            count: tokens?.filter((t) => t.partOfSpeech.tag === tag).length,
+            count: tokens?.filter((t) => t.partOfSpeech?.tag === tag).length,
           }
         })
       )
@@ -62,14 +58,17 @@ export const DashboardFilterContextProvider: React.FC<{
           setFilteredTokens(
             tokens
               // filter by tag
-              ?.filter((i) => tokenTags.indexOf(i.partOfSpeech.tag) > -1)
+              ?.filter(
+                (i) =>
+                  i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
+              )
               // get counts
               .reduce((p: any[], c) => {
                 const r = p
                 const exists = p.find(
                   (i) =>
                     i.token.text.content.toLowerCase() ===
-                    c.text.content.toLowerCase()
+                    c.text?.content?.toLowerCase()
                 )
                 if (!exists)
                   r.push({
@@ -94,7 +93,7 @@ export const DashboardFilterContextProvider: React.FC<{
               method: "post",
               body: JSON.stringify(
                 filteredTokens?.reduce((p, c) => {
-                  return { ...p, [c.token.text.content]: { hide: c.hide } }
+                  return { ...p, [String(c.token.text?.content)]: { hide: c.hide } }
                 }, {})
               ),
             })
@@ -113,7 +112,7 @@ export const DashboardFilterContextProvider: React.FC<{
     })
   }
 
-  const findTokens = (content: string) =>
+  const findTokens = (content?: string | null) =>
     rawData.filter((datum) =>
       new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
     )
@@ -134,15 +133,21 @@ export const DashboardFilterContextProvider: React.FC<{
         ?.map((entity) => {
           return {
             entity,
-            count: entity.mentions.length,
+            count: entity.mentions?.length || 0,
             hide: false,
           }
         })
         // filter by minCount
         .filter((i) => i.count >= minEntityCount)
         // order by count
-        .sort((a, b) => (a.entity.name < b.entity.name ? 1 : -1))
-        .sort((a, b) => (isNaN(Number(a.entity.name)) ? 1 : -1))
+        .sort((a, b) =>
+          a.entity.name && b.entity.name
+            ? a.entity.name < b.entity.name
+              ? 1
+              : -1
+            : 0
+        )
+        .sort((a, _b) => (isNaN(Number(a.entity.name)) ? 1 : -1))
         .sort((a, b) => (a.count < b.count ? 1 : -1))
     )
   }, [entities, minEntityCount])
@@ -160,8 +165,10 @@ export const DashboardFilterContextProvider: React.FC<{
 
   useEffect(() => {
     setFilteredSentences(
-      sentences?.filter((sentence) =>
-        new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
+      sentences?.filter(
+        (sentence) =>
+          sentence.text?.content &&
+          new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
       )
     )
   }, [sentences, sentenceTerms])
@@ -170,12 +177,12 @@ export const DashboardFilterContextProvider: React.FC<{
     setSentenceTerms((oldTerms) => [...oldTerms.filter((ot) => ot !== term)])
   }
 
-  const addSentenceTerm = (term: string) => {
-    setSentenceTerms((oldTerms) => [...oldTerms, term])
+  const addSentenceTerm = (term?: string | null) => {
+    term && setSentenceTerms((oldTerms) => [...oldTerms, term])
   }
 
-  const findSentence = (content: string) =>
-    rawData.find((datum) => datum.overview.search(content) > -1)
+  const findSentence = (content?: string | null) =>
+    content ? rawData.find((datum) => datum.overview.search(content) > -1) : null
 
   return (
     <DashboardFilterContext.Provider

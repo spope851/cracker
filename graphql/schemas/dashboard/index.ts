@@ -1,2 +1,2 @@
-export * from "./dashboard"
+export * from "./dashboardMetrics"
 export * from "./dashboardResponse"

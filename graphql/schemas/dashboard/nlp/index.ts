@@ -1,0 +1,6 @@
+export * from "./sentiment"
+export * from "./text"
+export * from "./sentence"
+export * from "./partOfSpeech"
+export * from "./token"
+export * from "./entity"

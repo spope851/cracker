@@ -9,7 +9,10 @@ const ratingColor = (
   else return "red"
 }
 
-const sentimentColor = (score: number): "lightCoral" | "paleGreen" | "#fff" => {
+const sentimentColor = (
+  score?: number | null
+): "lightCoral" | "paleGreen" | "#fff" => {
+  if (!score) return "#fff"
   if (score > 0) return "paleGreen"
   if (score < 0) return "lightCoral"
   return "#fff"

@@ -27,7 +27,7 @@ const EntityWordcloud: React.FC = () => {
       >
         {entities
           ? entities.map(({ entity: { name }, count, hide }, idx) => {
-              if (hide) return <React.Fragment key={idx}></React.Fragment>
+              if (hide || !name) return <React.Fragment key={idx}></React.Fragment>
               const foundTokens = findTokens(name)
               return (
                 <Tooltip

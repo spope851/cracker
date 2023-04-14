@@ -64,69 +64,69 @@ const SentencesTable: React.FC = () => {
               </Box>
             ) : (
               sentences &&
-              sentences.map(
-                ({ text: { content }, sentiment: { magnitude, score } }, idx) => {
-                  const bgcolor = sentimentColor(score)
-                  const foundSentence = findSentence(content)
-                  return (
-                    <Box
-                      key={idx}
-                      component="tr"
-                      color={"#000"}
-                      fontWeight={Math.abs(score) > 0 ? "bold" : ""}
-                    >
-                      <TD>
-                        <Typography>
-                          {sentenceTerms.length > 0
-                            ? content
-                                .split(
-                                  new RegExp(
-                                    `(\\b)(?=${sentenceTerms.join(
-                                      "|"
-                                    )})|(?<=${sentenceTerms.join("|")})(\\b)`,
-                                    "g"
-                                  )
+              sentences.map(({ text, sentiment }, idx) => {
+                const bgcolor = sentimentColor(sentiment?.score)
+                const foundSentence = findSentence(text?.content)
+                return (
+                  <Box
+                    key={idx}
+                    component="tr"
+                    color={"#000"}
+                    fontWeight={
+                      sentiment?.score && Math.abs(sentiment.score) > 0 ? "bold" : ""
+                    }
+                  >
+                    <TD>
+                      <Typography>
+                        {sentenceTerms.length > 0
+                          ? text?.content
+                              ?.split(
+                                new RegExp(
+                                  `(\\b)(?=${sentenceTerms.join(
+                                    "|"
+                                  )})|(?<=${sentenceTerms.join("|")})(\\b)`,
+                                  "g"
                                 )
-                                .map((part, idx) => (
-                                  <Typography
-                                    key={idx}
-                                    component="span"
-                                    fontWeight={
-                                      sentenceTerms.includes(part)
-                                        ? "bold"
-                                        : "normal"
-                                    }
-                                  >
-                                    {part}
-                                  </Typography>
-                                ))
-                            : content}
-                        </Typography>
-                      </TD>
-                      <TD bgcolor={bgcolor} sx={tableCellMobileSx}>
-                        {Number(score).toFixed(3)}
-                      </TD>
-                      <TD sx={tableCellMobileSx}>{Number(magnitude).toFixed(3)}</TD>
-                      <TD
-                        bgcolor={aboveAverage(
-                          avgHours,
-                          foundSentence?.numberCreativeHours
-                        )}
-                      >
-                        {foundSentence?.numberCreativeHours}
-                      </TD>
-                      <TD bgcolor={ratingColor(foundSentence?.rating)}>
-                        {foundSentence?.rating && foundSentence.rating > 0 && "+"}
-                        {foundSentence?.rating}
-                      </TD>
-                      <TD>
-                        {foundSentence?.createdAt &&
-                          new Date(foundSentence?.createdAt).toLocaleDateString()}
-                      </TD>
-                    </Box>
-                  )
-                }
-              )
+                              )
+                              .map((part, idx) => (
+                                <Typography
+                                  key={idx}
+                                  component="span"
+                                  fontWeight={
+                                    sentenceTerms.includes(part) ? "bold" : "normal"
+                                  }
+                                >
+                                  {part}
+                                </Typography>
+                              ))
+                          : text?.content}
+                      </Typography>
+                    </TD>
+                    <TD bgcolor={bgcolor} sx={tableCellMobileSx}>
+                      {Number(sentiment?.score).toFixed(3)}
+                    </TD>
+                    <TD sx={tableCellMobileSx}>
+                      {Number(sentiment?.magnitude).toFixed(3)}
+                    </TD>
+                    <TD
+                      bgcolor={aboveAverage(
+                        avgHours,
+                        foundSentence?.numberCreativeHours
+                      )}
+                    >
+                      {foundSentence?.numberCreativeHours}
+                    </TD>
+                    <TD bgcolor={ratingColor(foundSentence?.rating)}>
+                      {foundSentence?.rating && foundSentence.rating > 0 && "+"}
+                      {foundSentence?.rating}
+                    </TD>
+                    <TD>
+                      {foundSentence?.createdAt &&
+                        new Date(foundSentence?.createdAt).toLocaleDateString()}
+                    </TD>
+                  </Box>
+                )
+              })
             )}
           </Box>
         </Box>

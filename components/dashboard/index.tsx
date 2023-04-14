@@ -10,7 +10,7 @@ import {
   Tab,
   Tabs,
 } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { useRouter } from "next/router"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
@@ -21,41 +21,13 @@ import SentencesTable from "./sentencesTable"
 import TokenWordcloud from "./tokenWordcloud"
 import EntityWordcloud from "./entityWordcloud"
 import { DashboardFilterContextProvider } from "./context"
-import type { Entity, Sentence, Token } from "./types"
 import Metrics from "./metrics"
 
 const Dashboard: React.FC = () => {
   const router = useRouter()
-  const [nlpLoading, setLoading] = useState(true)
   const [analizeEntities, setAnalizeEntities] = useState(true)
-  const [entities, setEntities] = useState<Entity[]>()
-  const [tokens, setTokens] = useState<Token[]>()
-  const [sentences, setSentences] = useState<Sentence[]>()
   const [runningAvg, setRunningAvg] = useState<RunningAverage>("30")
   const { data, loading } = useQuery(DASBOARD_QUERY, { variables: { runningAvg } })
-
-  useEffect(() => {
-    ;(async () => {
-      if (!loading) {
-        setLoading(true)
-        const req = await fetch("/api/nlp", {
-          method: "post",
-          body: JSON.stringify({
-            wordcloud: data?.dashboard.dashboard?.dashboardMetrics.overviews,
-            runningAvg,
-          }),
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            setEntities(res.entities)
-            setTokens(res.tokens)
-            setSentences(res.sentences)
-            setLoading(false)
-          })
-        return req
-      }
-    })()
-  }, [runningAvg, loading])
 
   if (loading) return <>...loading</>
   if (data?.dashboard?.dashboard?.dashboardMetrics.avgHours === undefined)
@@ -81,11 +53,11 @@ const Dashboard: React.FC = () => {
   return (
     <Box m={5}>
       <DashboardFilterContextProvider
-        tokens={tokens}
-        entities={entities}
-        sentences={sentences}
-        rawData={rawData.slice(0, Number(runningAvg))}
-        loading={nlpLoading}
+        tokens={data.dashboard.dashboard.tokens}
+        entities={data.dashboard.dashboard.entities}
+        sentences={data.dashboard.dashboard.sentences}
+        rawData={rawData}
+        loading={loading}
         avgHours={Number(avgHours)}
         ratings={{ countNegTwo, countNegOne, countZero, countPlusOne, countPlusTwo }}
       >

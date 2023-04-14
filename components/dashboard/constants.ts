@@ -1,6 +1,6 @@
-import { type Tag } from "./types"
+import { PartOfSpeech } from "@/generated/graphql"
 
-const defaultTags: Tag[] = [
+const defaultTags: PartOfSpeech["tag"][] = [
   "ADJ",
   "VERB",
   "NOUN",
