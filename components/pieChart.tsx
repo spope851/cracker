@@ -1,4 +1,4 @@
-import { Ratings } from "@/types"
+import { Ratings } from "@/generated/graphql"
 import { ResponsivePie } from "@nivo/pie"
 import React from "react"
 

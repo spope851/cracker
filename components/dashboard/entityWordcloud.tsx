@@ -8,7 +8,7 @@ const EntityWordcloud: React.FC = () => {
   const {
     filteredEntities: entities,
     avgHours,
-    findTokens,
+    findTokens: findEntities,
     hideEntity,
     sentenceTerms,
     addSentenceTerm,
@@ -28,7 +28,7 @@ const EntityWordcloud: React.FC = () => {
         {entities
           ? entities.map(({ entity: { name }, count, hide }, idx) => {
               if (hide || !name) return <React.Fragment key={idx}></React.Fragment>
-              const foundTokens = findTokens(name)
+              const foundEntities = findEntities(name)
               return (
                 <Tooltip
                   key={idx}
@@ -54,15 +54,16 @@ const EntityWordcloud: React.FC = () => {
                           filter sentences
                         </Button>
                       </Stack>
-                      {(foundTokens.length > 0
-                        ? foundTokens
+                      {(foundEntities && foundEntities.length > 0
+                        ? foundEntities
                         : [{ overview: "", rating: 0 } as Track]
                       ).map((datum) => (
                         <Tooltip
                           key={datum.id}
                           placement="right"
                           title={
-                            foundTokens.length > 0 && (
+                            foundEntities &&
+                            foundEntities.length > 0 && (
                               <>
                                 <Typography
                                   display="flex"
@@ -128,7 +129,7 @@ const EntityWordcloud: React.FC = () => {
                           }
                         >
                           <Typography color={ratingColor(datum.rating)}>
-                            {foundTokens.length > 0
+                            {foundEntities && foundEntities.length > 0
                               ? new Date(
                                   String(datum.createdAt)
                                 ).toLocaleDateString()

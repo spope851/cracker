@@ -7,6 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const {
     user: { id: user },
   } = await getServerSession(req, res, authOptions)
-  await redis.set(`tokens/${user}`, req.body)
+  await redis.hmset(`dashboardFilters/${user}`, JSON.parse(req.body))
   res.send("cached")
 }

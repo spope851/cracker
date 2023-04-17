@@ -1,5 +1,4 @@
-import { PartOfSpeech, Sentence, Track } from "@/generated/graphql"
-import type { Ratings } from "@/types"
+import { DashboardMetrics, PartOfSpeech, Sentence, Track } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import { createContext, Dispatch, SetStateAction } from "react"
 import type { FilteredEntity, FilteredToken, TagCount } from "../types"
@@ -13,10 +12,10 @@ type DashboardFilterContextProps = {
   minTokenCount: number
   setMinTokenCount: Dispatch<SetStateAction<number>>
   loading: boolean
-  avgHours: number
-  ratings: Ratings
+  avgHours?: DashboardMetrics["avgHours"]
+  setAvgHours: Dispatch<SetStateAction<DashboardMetrics["avgHours"] | undefined>>
   hideToken: (hide: boolean, idx: number) => void
-  findTokens: (content?: string | null) => Track[]
+  findTokens: (content?: string | null) => Track[] | undefined
   handleTokenTagsChange: (event: SelectChangeEvent<string[]>) => void
   filteredEntities?: FilteredEntity[]
   hideEntity: (hide: boolean, idx: number) => void

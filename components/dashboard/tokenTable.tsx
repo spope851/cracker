@@ -61,16 +61,13 @@ const TokenTable: React.FC = () => {
             sx={{ width: "80px" }}
           />
           <FormControl>
-            <InputLabel id="demo-multiple-checkbox-label">part of speech</InputLabel>
+            <InputLabel>part of speech</InputLabel>
             <Select
-              labelId="demo-multiple-checkbox-label"
-              id="demo-multiple-checkbox"
               multiple
-              value={tags}
+              value={tags as string[]}
               onChange={handleTagsChange}
               input={<OutlinedInput label="part of speech" />}
               renderValue={(selected) => selected.join(", ")}
-              // MenuProps={MenuProps}
             >
               <ListSubheader
                 sx={{ display: "flex", justifyContent: "space-between" }}

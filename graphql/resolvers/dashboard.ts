@@ -1,10 +1,10 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]"
 import { type MyContext } from "@/pages/api/graphql"
-import { PgDashboard, PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
+import { PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
-import { DashboardMetrics, DashboardResponse } from "../schemas/dashboard"
+import { DashboardResponse } from "../schemas/dashboard"
 import { Track } from "../schemas/track"
 import language from "@google-cloud/language"
 import redis from "@/utils/redis"
@@ -19,6 +19,7 @@ export class DashboardReslover {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
+
     const rawData: Promise<Track[]> = await pool
       .query(
         `
@@ -58,33 +59,20 @@ export class DashboardReslover {
           ],
         }
       })
-    const dashboardMetrics: Promise<DashboardMetrics> = await pool
-      .query(`CALL get_user_dashboard($1, $2);`, [user, runningAvg])
-      .then((res: PgQueryResponse<PgDashboard>) => {
-        const {
-          _days_of_use,
-          _avg_hours,
-          _count_neg_two,
-          _count_neg_one,
-          _count_zero,
-          _count_plus_one,
-          _count_plus_two,
-          _overviews,
-        } = res.rows[0]
 
-        const dbm: DashboardMetrics = {
-          daysOfUse: Number(_days_of_use),
-          avgHours: Number(_avg_hours),
-          countNegTwo: Number(_count_neg_two),
-          countNegOne: Number(_count_neg_one),
-          countZero: Number(_count_zero),
-          countPlusOne: Number(_count_plus_one),
-          countPlusTwo: Number(_count_plus_two),
-          overviews: _overviews.toLowerCase(),
-        }
-
-        return dbm
-      })
+    const overviews: Promise<string> = await pool
+      .query(
+        `
+        SELECT STRING_AGG(overview, ' ') as _overviews
+        FROM tracker
+        WHERE "user" = $1
+        AND created_at > now() - ($2 || ' day')::interval;
+        `,
+        [user, runningAvg]
+      )
+      .then((res: PgQueryResponse<{ _overviews: string }>) =>
+        res.rows[0]._overviews.toLowerCase()
+      )
       .catch((e: PgQueryError) => {
         console.log(e)
         return {
@@ -101,7 +89,7 @@ export class DashboardReslover {
       const client = new language.LanguageServiceClient()
 
       const document = {
-        content: (await dashboardMetrics).overviews,
+        content: await overviews,
         type: "PLAIN_TEXT" as "PLAIN_TEXT",
       }
 
@@ -126,10 +114,10 @@ export class DashboardReslover {
     }
 
     const cachedNlpData = await redis.get(`nlp/${user}/${runningAvg}`)
+
     if (cachedNlpData)
       return {
         dashboard: {
-          dashboardMetrics: await dashboardMetrics,
           rawData: await rawData,
           sentences: JSON.parse(cachedNlpData).sentences,
           entities: JSON.parse(cachedNlpData).entities,
@@ -140,7 +128,6 @@ export class DashboardReslover {
       return await fetchNlpData().then(async ({ sentences, entities, tokens }) => {
         return {
           dashboard: {
-            dashboardMetrics: await dashboardMetrics,
             rawData: await rawData,
             sentences,
             entities,

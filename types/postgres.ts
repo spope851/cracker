@@ -1,6 +1,7 @@
 import { Track } from "@/graphql/schemas/track"
 
 interface PgQueryResponse<T> {
+  rowCount: number
   rows: T[]
 }
 

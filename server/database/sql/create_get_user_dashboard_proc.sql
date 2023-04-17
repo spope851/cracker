@@ -1,6 +1,6 @@
--- PROCEDURE: public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
+-- PROCEDURE: public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
 
--- DROP PROCEDURE IF EXISTS public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor);
+-- DROP PROCEDURE IF EXISTS public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor);
 
 CREATE OR REPLACE PROCEDURE public.get_user_dashboard(
 	IN user_id integer,
@@ -11,8 +11,8 @@ CREATE OR REPLACE PROCEDURE public.get_user_dashboard(
 	INOUT _count_neg_one refcursor DEFAULT '# of -1 ratings in past year'::refcursor,
 	INOUT _count_zero refcursor DEFAULT '# of 0 ratings in past year'::refcursor,
 	INOUT _count_plus_one refcursor DEFAULT '# of +1 ratings in past year'::refcursor,
-	INOUT _count_plus_two refcursor DEFAULT '# of +2 ratings in past year'::refcursor,
-	INOUT _overviews refcursor DEFAULT 'concatenate all overviews from past 30 days'::refcursor)
+	INOUT _count_plus_two refcursor DEFAULT '# of +2 ratings in past year'::refcursor
+)
 LANGUAGE 'plpgsql'
 AS $BODY$
 declare
@@ -65,15 +65,8 @@ begin
 	and rating = 2
 	and created_at > now() - (running_avg || ' day')::interval
 	into _count_plus_two;
-	
-	-- OVERVIEWS
-	select string_agg(overview, ' ')
-	from tracker
-	where "user" = user_id
-	and created_at > now() - (running_avg || ' day')::interval
-	into _overviews;
 
 end; 
 $BODY$;
-ALTER PROCEDURE public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
+ALTER PROCEDURE public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
     OWNER TO postgres;

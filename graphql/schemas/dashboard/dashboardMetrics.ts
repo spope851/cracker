@@ -1,11 +1,7 @@
 import { Field, Float, Int, ObjectType } from "type-graphql"
 
 @ObjectType()
-class DashboardMetrics {
-  @Field(() => Int)
-  daysOfUse!: number
-  @Field(() => Float)
-  avgHours!: number
+class Ratings {
   @Field(() => Int)
   countNegOne!: number
   @Field(() => Int)
@@ -16,8 +12,16 @@ class DashboardMetrics {
   countPlusOne!: number
   @Field(() => Int)
   countPlusTwo!: number
-  @Field(() => String)
-  overviews!: string
+}
+
+@ObjectType()
+class DashboardMetrics {
+  @Field(() => Int)
+  daysOfUse!: number
+  @Field(() => Float)
+  avgHours!: number
+  @Field(() => Ratings)
+  ratings!: Ratings
 }
 
 export { DashboardMetrics }

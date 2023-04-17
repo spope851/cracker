@@ -18,8 +18,8 @@ const sentimentColor = (
   return "#fff"
 }
 
-const aboveAverage = (avgHours: number, numberCreativeHours?: number) => {
-  if (!numberCreativeHours) return "#fff"
+const aboveAverage = (avgHours?: number, numberCreativeHours?: number) => {
+  if (!numberCreativeHours || !avgHours) return "#fff"
   else return numberCreativeHours > avgHours ? "paleGreen" : "lightCoral"
 }
 

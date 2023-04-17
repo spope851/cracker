@@ -55,14 +55,15 @@ const TokenWordcloud: React.FC = () => {
                           filter sentences
                         </Button>
                       </Stack>
-                      {(foundTokens.length > 0
+                      {(foundTokens && foundTokens.length > 0
                         ? foundTokens
-                        : [{ overview: "", rating: 0 } as Track]
+                        : [{ overview: "", rating: 0, id: "x" } as Track]
                       ).map((datum) => (
                         <Tooltip
                           key={datum.id}
                           placement="right"
                           title={
+                            foundTokens &&
                             foundTokens.length > 0 && (
                               <>
                                 <Typography
@@ -132,7 +133,7 @@ const TokenWordcloud: React.FC = () => {
                           }
                         >
                           <Typography color={ratingColor(datum.rating)}>
-                            {foundTokens.length > 0
+                            {foundTokens && foundTokens.length > 0
                               ? new Date(
                                   String(datum.createdAt)
                                 ).toLocaleDateString()

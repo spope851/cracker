@@ -1,31 +1,17 @@
-import { PartOfSpeech, Sentence, Track } from "@/generated/graphql"
-import type { Ratings } from "@/types"
+import { DashboardMetrics, PartOfSpeech, Sentence } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
-import { Dashboard } from "@/generated/graphql"
+import { RunningAverage } from "@/types"
+import { DASBOARD_QUERY } from "@/graphql/client"
+import { useQuery } from "@apollo/client"
 
 export const DashboardFilterContextProvider: React.FC<{
   children: ReactNode
-  tokens: Dashboard["tokens"]
-  loading: boolean
-  rawData: Track[]
-  avgHours: number
-  ratings: Ratings
-  entities: Dashboard["entities"]
-  sentences: Dashboard["sentences"]
-}> = ({
-  children,
-  tokens,
-  rawData,
-  loading,
-  avgHours,
-  ratings,
-  entities,
-  sentences,
-}) => {
+  runningAvg: RunningAverage
+}> = ({ children, runningAvg }) => {
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
   const [tokenTags, setTokenTags] = useState<PartOfSpeech["tag"][]>(
     defaultTags.slice(0, 4)
@@ -36,6 +22,15 @@ export const DashboardFilterContextProvider: React.FC<{
   const [minEntityCount, setMinEntityCount] = useState(2)
   const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
   const [sentenceTerms, setSentenceTerms] = useState<string[]>([])
+  const [avgHours, setAvgHours] = useState<DashboardMetrics["avgHours"]>()
+
+  const { data, loading } = useQuery(DASBOARD_QUERY, { variables: { runningAvg } })
+
+  const dashboard = data?.dashboard.dashboard
+  const rawData = dashboard?.rawData
+  const tokens = dashboard?.tokens
+  const entities = dashboard?.entities
+  const sentences = dashboard?.sentences
 
   useEffect(() => {
     if (tokens)
@@ -87,17 +82,17 @@ export const DashboardFilterContextProvider: React.FC<{
               .sort((a, b) => (a.count < b.count ? 1 : -1))
           )
         })
-        .finally(
-          async () =>
-            await fetch("/api/cacheTokens", {
-              method: "post",
-              body: JSON.stringify(
-                filteredTokens?.reduce((p, c) => {
-                  return { ...p, [String(c.token.text?.content)]: { hide: c.hide } }
-                }, {})
-              ),
-            })
-        )
+      // .finally(
+      //   async () =>
+      //     await fetch("/api/cacheTokens", {
+      //       method: "post",
+      //       body: JSON.stringify(
+      //         filteredTokens?.reduce((p, c) => {
+      //           return { ...p, [String(c.token.text?.content)]: { hide: c.hide } }
+      //         }, {})
+      //       ),
+      //     })
+      // )
     })()
   }, [tokens, tokenTags, minTokenCount])
 
@@ -113,7 +108,7 @@ export const DashboardFilterContextProvider: React.FC<{
   }
 
   const findTokens = (content?: string | null) =>
-    rawData.filter((datum) =>
+    rawData?.filter((datum) =>
       new RegExp(`(\\b)${content}(\\b)`, "g").test(datum.overview)
     )
 
@@ -182,7 +177,7 @@ export const DashboardFilterContextProvider: React.FC<{
   }
 
   const findSentence = (content?: string | null) =>
-    content ? rawData.find((datum) => datum.overview.search(content) > -1) : null
+    content ? rawData?.find((datum) => datum.overview.search(content) > -1) : null
 
   return (
     <DashboardFilterContext.Provider
@@ -196,7 +191,7 @@ export const DashboardFilterContextProvider: React.FC<{
         setMinTokenCount,
         loading,
         avgHours,
-        ratings,
+        setAvgHours,
         hideToken,
         findTokens,
         handleTokenTagsChange,

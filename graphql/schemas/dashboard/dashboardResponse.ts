@@ -1,7 +1,6 @@
 import { PsqlError } from "@/graphql/error"
 import { Field, ObjectType } from "type-graphql"
 import { Track } from "../track"
-import { DashboardMetrics } from "./dashboardMetrics"
 import { Entity, Sentence, Token } from "./nlp"
 import { google } from "@google-cloud/language/build/protos/protos"
 
@@ -9,9 +8,6 @@ type IToken = google.cloud.language.v1.IToken
 
 @ObjectType()
 class Dashboard {
-  @Field(() => DashboardMetrics!)
-  dashboardMetrics!: DashboardMetrics
-
   @Field(() => [Track])
   rawData!: Track[]
 
