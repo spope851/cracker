@@ -10,18 +10,44 @@ import { useQuery } from "@apollo/client"
 
 export const DashboardFilterContextProvider: React.FC<{
   children: ReactNode
-  runningAvg: RunningAverage
-}> = ({ children, runningAvg }) => {
+  runningAvg: RunningAverage | null
+  analyzeEntities: string | null
+  tokenTags: string | null
+  minTokenCount: string | null
+  minEntityCount: string | null
+  sentenceTerms: string | null
+}> = ({
+  children,
+  runningAvg: cachedRunningAvg,
+  analyzeEntities: cachedAnalyzeEntities,
+  tokenTags: cachedTokenTags,
+  minTokenCount: cachedMinTokenCount,
+  minEntityCount: cachedMinEntityCount,
+  sentenceTerms: cachedSentenceTerms,
+}) => {
+  const [analyzeEntities, setAnalyzeEntities] = useState<boolean>(
+    JSON.parse(cachedAnalyzeEntities || "true")
+  )
+  const [runningAvg, setRunningAvg] = useState<RunningAverage>(
+    cachedRunningAvg || "30"
+  )
+  const [daysOfUse, setDaysOfUse] = useState<DashboardMetrics["daysOfUse"]>()
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
   const [tokenTags, setTokenTags] = useState<PartOfSpeech["tag"][]>(
-    defaultTags.slice(0, 4)
+    (cachedTokenTags && JSON.parse(cachedTokenTags)) || defaultTags.slice(0, 4)
   )
   const [tokenTagCounts, setTokenTagCounts] = useState<TagCount[]>()
-  const [minTokenCount, setMinTokenCount] = useState(2)
+  const [minTokenCount, setMinTokenCount] = useState(
+    Number(cachedMinTokenCount) || 2
+  )
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
-  const [minEntityCount, setMinEntityCount] = useState(2)
+  const [minEntityCount, setMinEntityCount] = useState(
+    Number(cachedMinEntityCount) || 2
+  )
   const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
-  const [sentenceTerms, setSentenceTerms] = useState<string[]>([])
+  const [sentenceTerms, setSentenceTerms] = useState<string[]>(
+    (cachedSentenceTerms && JSON.parse(cachedSentenceTerms)) || []
+  )
   const [avgHours, setAvgHours] = useState<DashboardMetrics["avgHours"]>()
 
   const { data, loading } = useQuery(DASBOARD_QUERY, { variables: { runningAvg } })
@@ -31,6 +57,28 @@ export const DashboardFilterContextProvider: React.FC<{
   const tokens = dashboard?.tokens
   const entities = dashboard?.entities
   const sentences = dashboard?.sentences
+
+  useEffect(() => {
+    ;(async () =>
+      await fetch("/api/cacheDashboardFilters", {
+        method: "post",
+        body: JSON.stringify({
+          runningAvg,
+          analyzeEntities,
+          tokenTags: JSON.stringify(tokenTags),
+          minTokenCount,
+          minEntityCount,
+          sentenceTerms: JSON.stringify(sentenceTerms),
+        }),
+      }))()
+  }, [
+    runningAvg,
+    analyzeEntities,
+    tokenTags,
+    minTokenCount,
+    minEntityCount,
+    sentenceTerms,
+  ])
 
   useEffect(() => {
     if (tokens)
@@ -45,55 +93,32 @@ export const DashboardFilterContextProvider: React.FC<{
   }, [tokens])
 
   useEffect(() => {
-    ;(async () => {
-      await fetch("/api/getCachedTokens", { method: "get" })
-        .then((res) => res.json())
-        // TODO: implement token caching
-        .then((res) => {
-          setFilteredTokens(
-            tokens
-              // filter by tag
-              ?.filter(
-                (i) =>
-                  i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
-              )
-              // get counts
-              .reduce((p: any[], c) => {
-                const r = p
-                const exists = p.find(
-                  (i) =>
-                    i.token.text.content.toLowerCase() ===
-                    c.text?.content?.toLowerCase()
-                )
-                if (!exists)
-                  r.push({
-                    token: c,
-                    count: 1,
-                    hide:
-                      // filteredTokens?.find((t) => t.token === c)?.hide ||
-                      // res[c.text.content].hide ||
-                      false,
-                  })
-                else r[p.indexOf(exists)].count += 1
-                return r
-              }, [])
-              // filter by minCount
-              .filter((i) => i.count >= minTokenCount)
-              .sort((a, b) => (a.count < b.count ? 1 : -1))
+    setFilteredTokens(
+      tokens
+        // filter by tag
+        ?.filter(
+          (i) => i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
+        )
+        // get counts
+        .reduce((p: any[], c) => {
+          const r = p
+          const exists = p.find(
+            (i) =>
+              i.token.text.content.toLowerCase() === c.text?.content?.toLowerCase()
           )
-        })
-      // .finally(
-      //   async () =>
-      //     await fetch("/api/cacheTokens", {
-      //       method: "post",
-      //       body: JSON.stringify(
-      //         filteredTokens?.reduce((p, c) => {
-      //           return { ...p, [String(c.token.text?.content)]: { hide: c.hide } }
-      //         }, {})
-      //       ),
-      //     })
-      // )
-    })()
+          if (!exists)
+            r.push({
+              token: c,
+              count: 1,
+              hide: false,
+            })
+          else r[p.indexOf(exists)].count += 1
+          return r
+        }, [])
+        // filter by minCount
+        .filter((i) => i.count >= minTokenCount)
+        .sort((a, b) => (a.count < b.count ? 1 : -1))
+    )
   }, [tokens, tokenTags, minTokenCount])
 
   const hideToken = (hide: boolean, idx: number) => {
@@ -182,6 +207,12 @@ export const DashboardFilterContextProvider: React.FC<{
   return (
     <DashboardFilterContext.Provider
       value={{
+        runningAvg,
+        setRunningAvg,
+        analyzeEntities,
+        setAnalyzeEntities,
+        daysOfUse,
+        setDaysOfUse,
         filteredTokens,
         setFilteredTokens,
         tokenTags,

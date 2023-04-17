@@ -2,8 +2,15 @@ import { DashboardMetrics, PartOfSpeech, Sentence, Track } from "@/generated/gra
 import { SelectChangeEvent } from "@mui/material"
 import { createContext, Dispatch, SetStateAction } from "react"
 import type { FilteredEntity, FilteredToken, TagCount } from "../types"
+import { RunningAverage } from "@/types"
 
 type DashboardFilterContextProps = {
+  runningAvg: RunningAverage
+  setRunningAvg: Dispatch<SetStateAction<RunningAverage>>
+  analyzeEntities: boolean
+  setAnalyzeEntities: Dispatch<SetStateAction<boolean>>
+  daysOfUse?: DashboardMetrics["daysOfUse"]
+  setDaysOfUse: Dispatch<SetStateAction<DashboardMetrics["daysOfUse"] | undefined>>
   filteredTokens?: FilteredToken[]
   setFilteredTokens: Dispatch<SetStateAction<FilteredToken[] | undefined>>
   tokenTags: PartOfSpeech["tag"][]

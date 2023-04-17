@@ -1,24 +1,24 @@
 import { Grid, Typography } from "@mui/material"
-import React, { Dispatch, SetStateAction, useEffect } from "react"
+import React, { useContext, useEffect } from "react"
 import PieChart from "../pieChart"
 import { DASBOARD_METRICS_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
-import { RunningAverage } from "@/types"
-import { DashboardMetrics } from "@/generated/graphql"
+import { DashboardFilterContext } from "./context"
 
-const Metrics: React.FC<{
-  runningAvg: RunningAverage
-  setDaysOfUse: Dispatch<SetStateAction<DashboardMetrics["daysOfUse"] | undefined>>
-}> = ({ runningAvg, setDaysOfUse }) => {
+const Metrics: React.FC = () => {
+  const { runningAvg, setDaysOfUse, setAvgHours } = useContext(
+    DashboardFilterContext
+  )
   const { data, loading } = useQuery(DASBOARD_METRICS_QUERY, {
     variables: { runningAvg },
   })
 
-  useEffect(() => {
-    setDaysOfUse(data?.dashboardMetrics.dashboardMetrics?.daysOfUse)
-  }, [data, loading])
-
   const dashboardMetrics = data?.dashboardMetrics.dashboardMetrics
+
+  useEffect(() => {
+    setDaysOfUse(dashboardMetrics?.daysOfUse)
+    setAvgHours(dashboardMetrics?.avgHours)
+  }, [data])
 
   return (
     <Grid container item md={4} mb={{ md: 0, sm: 5, xs: 5 }}>

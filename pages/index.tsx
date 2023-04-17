@@ -9,6 +9,7 @@ import { RunningAverage } from "@/types"
 import { NextApiRequest, NextApiResponse } from "next"
 import { getServerSession } from "next-auth"
 import { authOptions } from "./api/auth/[...nextauth]"
+import { DashboardFilterContextProvider } from "@/components/dashboard/context"
 
 export async function getServerSideProps({
   req,
@@ -20,13 +21,17 @@ export async function getServerSideProps({
   const {
     user: { id: user },
   } = await getServerSession(req, res, authOptions)
-  const filters = await redis.hgetall(`dashboardFilters/${user}`)
-  return { props: filters }
+  const dashboardFilters = await redis.hgetall(`dashboardFilters/${user}`)
+  return { props: dashboardFilters }
 }
 
 export default function Home(dashboardFilters: {
-  runningAvg: RunningAverage
-  analyzeEntities: string
+  runningAvg: RunningAverage | null
+  analyzeEntities: string | null
+  tokenTags: string | null
+  minTokenCount: string | null
+  minEntityCount: string | null
+  sentenceTerms: string | null
 }) {
   const session = useSession()
 
@@ -43,7 +48,9 @@ export default function Home(dashboardFilters: {
         m="auto"
       >
         {session.status === "authenticated" ? (
-          <Dashboard {...dashboardFilters} />
+          <DashboardFilterContextProvider {...dashboardFilters}>
+            <Dashboard />
+          </DashboardFilterContextProvider>
         ) : (
           <Unauthenticated />
         )}
