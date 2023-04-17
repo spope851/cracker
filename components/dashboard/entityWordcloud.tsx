@@ -56,7 +56,7 @@ const EntityWordcloud: React.FC = () => {
                       </Stack>
                       {(foundEntities && foundEntities.length > 0
                         ? foundEntities
-                        : [{ overview: "", rating: 0 } as Track]
+                        : [{ overview: "", rating: 0, id: "x" } as Track]
                       ).map((datum) => (
                         <Tooltip
                           key={datum.id}

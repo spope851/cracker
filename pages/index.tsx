@@ -32,6 +32,8 @@ export default function Home(dashboardFilters: {
   minTokenCount: string | null
   minEntityCount: string | null
   sentenceTerms: string | null
+  hiddenTokens: string | null
+  hiddenEntities: string | null
 }) {
   const session = useSession()
 

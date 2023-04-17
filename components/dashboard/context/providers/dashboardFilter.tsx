@@ -16,6 +16,8 @@ export const DashboardFilterContextProvider: React.FC<{
   minTokenCount: string | null
   minEntityCount: string | null
   sentenceTerms: string | null
+  hiddenTokens: string | null
+  hiddenEntities: string | null
 }> = ({
   children,
   runningAvg: cachedRunningAvg,
@@ -24,6 +26,8 @@ export const DashboardFilterContextProvider: React.FC<{
   minTokenCount: cachedMinTokenCount,
   minEntityCount: cachedMinEntityCount,
   sentenceTerms: cachedSentenceTerms,
+  hiddenTokens: cachedHiddenTokens,
+  hiddenEntities: cachedHiddenEntities,
 }) => {
   const [analyzeEntities, setAnalyzeEntities] = useState<boolean>(
     JSON.parse(cachedAnalyzeEntities || "true")
@@ -33,6 +37,9 @@ export const DashboardFilterContextProvider: React.FC<{
   )
   const [daysOfUse, setDaysOfUse] = useState<DashboardMetrics["daysOfUse"]>()
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
+  const [hiddenTokens, setHiddenTokens] = useState<string[]>(
+    (cachedHiddenTokens && JSON.parse(cachedHiddenTokens)) || []
+  )
   const [tokenTags, setTokenTags] = useState<PartOfSpeech["tag"][]>(
     (cachedTokenTags && JSON.parse(cachedTokenTags)) || defaultTags.slice(0, 4)
   )
@@ -41,6 +48,9 @@ export const DashboardFilterContextProvider: React.FC<{
     Number(cachedMinTokenCount) || 2
   )
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
+  const [hiddenEntities, setHiddenEntities] = useState<string[]>(
+    (cachedHiddenEntities && JSON.parse(cachedHiddenEntities)) || []
+  )
   const [minEntityCount, setMinEntityCount] = useState(
     Number(cachedMinEntityCount) || 2
   )
@@ -69,6 +79,8 @@ export const DashboardFilterContextProvider: React.FC<{
           minTokenCount,
           minEntityCount,
           sentenceTerms: JSON.stringify(sentenceTerms),
+          hiddenTokens: JSON.stringify(hiddenTokens),
+          hiddenEntities: JSON.stringify(hiddenEntities),
         }),
       }))()
   }, [
@@ -78,6 +90,8 @@ export const DashboardFilterContextProvider: React.FC<{
     minTokenCount,
     minEntityCount,
     sentenceTerms,
+    hiddenTokens,
+    hiddenEntities,
   ])
 
   useEffect(() => {
@@ -86,7 +100,7 @@ export const DashboardFilterContextProvider: React.FC<{
         defaultTags.map((tag) => {
           return {
             tag,
-            count: tokens?.filter((t) => t.partOfSpeech?.tag === tag).length,
+            count: tokens.filter((t) => t.partOfSpeech?.tag === tag).length,
           }
         })
       )
@@ -100,17 +114,17 @@ export const DashboardFilterContextProvider: React.FC<{
           (i) => i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
         )
         // get counts
-        .reduce((p: any[], c) => {
+        .reduce((p: FilteredToken[], c) => {
           const r = p
           const exists = p.find(
             (i) =>
-              i.token.text.content.toLowerCase() === c.text?.content?.toLowerCase()
+              i.token.text?.content?.toLowerCase() === c.text?.content?.toLowerCase()
           )
           if (!exists)
             r.push({
               token: c,
               count: 1,
-              hide: false,
+              hide: hiddenTokens.includes(c.text?.content || ""),
             })
           else r[p.indexOf(exists)].count += 1
           return r
@@ -130,6 +144,24 @@ export const DashboardFilterContextProvider: React.FC<{
       }
       return newTokens
     })
+
+    if (hide)
+      setHiddenTokens((oldTokens) => {
+        let newTokens = [...oldTokens]
+        filteredTokens &&
+          newTokens.push(filteredTokens[idx].token.text?.content || "")
+        return newTokens
+      })
+    else
+      setHiddenTokens((oldTokens) => {
+        let newTokens = [...oldTokens]
+        if (filteredTokens) {
+          newTokens = newTokens.filter(
+            (token) => token !== filteredTokens[idx].token.text?.content
+          )
+        }
+        return newTokens
+      })
   }
 
   const findTokens = (content?: string | null) =>
@@ -154,7 +186,7 @@ export const DashboardFilterContextProvider: React.FC<{
           return {
             entity,
             count: entity.mentions?.length || 0,
-            hide: false,
+            hide: hiddenEntities.includes(entity.name || ""),
           }
         })
         // filter by minCount
@@ -173,14 +205,31 @@ export const DashboardFilterContextProvider: React.FC<{
   }, [entities, minEntityCount])
 
   const hideEntity = (hide: boolean, idx: number) => {
-    setFilteredEntities((oldTokens) => {
-      let newTokens
-      if (oldTokens) {
-        newTokens = [...oldTokens]
-        newTokens[idx].hide = hide
+    setFilteredEntities((oldEntities) => {
+      let newEntities
+      if (oldEntities) {
+        newEntities = [...oldEntities]
+        newEntities[idx].hide = hide
       }
-      return newTokens
+      return newEntities
     })
+
+    if (hide)
+      setHiddenEntities((oldEntities) => {
+        let newEntities = [...oldEntities]
+        filteredEntities && newEntities.push(filteredEntities[idx].entity.name || "")
+        return newEntities
+      })
+    else
+      setHiddenEntities((oldEntities) => {
+        let newEntities = [...oldEntities]
+        if (filteredEntities) {
+          newEntities = newEntities.filter(
+            (entity) => entity !== filteredEntities[idx].entity.name
+          )
+        }
+        return newEntities
+      })
   }
 
   useEffect(() => {
