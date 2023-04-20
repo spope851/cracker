@@ -47,6 +47,8 @@ export default function Home(dashboardFilters: {
 }) {
   const session = useSession()
 
+  console.log(process.env.VERCEL_URL)
+
   return (
     <>
       <Head>
