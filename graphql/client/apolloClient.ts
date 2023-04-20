@@ -6,7 +6,7 @@ const cache = new InMemoryCache()
 const client = new ApolloClient({
   // Provide required constructor fields
   cache: cache,
-  uri: `/api/graphql`,
+  uri: `${__prod__ ? process.env.VERCEL_URL : ""}/api/graphql`,
 
   // Provide some optional constructor fields
   name: "react-web-client",
