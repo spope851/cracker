@@ -21,11 +21,11 @@ type DashboardFilterContextProps = {
   loading: boolean
   avgHours?: DashboardMetrics["avgHours"]
   setAvgHours: Dispatch<SetStateAction<DashboardMetrics["avgHours"] | undefined>>
-  hideToken: (hide: boolean, idx: number) => void
+  hideToken: (hide: boolean, token: string) => void
   findTokens: (content?: string | null) => Track[] | undefined
   handleTokenTagsChange: (event: SelectChangeEvent<string[]>) => void
   filteredEntities?: FilteredEntity[]
-  hideEntity: (hide: boolean, idx: number) => void
+  hideEntity: (hide: boolean, entity: string) => void
   minEntityCount: number
   setMinEntityCount: Dispatch<SetStateAction<number>>
   filteredSentences?: Sentence[]

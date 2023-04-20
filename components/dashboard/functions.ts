@@ -1,8 +1,8 @@
 const ratingColor = (
   score?: number
 ): "red" | "lime" | "paleGreen" | "yellow" | "lightCoral" | "#fff" => {
-  if (!score) return "#fff"
-  if (score === 2) return "lime"
+  if (score === undefined) return "#fff"
+  else if (score === 2) return "lime"
   else if (score === 1) return "paleGreen"
   else if (score === 0) return "yellow"
   else if (score === -1) return "lightCoral"
@@ -13,13 +13,13 @@ const sentimentColor = (
   score?: number | null
 ): "lightCoral" | "paleGreen" | "#fff" => {
   if (!score) return "#fff"
-  if (score > 0) return "paleGreen"
-  if (score < 0) return "lightCoral"
-  return "#fff"
+  else if (score > 0) return "paleGreen"
+  else return "lightCoral"
 }
 
 const aboveAverage = (avgHours?: number, numberCreativeHours?: number) => {
-  if (!numberCreativeHours || !avgHours) return "#fff"
+  if (numberCreativeHours === undefined) return "#fff"
+  else if (avgHours === undefined) return "#fff"
   else return numberCreativeHours > avgHours ? "paleGreen" : "lightCoral"
 }
 

@@ -75,8 +75,10 @@ const EntityTable: React.FC = () => {
                         sx={{ p: 0, mr: 1 }}
                         checked={!hide}
                         onChange={(e) => {
-                          if (e.target.checked) hideEntity(false, idx)
-                          else hideEntity(true, idx)
+                          if (entity.name) {
+                            if (e.target.checked) hideEntity(false, entity.name)
+                            else hideEntity(true, entity.name)
+                          }
                         }}
                       />
                       {entity.name}

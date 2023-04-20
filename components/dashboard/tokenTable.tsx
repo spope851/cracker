@@ -124,8 +124,11 @@ const TokenTable: React.FC = () => {
                         sx={{ p: 0, mr: 1 }}
                         checked={!hide}
                         onChange={(e) => {
-                          if (e.target.checked) hideToken(false, idx)
-                          else hideToken(true, idx)
+                          if (token.text?.content) {
+                            if (e.target.checked)
+                              hideToken(false, token.text.content)
+                            else hideToken(true, token.text.content)
+                          }
                         }}
                       />
                       {token.text?.content}

@@ -15,12 +15,11 @@ import EntityTable from "./entityTable"
 import { RunningAverage } from "@/types"
 import TokenTable from "./tokenTable"
 import SentencesTable from "./sentencesTable"
-import TokenWordcloud from "./tokenWordcloud"
-import EntityWordcloud from "./entityWordcloud"
 import { DashboardFilterContext } from "./context"
 import Metrics from "./metrics"
 import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
+import Wordcloud from "./wordcloud"
 
 const Dashboard: React.FC = () => {
   const router = useRouter()
@@ -31,6 +30,8 @@ const Dashboard: React.FC = () => {
     analyzeEntities,
     setAnalyzeEntities,
     daysOfUse,
+    filteredEntities: entities,
+    filteredTokens: tokens,
   } = useContext(DashboardFilterContext)
 
   if (!lastPost)
@@ -74,7 +75,23 @@ const Dashboard: React.FC = () => {
       </Grid>
       <Grid container columnSpacing={5}>
         <SentencesTable />
-        {analyzeEntities ? <EntityWordcloud /> : <TokenWordcloud />}
+        <Wordcloud
+          words={
+            analyzeEntities
+              ? entities &&
+                entities.map(({ entity, count, hide }, idx) => {
+                  return hide
+                    ? { text: "", value: 0, key: idx }
+                    : { text: entity.name || "", value: count, key: idx }
+                })
+              : tokens &&
+                tokens.map(({ token, count, hide }, idx) => {
+                  return hide
+                    ? { text: "", value: 0, key: idx }
+                    : { text: token.text?.content || "", value: count, key: idx }
+                })
+          }
+        />
       </Grid>
     </Box>
   )

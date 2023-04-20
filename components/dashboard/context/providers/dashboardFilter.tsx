@@ -135,12 +135,16 @@ export const DashboardFilterContextProvider: React.FC<{
     )
   }, [tokens, tokenTags, minTokenCount])
 
-  const hideToken = (hide: boolean, idx: number) => {
+  const hideToken = (hide: boolean, token: string) => {
     setFilteredTokens((oldTokens) => {
       let newTokens
       if (oldTokens) {
-        newTokens = [...oldTokens]
-        newTokens[idx].hide = hide
+        newTokens = [...oldTokens].map((oldToken) => {
+          return {
+            ...oldToken,
+            hide: oldToken.token.text?.content === token ? hide : oldToken.hide,
+          }
+        })
       }
       return newTokens
     })
@@ -148,17 +152,14 @@ export const DashboardFilterContextProvider: React.FC<{
     if (hide)
       setHiddenTokens((oldTokens) => {
         let newTokens = [...oldTokens]
-        filteredTokens &&
-          newTokens.push(filteredTokens[idx].token.text?.content || "")
+        filteredTokens && newTokens.push(token)
         return newTokens
       })
     else
       setHiddenTokens((oldTokens) => {
         let newTokens = [...oldTokens]
         if (filteredTokens) {
-          newTokens = newTokens.filter(
-            (token) => token !== filteredTokens[idx].token.text?.content
-          )
+          newTokens = newTokens.filter((newToken) => newToken !== token)
         }
         return newTokens
       })
@@ -204,12 +205,16 @@ export const DashboardFilterContextProvider: React.FC<{
     )
   }, [entities, minEntityCount])
 
-  const hideEntity = (hide: boolean, idx: number) => {
+  const hideEntity = (hide: boolean, entity: string) => {
     setFilteredEntities((oldEntities) => {
       let newEntities
       if (oldEntities) {
-        newEntities = [...oldEntities]
-        newEntities[idx].hide = hide
+        newEntities = [...oldEntities].map((oldEntity) => {
+          return {
+            ...oldEntity,
+            hide: oldEntity.entity.name === entity ? hide : oldEntity.hide,
+          }
+        })
       }
       return newEntities
     })
@@ -217,16 +222,14 @@ export const DashboardFilterContextProvider: React.FC<{
     if (hide)
       setHiddenEntities((oldEntities) => {
         let newEntities = [...oldEntities]
-        filteredEntities && newEntities.push(filteredEntities[idx].entity.name || "")
+        newEntities.push(entity)
         return newEntities
       })
     else
       setHiddenEntities((oldEntities) => {
         let newEntities = [...oldEntities]
         if (filteredEntities) {
-          newEntities = newEntities.filter(
-            (entity) => entity !== filteredEntities[idx].entity.name
-          )
+          newEntities = newEntities.filter((newEntity) => newEntity !== entity)
         }
         return newEntities
       })
