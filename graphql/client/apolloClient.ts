@@ -1,4 +1,4 @@
-import { __prod__ } from "@/utils/env"
+// import { __prod__ } from "@/utils/env"
 import { ApolloClient, InMemoryCache } from "@apollo/client"
 
 const cache = new InMemoryCache()
@@ -6,7 +6,7 @@ const cache = new InMemoryCache()
 const client = new ApolloClient({
   // Provide required constructor fields
   cache: cache,
-  uri: `${__prod__ ? process.env.VERCEL_URL : ""}/api/graphql`,
+  uri: `/api/graphql`,
 
   // Provide some optional constructor fields
   name: "react-web-client",
