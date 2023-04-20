@@ -7,7 +7,7 @@ import { Unauthenticated } from "@/components/forms"
 import redis from "@/utils/redis"
 import { RunningAverage } from "@/types"
 import { NextApiRequest, NextApiResponse } from "next"
-import { getServerSession } from "next-auth"
+import { getServerSession } from "next-auth/next"
 import { authOptions } from "./api/auth/[...nextauth]"
 import { DashboardFilterContextProvider } from "@/components/dashboard/context"
 
@@ -18,10 +18,20 @@ export async function getServerSideProps({
   req: NextApiRequest
   res: NextApiResponse
 }) {
-  const {
-    user: { id: user },
-  } = await getServerSession(req, res, authOptions)
-  const dashboardFilters = await redis.hgetall(`dashboardFilters/${user}`)
+  const session = await getServerSession(req, res, authOptions)
+  let dashboardFilters: Record<string, string | null> = {
+    runningAvg: null,
+    analyzeEntities: null,
+    tokenTags: null,
+    minTokenCount: null,
+    minEntityCount: null,
+    sentenceTerms: null,
+    hiddenTokens: null,
+    hiddenEntities: null,
+  }
+
+  if (session?.status === "authenticated")
+    dashboardFilters = await redis.hgetall(`dashboardFilters/${session.user.id}`)
   return { props: dashboardFilters }
 }
 

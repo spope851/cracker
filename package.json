@@ -11,7 +11,7 @@
     "watch": "graphql-codegen -w",
     "codegen": "graphql-codegen --config codegen.ts",
     "start:server": "cd server && docker-compose up -d",
-    "new:db": "cd server && rm -rf postgres-data && docker-compose build && docker-compose up",
+    "new:db": "cd server && rm -rf postgres-data && docker-compose build && docker-compose -p cracker up",
     "it:db": "docker exec -it pg sh",
     "it:cache": "docker exec -it redis redis-cli",
     "inspect:db": "docker inspect $(docker ps -aqf 'name=^pg$') | grep IPAddress"
