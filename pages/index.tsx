@@ -48,6 +48,7 @@ export default function Home(dashboardFilters: {
   const session = useSession()
 
   console.log(process.env.VERCEL_URL)
+  console.log(process.env.NEXTAUTH_SECRET)
 
   return (
     <>
