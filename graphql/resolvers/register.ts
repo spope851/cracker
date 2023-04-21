@@ -12,7 +12,9 @@ class RegistrationResolver {
     @Arg("user", () => UserInput) user: UserInput
   ): Promise<RegisterResponse> {
     const hashedPassword = await argon2.hash(user.password)
-    const res: Promise<RegisterResponse> = await pool
+    const client = await pool.connect()
+    let clientError: PgQueryError
+    const res: Promise<RegisterResponse> = await client
       .query(
         `INSERT INTO "user" (email, username, password)
        VALUES (
@@ -34,6 +36,7 @@ class RegistrationResolver {
         }
       })
       .catch((e: PgQueryError) => {
+        clientError = e
         if (e.code === "23505") {
           const details = postgresErrorDetails(e.detail)
           return {
@@ -54,6 +57,14 @@ class RegistrationResolver {
               },
             ],
           }
+        }
+      })
+      .finally(() => {
+        if (clientError) {
+          client.release(clientError)
+          client.off("error", (err: PgQueryError) => {
+            console.log(err)
+          })
         }
       })
     return res
