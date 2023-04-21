@@ -5,7 +5,7 @@ import { Box } from "@mui/material"
 import Dashboard from "@/components/dashboard"
 import { Unauthenticated } from "@/components/forms"
 import redis from "@/utils/redis"
-import { RunningAverage } from "@/types"
+import { DashboardFilters } from "@/types"
 import { NextApiRequest, NextApiResponse } from "next"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "./api/auth/[...nextauth]"
@@ -18,32 +18,17 @@ export async function getServerSideProps({
   req: NextApiRequest
   res: NextApiResponse
 }) {
+  let dashboardFilters = {}
   const session = await getServerSession(req, res, authOptions)
-  let dashboardFilters: Record<string, string | null> = {
-    runningAvg: null,
-    analyzeEntities: null,
-    tokenTags: null,
-    minTokenCount: null,
-    minEntityCount: null,
-    sentenceTerms: null,
-    hiddenTokens: null,
-    hiddenEntities: null,
-  }
-
-  if (session?.status === "authenticated")
+  if (session)
     dashboardFilters = await redis.hgetall(`dashboardFilters/${session.user.id}`)
-  return { props: dashboardFilters }
+  return { props: { dashboardFilters } }
 }
 
-export default function Home(dashboardFilters: {
-  runningAvg: RunningAverage | null
-  analyzeEntities: string | null
-  tokenTags: string | null
-  minTokenCount: string | null
-  minEntityCount: string | null
-  sentenceTerms: string | null
-  hiddenTokens: string | null
-  hiddenEntities: string | null
+export default function Home({
+  dashboardFilters,
+}: {
+  dashboardFilters: DashboardFilters
 }) {
   const session = useSession()
 

@@ -10,4 +10,15 @@ interface PgDashboardMetrics {
   _count_plus_two: number
 }
 
-export type { PgDashboardMetrics, RunningAverage }
+type DashboardFilters = {
+  runningAvg: RunningAverage | null
+  analyzeEntities: string | null
+  tokenTags: string | null
+  minTokenCount: string | null
+  minEntityCount: string | null
+  sentenceTerms: string | null
+  hiddenTokens: string | null
+  hiddenEntities: string | null
+}
+
+export type { PgDashboardMetrics, RunningAverage, DashboardFilters }
