@@ -42,3 +42,5 @@ public/static/svelte-apps
 **/postgres-data/**
 **/cache/**
 **/pgadmin_data/**
+
+.env
