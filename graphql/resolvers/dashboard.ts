@@ -86,7 +86,14 @@ export class DashboardReslover {
       })
 
     const fetchNlpData = async () => {
-      const client = new language.LanguageServiceClient()
+      let credentials = null
+
+      if (process.env.GCP_CRED)
+        credentials = JSON.parse(
+          Buffer.from(process.env.GCP_CRED, "base64").toString()
+        )
+
+      const client = new language.LanguageServiceClient({ credentials })
 
       const document = {
         content: await overviews,
