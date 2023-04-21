@@ -6,34 +6,34 @@ import Dashboard from "@/components/dashboard"
 import { Unauthenticated } from "@/components/forms"
 import { RunningAverage } from "@/types"
 import { DashboardFilterContextProvider } from "@/components/dashboard/context"
-// import redis from "@/utils/redis"
-// import { NextApiRequest, NextApiResponse } from "next"
-// import { getServerSession } from "next-auth/next"
-// import { authOptions } from "./api/auth/[...nextauth]"
+import redis from "../utils/redis"
+import { NextApiRequest, NextApiResponse } from "next"
+import { authOptions } from "./api/auth/[...nextauth]"
+import { getServerSession } from "next-auth"
 
-// export async function getServerSideProps({
-//   req,
-//   res,
-// }: {
-//   req: NextApiRequest
-//   res: NextApiResponse
-// }) {
-//   const session = await getServerSession(req, res, authOptions)
-//   let dashboardFilters: Record<string, string | null> = {
-//     runningAvg: null,
-//     analyzeEntities: null,
-//     tokenTags: null,
-//     minTokenCount: null,
-//     minEntityCount: null,
-//     sentenceTerms: null,
-//     hiddenTokens: null,
-//     hiddenEntities: null,
-//   }
+export async function getServerSideProps({
+  req,
+  res,
+}: {
+  req: NextApiRequest
+  res: NextApiResponse
+}) {
+  const session = await getServerSession(req, res, authOptions)
+  let dashboardFilters: Record<string, string | null> = {
+    runningAvg: null,
+    analyzeEntities: null,
+    tokenTags: null,
+    minTokenCount: null,
+    minEntityCount: null,
+    sentenceTerms: null,
+    hiddenTokens: null,
+    hiddenEntities: null,
+  }
 
-//   if (session?.status === "authenticated")
-//     dashboardFilters = await redis.hgetall(`dashboardFilters/${session.user.id}`)
-//   return { props: dashboardFilters }
-// }
+  if (session)
+    dashboardFilters = await redis.hgetall(`dashboardFilters/${session.user.id}`)
+  return { props: dashboardFilters }
+}
 
 export default function Home(dashboardFilters: {
   runningAvg: RunningAverage | null
@@ -46,9 +46,6 @@ export default function Home(dashboardFilters: {
   hiddenEntities: string | null
 }) {
   const session = useSession()
-
-  console.log(process.env.VERCEL_URL)
-  console.log(process.env.NEXTAUTH_SECRET)
 
   return (
     <>
