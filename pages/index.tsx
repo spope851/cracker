@@ -30,8 +30,8 @@ export async function getServerSideProps({
     hiddenEntities: null,
   }
 
-  const hello = await redis.get("hello")
-  console.log(hello)
+  // const hello = await redis.get("hello")
+  console.log("hello")
 
   // if (session)
   // dashboardFilters = await redis.hgetall(`dashboardFilters/${session.user.id}`)
