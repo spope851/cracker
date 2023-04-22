@@ -21,12 +21,15 @@ import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
 import Wordcloud from "./wordcloud"
 
-const calcMaxWidth = "calc(100vw - 40px)"
+const CALC_MAX_WIDTH = "calc(100vw - 40px)"
 
 const maxWidth = {
-  sm: calcMaxWidth,
-  xs: calcMaxWidth,
+  sm: CALC_MAX_WIDTH,
+  xs: CALC_MAX_WIDTH,
 }
+
+const RUNNING_AVG_WIDTH = 150
+const RUNNING_AVG_MR = 5
 
 const Dashboard: React.FC = () => {
   const router = useRouter()
@@ -50,8 +53,17 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box m={5}>
-      <Stack flexDirection="row" mb={1}>
-        <FormControl sx={{ width: 150, mr: 5 }}>
+      <Stack
+        flexDirection={{ md: "row", sm: "row", xs: "column" }}
+        mb={1}
+        rowGap={1}
+      >
+        <FormControl
+          sx={{
+            width: { md: RUNNING_AVG_WIDTH, sm: RUNNING_AVG_WIDTH },
+            mr: { md: RUNNING_AVG_MR, sm: RUNNING_AVG_MR },
+          }}
+        >
           <InputLabel>running average</InputLabel>
           <Select
             value={runningAvg}
