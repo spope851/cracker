@@ -60,31 +60,6 @@ export class DashboardReslover {
         }
       })
 
-    const overviews: Promise<string> = await pool
-      .query(
-        `
-        SELECT STRING_AGG(overview, ' ') as _overviews
-        FROM tracker
-        WHERE "user" = $1
-        AND created_at > now() - ($2 || ' day')::interval;
-        `,
-        [user, runningAvg]
-      )
-      .then((res: PgQueryResponse<{ _overviews: string }>) =>
-        res.rows[0]._overviews.toLowerCase()
-      )
-      .catch((e: PgQueryError) => {
-        console.log(e)
-        return {
-          errors: [
-            {
-              field: "unknown",
-              message: "unhandled error",
-            },
-          ],
-        }
-      })
-
     const fetchNlpData = async () => {
       let credentials = null
 
@@ -95,8 +70,10 @@ export class DashboardReslover {
 
       const client = new language.LanguageServiceClient({ credentials })
 
+      const overviews = (await rawData).map((track) => track.overview).join(" ")
+
       const document = {
-        content: await overviews,
+        content: overviews,
         type: "PLAIN_TEXT" as "PLAIN_TEXT",
       }
 
