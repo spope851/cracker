@@ -11,10 +11,11 @@ const EntityTable: React.FC = () => {
     hideEntity,
     minEntityCount: minCount,
     setMinEntityCount: setMinCount,
+    maxWidth,
   } = useContext(DashboardFilterContext)
 
   return (
-    <Grid container item md={8}>
+    <Grid container item md={8} maxWidth={{ sm: maxWidth, xs: maxWidth }}>
       <Box
         border="solid"
         borderRadius={2}

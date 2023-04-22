@@ -7,14 +7,21 @@ import WordcloudPopover from "./wordcloudPopover"
 const Wordcloud: React.FC<{ words?: Word[] }> = ({ words }) => {
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [popoverEntity, setPopoverEntity] = useState("")
-  const { sentenceTerms } = useContext(DashboardFilterContext)
+  const { sentenceTerms, maxWidth } = useContext(DashboardFilterContext)
 
   const size: [number, number] = useMemo(() => {
     return [800, 800]
   }, [])
 
   return (
-    <Grid container item md={5} alignItems="stretch" overflow="auto">
+    <Grid
+      container
+      item
+      md={5}
+      alignItems="stretch"
+      overflow="auto"
+      maxWidth={{ sm: maxWidth, xs: maxWidth }}
+    >
       <WordcloudPopover
         word={popoverEntity}
         open={popoverOpen}
