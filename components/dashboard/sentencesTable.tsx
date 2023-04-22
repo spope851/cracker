@@ -24,7 +24,7 @@ const SentencesTable: React.FC = () => {
   } = useContext(DashboardFilterContext)
 
   return (
-    <Grid container item md={7} mb={{ md: 0, sm: 5, xs: 5 }}>
+    <Grid container item md={7} sm={12} xs={12} mb={{ md: 0, sm: 5, xs: 5 }}>
       <Box
         border="solid"
         borderRadius={2}

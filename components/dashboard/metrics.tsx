@@ -21,7 +21,7 @@ const Metrics: React.FC = () => {
   }, [data])
 
   return (
-    <Grid container item md={4} mb={{ md: 0, sm: 5, xs: 5 }}>
+    <Grid container item md={4} sm={12} xs={12} mb={{ md: 0, sm: 5, xs: 5 }}>
       <Grid
         item
         flex={1}

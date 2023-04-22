@@ -27,11 +27,10 @@ const TokenTable: React.FC = () => {
     hideToken,
     tokenTags: tags,
     tokenTagCounts: tagCounts,
-    maxWidth,
   } = useContext(DashboardFilterContext)
 
   return (
-    <Grid container item md={8} maxWidth={{ sm: maxWidth, xs: maxWidth }}>
+    <Grid container item md={8} sm={12} xs={12}>
       <Box
         border="solid"
         borderRadius={2}

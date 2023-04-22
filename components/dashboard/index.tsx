@@ -21,6 +21,13 @@ import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
 import Wordcloud from "./wordcloud"
 
+const calcMaxWidth = "calc(100vw - 40px)"
+
+const maxWidth = {
+  sm: calcMaxWidth,
+  xs: calcMaxWidth,
+}
+
 const Dashboard: React.FC = () => {
   const router = useRouter()
   const { lastPost } = useContext(UserContext)
@@ -69,11 +76,17 @@ const Dashboard: React.FC = () => {
           <Tab label="analyze tokens" />
         </Tabs>
       </Stack>
-      <Grid container justifyContent="space-between" mb={5} columnSpacing={5}>
+      <Grid
+        container
+        justifyContent="space-between"
+        columnSpacing={5}
+        maxWidth={maxWidth}
+        mb={5}
+      >
         <Metrics />
         {analyzeEntities ? <EntityTable /> : <TokenTable />}
       </Grid>
-      <Grid container columnSpacing={5}>
+      <Grid container columnSpacing={5} maxWidth={maxWidth}>
         <SentencesTable />
         <Wordcloud
           words={

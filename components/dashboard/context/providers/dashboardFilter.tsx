@@ -8,8 +8,6 @@ import { RunningAverage } from "@/types"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 
-const maxWidth = "calc(100vw - 40px)"
-
 export const DashboardFilterContextProvider: React.FC<{
   children: ReactNode
   runningAvg: RunningAverage | null
@@ -290,7 +288,6 @@ export const DashboardFilterContextProvider: React.FC<{
         sentenceTerms,
         addSentenceTerm,
         removeSentenceTerm,
-        maxWidth,
       }}
     >
       {children}

@@ -34,7 +34,6 @@ type DashboardFilterContextProps = {
   sentenceTerms: string[]
   addSentenceTerm: (term?: string | null) => void
   removeSentenceTerm: (term: string) => void
-  maxWidth: string
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(
