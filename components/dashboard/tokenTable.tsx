@@ -17,17 +17,6 @@ import React, { useContext } from "react"
 import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
 
-// const ITEM_HEIGHT = 48
-// const ITEM_PADDING_TOP = 8
-// const MenuProps = {
-//   PaperProps: {
-//     style: {
-//       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-//       width: 250,
-//     },
-//   },
-// }
-
 const TokenTable: React.FC = () => {
   const {
     minTokenCount: minCount,
