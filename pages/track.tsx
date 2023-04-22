@@ -7,7 +7,7 @@ import { UploadTracker } from "@/components/uploadTracker"
 import UploadFileIcon from "@mui/icons-material/UploadFile"
 
 export default function Track() {
-  const { hasPostedToday } = useContext(UserContext)
+  const { hasPostedToday, lastPost } = useContext(UserContext)
   const [upload, setUpload] = useState(false)
 
   const post = hasPostedToday ? <UpdateTracker /> : <Tracker />
@@ -25,7 +25,7 @@ export default function Track() {
         flex={1}
         p={5}
       >
-        {!upload && (
+        {!lastPost && !upload && (
           <Button
             variant="outlined"
             onClick={() => setUpload(!upload)}

@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client"
 import { Box, BoxProps, Button, Typography } from "@mui/material"
 import React, { PropsWithChildren, ReactNode, useContext, useState } from "react"
 import Dropzone from "react-dropzone"
-import * as csv from "csv"
+import { parse } from "csv"
 import { TrackerInput } from "@/generated/graphql"
 import { OVERVIEW_CHAR_LIMIT } from "@/constants"
 import { useRouter } from "next/router"
@@ -52,56 +52,63 @@ export const UploadTracker: React.FC<{ setUpload: (upload: boolean) => void }> =
         onDropAccepted={async (acceptedFiles) => {
           const reader = new FileReader()
           reader.onload = () => {
-            csv.parse(reader.result as Buffer, (_err, rows) => {
-              rows.shift()
-              const userData: TrackerInput[] = rows.map(
-                ([numberCreativeHours, rating, overview]: string[]) => {
-                  return {
-                    numberCreativeHours: Number(numberCreativeHours),
-                    rating: Number(rating),
-                    overview: overview.slice(0, OVERVIEW_CHAR_LIMIT),
-                  }
-                }
-              )
-              setUploadedData(userData)
-              setDropzoneContent(
-                <Box
-                  component="table"
-                  bgcolor="#ddd"
-                  border="solid"
-                  sx={{ borderCollapse: "collapse" }}
-                >
-                  <Box component="thead">
-                    <BorderedTableComponent component="th">
-                      hours
-                    </BorderedTableComponent>
-                    <BorderedTableComponent component="th">
-                      rating
-                    </BorderedTableComponent>
-                    <BorderedTableComponent component="th">
-                      overview
-                    </BorderedTableComponent>
+            if (reader.result)
+              parse(reader.result.toString(), (_err, rows) => {
+                const userData: TrackerInput[] = rows
+                  .map(([numberCreativeHours, rating, overview]: string[]) => {
+                    // invalidate rows of the wrong type
+                    if (!!Number(numberCreativeHours) && !!Number(rating))
+                      return {
+                        numberCreativeHours: Number(numberCreativeHours),
+                        rating: Number(rating),
+                        // TODO: ensure punctuation when merged with feature/dashboard2 branch
+                        overview: overview.slice(0, OVERVIEW_CHAR_LIMIT).trim(),
+                      }
+                  })
+                  // filter out invalid rows
+                  .filter((datum: TrackerInput | undefined) => datum !== undefined)
+
+                setUploadedData(userData)
+                setDropzoneContent(
+                  <Box
+                    component="table"
+                    bgcolor="#ddd"
+                    border="solid"
+                    sx={{ borderCollapse: "collapse" }}
+                  >
+                    <Box component="thead">
+                      <Box component="tr">
+                        <BorderedTableComponent component="th">
+                          hours
+                        </BorderedTableComponent>
+                        <BorderedTableComponent component="th">
+                          rating
+                        </BorderedTableComponent>
+                        <BorderedTableComponent component="th">
+                          overview
+                        </BorderedTableComponent>
+                      </Box>
+                    </Box>
+                    <Box component="tbody">
+                      {userData.map(
+                        ({ overview, numberCreativeHours, rating }, idx) => (
+                          <Box component="tr" key={idx}>
+                            <BorderedTableComponent component="td">
+                              {numberCreativeHours}
+                            </BorderedTableComponent>
+                            <BorderedTableComponent component="td">
+                              {rating}
+                            </BorderedTableComponent>
+                            <BorderedTableComponent component="td">
+                              {overview}
+                            </BorderedTableComponent>
+                          </Box>
+                        )
+                      )}
+                    </Box>
                   </Box>
-                  <Box component="tbody">
-                    {userData.map(
-                      ({ overview, numberCreativeHours, rating }, idx) => (
-                        <Box component="tr" key={idx}>
-                          <BorderedTableComponent component="td">
-                            {numberCreativeHours}
-                          </BorderedTableComponent>
-                          <BorderedTableComponent component="td">
-                            {rating}
-                          </BorderedTableComponent>
-                          <BorderedTableComponent component="td">
-                            {overview}
-                          </BorderedTableComponent>
-                        </Box>
-                      )
-                    )}
-                  </Box>
-                </Box>
-              )
-            })
+                )
+              })
           }
 
           reader.readAsBinaryString(acceptedFiles[0])
