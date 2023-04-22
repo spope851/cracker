@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
 import { TRACKER_MUTATION } from "@/graphql/client"
 import { Tracker } from "../forms"
+import { ensurePunctuation } from "@/utils/stringUtils"
 
 export const PostTracker: React.FC = () => {
   const { refetch } = useContext(UserContext)
@@ -34,7 +35,7 @@ export const PostTracker: React.FC = () => {
             variables: {
               tracker: {
                 numberCreativeHours,
-                overview,
+                overview: ensurePunctuation(overview.trim()),
                 rating,
               },
             },

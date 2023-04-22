@@ -4,6 +4,7 @@ import { UPDATE_TRACKER_MUTATION } from "@/graphql/client/track/updateTrackerMut
 import { useMutation } from "@apollo/client"
 import { useRouter } from "next/router"
 import { Tracker } from "../forms"
+import { ensurePunctuation } from "@/utils/stringUtils"
 
 export const UpdateTracker: React.FC = () => {
   const { lastPost, refetch } = useContext(UserContext)
@@ -40,7 +41,7 @@ export const UpdateTracker: React.FC = () => {
             variables: {
               tracker: {
                 numberCreativeHours: updatedNumberCreativeHours,
-                overview: updatedOverview,
+                overview: ensurePunctuation(updatedOverview.trim()),
                 rating: updatedRating,
                 id,
               },

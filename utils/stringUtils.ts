@@ -9,4 +9,7 @@ const fromToday = (lastPost?: string): boolean => {
   return lastPost === utcToday
 }
 
-export { postgresErrorDetails, fromToday }
+const ensurePunctuation = (overview: string) =>
+  [".", "?", "!"].includes(overview.slice(-1)) ? overview : `${overview}.`
+
+export { postgresErrorDetails, fromToday, ensurePunctuation }
