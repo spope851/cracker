@@ -40,6 +40,8 @@ const SentencesTable: React.FC = () => {
       >
         <Stack direction="row">
           <Grid
+            container
+            item
             md={9}
             display="flex"
             flexDirection="row"
@@ -60,6 +62,8 @@ const SentencesTable: React.FC = () => {
             )}
           </Grid>
           <Grid
+            container
+            item
             md={3}
             display="flex"
             justifyContent="flex-end"

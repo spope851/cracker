@@ -3,6 +3,7 @@ import React, { useContext, useMemo, useState } from "react"
 import { DashboardFilterContext } from "./context"
 import ReactWordcloud, { Word } from "react-wordcloud"
 import WordcloudPopover from "./wordcloudPopover"
+// import { sticky } from "tippy.js"
 
 const Wordcloud: React.FC<{ words?: Word[] }> = ({ words }) => {
   const [popoverOpen, setPopoverOpen] = useState(false)
@@ -35,13 +36,23 @@ const Wordcloud: React.FC<{ words?: Word[] }> = ({ words }) => {
             options={{
               deterministic: true,
               fontSizes: [24, 72],
-              svgAttributes: { style: "transform: translate(-180px, -130px);" },
+              svgAttributes: { style: "transform: translate(-120px, -100px);" },
+              fontFamily: "arial-black",
+              // these tippy props have no effect. reaching out to the authors of react-wordcloud about this issue
+              // tooltipOptions: {
+              //   interactive: true,
+              //   interactiveBorder: 100,
+              //   interactiveDebounce: 100,
+              //   appendTo: () => document.body,
+              //   sticky: true,
+              //   plugins: [sticky],
+              // },
             }}
             callbacks={{
               getWordColor: (word) =>
                 sentenceTerms.includes(word.text)
                   ? "lime"
-                  : ["red", "blue", "brown", ""][word.value % 4],
+                  : ["red", "blue", "brown", "purple"][word.value % 4],
               onWordClick: (word) => {
                 setPopoverOpen(true)
                 setPopoverEntity(word.text)

@@ -1,5 +1,5 @@
 import { Track } from "@/generated/graphql"
-import { Box, Button, Popover, Stack, Tooltip, Typography } from "@mui/material"
+import { Button, Popover, Stack, Tooltip, Typography } from "@mui/material"
 import React, { useContext } from "react"
 import { aboveAverage, ratingColor } from "./functions"
 import { DashboardFilterContext } from "./context"
@@ -20,6 +20,7 @@ const WordcloudPopover: React.FC<{
   const foundData = findWords(word)
   return (
     <Popover
+      anchorEl={document.body}
       disableEnforceFocus
       disableAutoFocus
       disableRestoreFocus
