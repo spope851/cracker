@@ -28,7 +28,7 @@ const WordcloudPopover: React.FC<{
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box p={5} bgcolor="#666">
+      <Stack rowGap={1} p={1} bgcolor="#666">
         <Stack rowGap={1}>
           <Button
             onClick={() => {
@@ -55,7 +55,7 @@ const WordcloudPopover: React.FC<{
             filter sentences
           </Button>
         </Stack>
-        <>
+        <Stack alignItems="end">
           {(foundData && foundData.length > 0
             ? foundData
             : [{ overview: "", rating: 0, id: "x" } as Track]
@@ -128,8 +128,8 @@ const WordcloudPopover: React.FC<{
               </Typography>
             </Tooltip>
           ))}
-        </>
-      </Box>
+        </Stack>
+      </Stack>
     </Popover>
   )
 }
