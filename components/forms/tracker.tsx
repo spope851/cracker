@@ -26,7 +26,7 @@ export const Tracker: React.FC = () => {
   const [track, { data: _data, loading }] = useMutation(TRACKER_MUTATION)
 
   return (
-    <form style={{ display: "flex", flexDirection: "column" }}>
+    <form style={{ display: "flex", flexDirection: "column", marginTop: '100px' }}>
       <FormControl sx={{ width: "200%", alignSelf: "center", mb: 5 }}>
         <FormLabel>overview</FormLabel>
         <TextareaAutosize
@@ -78,7 +78,7 @@ export const Tracker: React.FC = () => {
                 },
               })
                 .then(() => refetch({ refetch: true }))
-                .finally(() => router.push("/"))
+                .finally(() => router.push("/track"))
           }}
         >
           {loading ? "...processing" : "submit"}
