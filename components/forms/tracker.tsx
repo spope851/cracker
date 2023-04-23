@@ -18,12 +18,10 @@ type StateVar<T> = {
   setter: (val: T) => void
 }
 
-type Rating = -2 | -1 | 0 | 1 | 2
-
 type TrackerProps = {
   overview: StateVar<string | undefined>
   numberCreativeHours: StateVar<number>
-  rating: StateVar<Rating>
+  rating: StateVar<number>
   loading: boolean
   onSubmit: () => void
 }
@@ -74,7 +72,7 @@ export const Tracker: React.FC<TrackerProps> = ({
             <Select
               value={rating.value}
               label="rating"
-              onChange={(e) => rating.setter(Number(e.target.value) as Rating)}
+              onChange={(e) => rating.setter(Number(e.target.value))}
             >
               <MenuItem value={-2}>-2</MenuItem>
               <MenuItem value={-1}>-1</MenuItem>
