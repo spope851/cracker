@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material"
 import { OVERVIEW_CHAR_LIMIT } from "@/constants"
+import { RatingInput } from "./components"
 
 type StateVar<T> = {
   value: T
@@ -68,18 +69,11 @@ export const Tracker: React.FC<TrackerProps> = ({
         </Grid>
         <Grid container item md={6}>
           <FormControl fullWidth>
-            <InputLabel>rating</InputLabel>
-            <Select
-              value={rating.value}
+            <RatingInput
               label="rating"
+              value={rating.value}
               onChange={(e) => rating.setter(Number(e.target.value))}
-            >
-              <MenuItem value={-2}>-2</MenuItem>
-              <MenuItem value={-1}>-1</MenuItem>
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>+1</MenuItem>
-              <MenuItem value={2}>+2</MenuItem>
-            </Select>
+            />
           </FormControl>
         </Grid>
       </Grid>

@@ -1,9 +1,11 @@
-import { Box, Chip, Grid, Typography } from "@mui/material"
+import { Box, Chip, FormControl, Grid, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import React, { useContext } from "react"
 import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
 import { ratingColor, sentimentColor, aboveAverage } from "./functions"
+import { RatingInput } from "../forms"
+import HighlightOffIcon from "@mui/icons-material/HighlightOff"
 
 const tableCellMobileSx = {
   display: {
@@ -21,6 +23,8 @@ const SentencesTable: React.FC = () => {
     avgHours,
     sentenceTerms,
     removeSentenceTerm,
+    sentencesRating,
+    setSentencesRating,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -34,18 +38,54 @@ const SentencesTable: React.FC = () => {
         maxHeight="500px"
         overflow="auto"
       >
-        {sentenceTerms.length > 0 && (
-          <Stack flexDirection="row" alignItems="center" columnGap={1}>
-            <Typography>term:</Typography>
-            {sentenceTerms.map((term, idx) => (
+        <Stack direction="row">
+          <Grid
+            md={9}
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            columnGap={1}
+          >
+            {sentenceTerms.length > 0 && (
+              <>
+                <Typography>term:</Typography>
+                {sentenceTerms.map((term, idx) => (
+                  <Chip
+                    key={idx}
+                    label={term}
+                    onDelete={() => removeSentenceTerm(term)}
+                  />
+                ))}
+              </>
+            )}
+          </Grid>
+          <Grid
+            md={3}
+            display="flex"
+            justifyContent="flex-end"
+            direction="row"
+            alignItems="center"
+            columnGap={1}
+          >
+            {typeof sentencesRating === "number" && (
               <Chip
-                key={idx}
-                label={term}
-                onDelete={() => removeSentenceTerm(term)}
+                onDelete={() => setSentencesRating("")}
+                sx={{
+                  "& .MuiChip-label": {
+                    pr: 0,
+                  },
+                }}
               />
-            ))}
-          </Stack>
-        )}
+            )}
+            <FormControl sx={{ width: 80 }}>
+              <RatingInput
+                label="rating"
+                value={sentencesRating}
+                onChange={(e) => setSentencesRating(Number(e.target.value))}
+              />
+            </FormControl>
+          </Grid>
+        </Stack>
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
@@ -117,7 +157,7 @@ const SentencesTable: React.FC = () => {
                       {foundSentence?.numberCreativeHours}
                     </TD>
                     <TD bgcolor={ratingColor(foundSentence?.rating)}>
-                      {foundSentence?.rating && foundSentence.rating > 0 && "+"}
+                      {foundSentence?.rating && foundSentence.rating > 0 ? "+" : ""}
                       {foundSentence?.rating}
                     </TD>
                     <TD>

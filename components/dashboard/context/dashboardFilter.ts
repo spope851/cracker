@@ -30,6 +30,8 @@ type DashboardFilterContextProps = {
   setMinEntityCount: Dispatch<SetStateAction<number>>
   filteredSentences?: Sentence[]
   setFilteredSentences: Dispatch<SetStateAction<Sentence[] | undefined>>
+  sentencesRating: number | ""
+  setSentencesRating: Dispatch<SetStateAction<number | "">>
   findSentence: (content?: string | null) => Track | null | undefined
   sentenceTerms: string[]
   addSentenceTerm: (term?: string | null) => void

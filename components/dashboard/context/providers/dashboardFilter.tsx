@@ -4,21 +4,13 @@ import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
-import { RunningAverage } from "@/types"
+import { DashboardFilters, RunningAverage } from "@/types"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 
-export const DashboardFilterContextProvider: React.FC<{
-  children: ReactNode
-  runningAvg: RunningAverage | null
-  analyzeEntities: string | null
-  tokenTags: string | null
-  minTokenCount: string | null
-  minEntityCount: string | null
-  sentenceTerms: string | null
-  hiddenTokens: string | null
-  hiddenEntities: string | null
-}> = ({
+export const DashboardFilterContextProvider: React.FC<
+  DashboardFilters & { children: ReactNode }
+> = ({
   children,
   runningAvg: cachedRunningAvg,
   analyzeEntities: cachedAnalyzeEntities,
@@ -28,6 +20,7 @@ export const DashboardFilterContextProvider: React.FC<{
   sentenceTerms: cachedSentenceTerms,
   hiddenTokens: cachedHiddenTokens,
   hiddenEntities: cachedHiddenEntities,
+  sentencesRating: cachedSentencesRating,
 }) => {
   const [analyzeEntities, setAnalyzeEntities] = useState<boolean>(
     JSON.parse(cachedAnalyzeEntities || "true")
@@ -55,6 +48,9 @@ export const DashboardFilterContextProvider: React.FC<{
     Number(cachedMinEntityCount) || 2
   )
   const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
+  const [sentencesRating, setSentencesRating] = useState(
+    cachedSentencesRating ? Number(cachedSentencesRating) : ("" as "")
+  )
   const [sentenceTerms, setSentenceTerms] = useState<string[]>(
     (cachedSentenceTerms && JSON.parse(cachedSentenceTerms)) || []
   )
@@ -68,6 +64,7 @@ export const DashboardFilterContextProvider: React.FC<{
   const entities = dashboard?.entities
   const sentences = dashboard?.sentences
 
+  // cache filters
   useEffect(() => {
     ;(async () =>
       await fetch("/api/cacheDashboardFilters", {
@@ -81,6 +78,7 @@ export const DashboardFilterContextProvider: React.FC<{
           sentenceTerms: JSON.stringify(sentenceTerms),
           hiddenTokens: JSON.stringify(hiddenTokens),
           hiddenEntities: JSON.stringify(hiddenEntities),
+          sentencesRating,
         }),
       }))()
   }, [
@@ -92,8 +90,10 @@ export const DashboardFilterContextProvider: React.FC<{
     sentenceTerms,
     hiddenTokens,
     hiddenEntities,
+    sentencesRating,
   ])
 
+  // get tag counts
   useEffect(() => {
     if (tokens)
       setTokenTagCounts(
@@ -106,6 +106,7 @@ export const DashboardFilterContextProvider: React.FC<{
       )
   }, [tokens])
 
+  // filter tokens
   useEffect(() => {
     setFilteredTokens(
       tokens
@@ -180,6 +181,7 @@ export const DashboardFilterContextProvider: React.FC<{
     )
   }
 
+  // filter entities
   useEffect(() => {
     setFilteredEntities(
       entities
@@ -235,15 +237,26 @@ export const DashboardFilterContextProvider: React.FC<{
       })
   }
 
+  // filter sentences
   useEffect(() => {
     setFilteredSentences(
-      sentences?.filter(
-        (sentence) =>
-          sentence.text?.content &&
-          new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
-      )
+      sentences
+        // filter by sentence terms
+        ?.filter(
+          (sentence) =>
+            sentence.text?.content &&
+            new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
+        )
+        // filter by sentence ratings
+        .filter((sentence) => {
+          if (sentencesRating === "") return true
+          if (sentence.text?.content) {
+            const foundSentence = findSentence(sentence.text.content)
+            return foundSentence?.rating === sentencesRating
+          }
+        })
     )
-  }, [sentences, sentenceTerms])
+  }, [sentences, sentenceTerms, sentencesRating])
 
   const removeSentenceTerm = (term: string) => {
     setSentenceTerms((oldTerms) => [...oldTerms.filter((ot) => ot !== term)])
@@ -284,6 +297,8 @@ export const DashboardFilterContextProvider: React.FC<{
         setMinEntityCount,
         filteredSentences,
         setFilteredSentences,
+        sentencesRating,
+        setSentencesRating,
         findSentence,
         sentenceTerms,
         addSentenceTerm,
