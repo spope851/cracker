@@ -9,6 +9,15 @@ import { isSameDay } from "@/utils/date"
 
 const FOUND_DAY_PREFIX = "found-calendar-day-"
 
+const POPOVER_WIDTH = 300
+
+const POPOVER_BUTTON_SX = {
+  bgcolor: "#fff",
+  ":hover": {
+    bgcolor: "#aaa",
+  },
+}
+
 const WordcloudPopover: React.FC<{
   word: string
   open: boolean
@@ -41,7 +50,7 @@ const WordcloudPopover: React.FC<{
     <Popover
       anchorEl={document.body}
       anchorReference="anchorPosition"
-      anchorPosition={{ top: 0, left: 348 }}
+      anchorPosition={{ top: 0, left: POPOVER_WIDTH + 48 }}
       disableEnforceFocus
       disableAutoFocus
       disableRestoreFocus
@@ -57,7 +66,7 @@ const WordcloudPopover: React.FC<{
       }}
     >
       {track ? (
-        <Stack rowGap={1} p={1} bgcolor="#666" color="#fff" maxWidth={300}>
+        <Stack rowGap={1} p={1} bgcolor="#666" color="#fff" maxWidth={POPOVER_WIDTH}>
           <Typography
             variant="h5"
             alignSelf="center"
@@ -128,33 +137,7 @@ const WordcloudPopover: React.FC<{
       onClose={() => setSelfOpen(false)}
     >
       <Stack rowGap={1} p={1} bgcolor="#666">
-        <Stack rowGap={1}>
-          <Button
-            onClick={() => {
-              analyzeEntities ? hideEntity(true, word) : hideToken(true, word)
-              setSelfOpen(false)
-            }}
-            variant="outlined"
-            // TODO: hover background color
-            sx={{ bgcolor: "#fff" }}
-            size="small"
-          >
-            hide
-          </Button>
-          <Button
-            onClick={() => {
-              addSentenceTerm(word)
-              setSelfOpen(false)
-            }}
-            variant="outlined"
-            // TODO: hover background color
-            sx={{ bgcolor: "#fff" }}
-            size="small"
-          >
-            filter sentences
-          </Button>
-        </Stack>
-        <Stack alignItems="end" width={300}>
+        <Stack alignItems="end" width={POPOVER_WIDTH}>
           <StyledCalendar
             minDetail="month"
             onClickDay={(value) => {
@@ -177,6 +160,30 @@ const WordcloudPopover: React.FC<{
               )}
             />
           )}
+        </Stack>
+        <Stack rowGap={1} direction="row" justifyContent="space-around">
+          <Button
+            onClick={() => {
+              analyzeEntities ? hideEntity(true, word) : hideToken(true, word)
+              setSelfOpen(false)
+            }}
+            variant="outlined"
+            sx={POPOVER_BUTTON_SX}
+            size="small"
+          >
+            hide
+          </Button>
+          <Button
+            onClick={() => {
+              addSentenceTerm(word)
+              setSelfOpen(false)
+            }}
+            variant="outlined"
+            sx={POPOVER_BUTTON_SX}
+            size="small"
+          >
+            filter sentences
+          </Button>
         </Stack>
       </Stack>
     </Popover>

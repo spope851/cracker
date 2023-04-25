@@ -6,13 +6,13 @@ import { DashboardFilterContext } from "./context"
 import { ratingColor, sentimentColor, aboveAverage } from "./functions"
 import { RatingInput } from "../forms"
 
-const tableCellMobileSx = {
-  display: {
-    sm: "table-cell",
-    md: "table-cell",
-    xs: "none",
-  },
-}
+// const tableCellMobileSx = {
+//   display: {
+//     sm: "table-cell",
+//     md: "table-cell",
+//     xs: "none",
+//   },
+// }
 
 const SentencesTable: React.FC = () => {
   const {
@@ -93,8 +93,16 @@ const SentencesTable: React.FC = () => {
           <Box component="thead">
             <Box component="tr">
               <TH>sentence</TH>
-              <TH sx={tableCellMobileSx}>score</TH>
-              <TH sx={tableCellMobileSx}>magnitude</TH>
+              <TH
+              // sx={tableCellMobileSx}
+              >
+                score
+              </TH>
+              <TH
+              // sx={tableCellMobileSx}
+              >
+                magnitude
+              </TH>
               <TH>hours</TH>
               <TH>rating</TH>
               <TH>date</TH>
@@ -145,10 +153,15 @@ const SentencesTable: React.FC = () => {
                           : text?.content}
                       </Typography>
                     </TD>
-                    <TD bgcolor={bgcolor} sx={tableCellMobileSx}>
+                    <TD
+                      bgcolor={bgcolor}
+                      // sx={tableCellMobileSx}
+                    >
                       {Number(sentiment?.score).toFixed(3)}
                     </TD>
-                    <TD sx={tableCellMobileSx}>
+                    <TD
+                    // sx={tableCellMobileSx}
+                    >
                       {Number(sentiment?.magnitude).toFixed(3)}
                     </TD>
                     <TD
