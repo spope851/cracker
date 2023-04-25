@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material"
+import Link from "next/link"
 import React, { ReactNode, useEffect, useState } from "react"
 import ReactPlayer from "react-player/youtube"
 
@@ -21,12 +22,13 @@ export default function About() {
       <Box>
         <Typography>
           Cracker takes inspiration from a framework described by bestselling author
-          Jim Collins in the above interview. Collins there describes how value that
-          can derived from three simple datapoints. This mixture of qualitative and
-          quantitative data can be quite telling when properly analyzed. We&apos;ve
-          tested the framework and found value in it, which is why we want to make it
-          accessible to all. Cracker is the solution we came up with. Your job is to
-          enter the same three fields mentioned in the interview:
+          <Link href="https://www.jimcollins.com/">Jim Collins</Link> in the above
+          interview. Collins there describes how value that can derived from three
+          simple datapoints. This mixture of qualitative and quantitative data can be
+          quite telling when properly analyzed. We&apos;ve tested the framework and
+          found value in it, which is why we want to make it accessible to all.
+          Cracker is the solution we came up with. Your job is to enter the same
+          three fields mentioned in the interview:
         </Typography>
         <Box component="ul">
           <Typography component="li">
@@ -65,8 +67,11 @@ export default function About() {
         the incredibly simple data you&apos;ve provided. On top of all that,
         we&apos;re also an AI platform. This app is a perfect use case to take
         advantage of textual analysis tools being rapidly developed in the AI
-        community. We are currently leveraging Google&apos;s Natural Language API to
-        identify sentences, tokens, and entities in your data and provide you with
+        community. We are currently leveraging Google&apos;s{" "}
+        <Link href="https://cloud.google.com/natural-language">
+          Natural Language API
+        </Link>{" "}
+        to identify sentences, tokens, and entities in your data and provide you with
         insights from the AI that can be found in the dashboard&apos;s additional
         tables. We plan to continue exploring new tools in the industry with the goal
         of providing our users the richest experience possible while analyzing their
