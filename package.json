@@ -42,6 +42,7 @@
     "next-auth": "^4.19.2",
     "pg": "^8.8.0",
     "react": "18.2.0",
+    "react-calendar": "^4.2.1",
     "react-dom": "18.2.0",
     "react-timeclock": "^0.1.0",
     "react-wordcloud": "^1.2.7",

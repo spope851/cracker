@@ -5,7 +5,6 @@ import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
 import { ratingColor, sentimentColor, aboveAverage } from "./functions"
 import { RatingInput } from "../forms"
-import HighlightOffIcon from "@mui/icons-material/HighlightOff"
 
 const tableCellMobileSx = {
   display: {
