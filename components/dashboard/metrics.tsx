@@ -5,7 +5,7 @@ import { DASBOARD_METRICS_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 import { DashboardFilterContext } from "./context"
 
-const Metrics: React.FC = () => {
+export const Metrics: React.FC = () => {
   const { runningAvg, setDaysOfUse, setAvgHours } = useContext(
     DashboardFilterContext
   )
@@ -70,5 +70,3 @@ const Metrics: React.FC = () => {
     </Grid>
   )
 }
-
-export default Metrics

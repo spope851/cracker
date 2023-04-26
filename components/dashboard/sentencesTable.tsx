@@ -14,7 +14,7 @@ import { RatingInput } from "../forms"
 //   },
 // }
 
-const SentencesTable: React.FC = () => {
+export const SentencesTable: React.FC = () => {
   const {
     filteredSentences: sentences,
     loading,
@@ -190,5 +190,3 @@ const SentencesTable: React.FC = () => {
     </Grid>
   )
 }
-
-export default SentencesTable

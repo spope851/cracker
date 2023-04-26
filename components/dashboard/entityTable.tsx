@@ -4,7 +4,7 @@ import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
 import { sentimentColor } from "./functions"
 
-const EntityTable: React.FC = () => {
+export const EntityTable: React.FC = () => {
   const {
     loading,
     filteredEntities: entities,
@@ -103,5 +103,3 @@ const EntityTable: React.FC = () => {
     </Grid>
   )
 }
-
-export default EntityTable

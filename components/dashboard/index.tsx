@@ -11,15 +11,15 @@ import {
   Tabs,
 } from "@mui/material"
 import React, { useContext } from "react"
-import EntityTable from "./entityTable"
 import { RunningAverage } from "@/types"
-import TokenTable from "./tokenTable"
-import SentencesTable from "./sentencesTable"
 import { DashboardFilterContext } from "./context"
-import Metrics from "./metrics"
 import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
-import Wordcloud from "./wordcloud"
+import { EntityTable } from "./entityTable"
+import { Metrics } from "./metrics"
+import { SentencesTable } from "./sentencesTable"
+import { TokenTable } from "./tokenTable"
+import { Wordcloud } from "./wordcloud"
 
 const CALC_MAX_WIDTH = "calc(100vw - 40px)"
 

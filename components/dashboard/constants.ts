@@ -14,4 +14,6 @@ const defaultTags: PartOfSpeech["tag"][] = [
   "PUNCT",
 ]
 
-export { defaultTags }
+const POPOVER_WIDTH = 300
+
+export { defaultTags, POPOVER_WIDTH }

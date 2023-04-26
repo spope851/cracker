@@ -17,7 +17,7 @@ import React, { useContext } from "react"
 import { TH, TD } from "./components"
 import { DashboardFilterContext } from "./context"
 
-const TokenTable: React.FC = () => {
+export const TokenTable: React.FC = () => {
   const {
     minTokenCount: minCount,
     setMinTokenCount: setMinCount,
@@ -134,5 +134,3 @@ const TokenTable: React.FC = () => {
     </Grid>
   )
 }
-
-export default TokenTable

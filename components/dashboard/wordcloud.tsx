@@ -2,10 +2,10 @@ import { Box, Grid } from "@mui/material"
 import React, { useContext, useMemo, useState } from "react"
 import { DashboardFilterContext } from "./context"
 import ReactWordcloud, { Word } from "react-wordcloud"
-import WordcloudPopover from "./wordcloudPopover"
+import { WordcloudPopover } from "./wordcloudPopover"
 // import { sticky } from "tippy.js"
 
-const Wordcloud: React.FC<{ words?: Word[] }> = ({ words }) => {
+export const Wordcloud: React.FC<{ words?: Word[] }> = ({ words }) => {
   const [popoverOpen, setPopoverOpen] = useState(false)
   const [popoverEntity, setPopoverEntity] = useState("")
   const { sentenceTerms } = useContext(DashboardFilterContext)
@@ -67,5 +67,3 @@ const Wordcloud: React.FC<{ words?: Word[] }> = ({ words }) => {
     </Grid>
   )
 }
-
-export default Wordcloud
