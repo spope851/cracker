@@ -48,7 +48,13 @@ export const Teammate: React.FC<TeammateProps> = ({ name, role, img, links }) =>
       <Typography variant="h5">{role}</Typography>
       <Stack direction="row" columnGap={1}>
         {links.map(({ id, href }) => (
-          <Link href={href} target="_blank" rel="noreferrer" style={ICON_STYLE}>
+          <Link
+            key={id}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            style={ICON_STYLE}
+          >
             <Image
               src={ICONS[id]}
               height={ICON_DIMENSIONS}
