@@ -55,6 +55,7 @@ export default function Navbar() {
           <Box ml="auto" display="flex">
             <NavbarItem title="track" />
             <NavbarItem title="about" />
+            <NavbarItem title="team" />
             {session.status === "authenticated" && (
               <Box
                 component="li"
