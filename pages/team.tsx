@@ -1,6 +1,7 @@
 import { Stack } from "@mui/material"
 import React from "react"
 import spencer from "../public/images/spencer.jpeg"
+import chris from "../public/images/chris.jpg"
 import { Teammate, TeammateProps } from "@/components/teammate"
 
 const TEAMMATES: TeammateProps[] = [
@@ -27,14 +28,38 @@ const TEAMMATES: TeammateProps[] = [
       },
     ],
   },
+  {
+    name: "Chris",
+    role: "Developer",
+    img: chris,
+    links: [
+      {
+        id: "github",
+        href: "https://github.com/ChrisShep98",
+      },
+      {
+        id: "twitter",
+        href: "",
+      },
+      {
+        id: "web",
+        href: "",
+      },
+      {
+        id: "mail",
+        href: "",
+      },
+    ],
+  },
 ]
 
 export default function Team() {
   return (
-    <Stack alignItems="center" py={5} px={{ md: 20, sm: 5, xs: 1 }} rowGap={5}>
+      <Stack direction='row' justifyContent='center' py={8} columnGap={10}>
       {TEAMMATES.map((teammate) => (
         <Teammate key={teammate.name} {...teammate} />
       ))}
     </Stack>
+    
   )
 }
