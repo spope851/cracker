@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/router"
 import AvatarMenu from "./avatarMenu"
 import cracker from "../public/images/cracker.svg"
+import { NavbarItem } from "./navbarItem"
 
 export default function Navbar() {
   const router = useRouter()
@@ -52,19 +53,9 @@ export default function Navbar() {
             </Link>
           </Box>
           <Box ml="auto" display="flex">
-            <Box
-              component="li"
-              p={2}
-              borderLeft="solid 1px #bbb"
-              sx={{
-                backgroundColor:
-                  router.pathname === "/track" ? "primary.main" : "grey",
-              }}
-            >
-              <Link href="/track" style={{ textDecoration: "none" }}>
-                <Typography color="#fff">track</Typography>
-              </Link>
-            </Box>
+            <NavbarItem title="track" />
+            <NavbarItem title="about" />
+            <NavbarItem title="team" />
             {session.status === "authenticated" && (
               <Box
                 component="li"
