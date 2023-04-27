@@ -3844,6 +3844,11 @@ at-least-node@^1.0.0:
   resolved "https://registry.yarnpkg.com/at-least-node/-/at-least-node-1.0.0.tgz#602cd4b46e844ad4effc92a8011a3c46e0238dc2"
   integrity sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
 
+attr-accept@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-2.2.2.tgz#646613809660110749e92f2c10833b70968d929b"
+  integrity sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==
+
 auto-bind@~4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/auto-bind/-/auto-bind-4.0.0.tgz#e3589fc6c2da8f7ca43ba9f84fa52a744fc997fb"
@@ -4940,6 +4945,31 @@ csstype@^3.0.2, csstype@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.1.tgz#841b532c45c758ee546a11d5bd7b7b473c8c30b9"
   integrity sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==
+
+csv-generate@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/csv-generate/-/csv-generate-4.2.2.tgz#b0ae1dca9f608fb8dfbb9df32949652d8f583ade"
+  integrity sha512-Ah/NcMxHMqwQsuL173yp8EOzHrbLh8iyScqTy990b+TJZNjHhy7gs5FfSmyQ2arLC2QVrueO3DYJVQnibJB3WQ==
+
+csv-parse@^5.3.6:
+  version "5.3.6"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-5.3.6.tgz#181d7c12300a60684bb51261ea9a5c3135ba8688"
+  integrity sha512-WI330GjCuEioK/ii8HM2YE/eV+ynpeLvU+RXw4R8bRU8R0laK5zO3fDsc4gH8s472e3Ga38rbIjCAiQh+tEHkw==
+
+csv-stringify@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-6.3.0.tgz#21ae523c5c0b25f16d8625bde45dc1b4b5b77eb0"
+  integrity sha512-kTnnBkkLmAR1G409aUdShppWUClNbBQZXhrKrXzKYBGw4yfROspiFvVmjbKonCrdGfwnqwMXKLQG7ej7K/jwjg==
+
+csv@^6.2.8:
+  version "6.2.8"
+  resolved "https://registry.yarnpkg.com/csv/-/csv-6.2.8.tgz#0eb831a4e0c64794ccd2990e5ddb5148b22d57a0"
+  integrity sha512-QGemEqFr5XgbHcufWwO+qnReFhClbd+6WywKDVqEXmRfGrJHl5fRrlphZUnsky2YAwcCxYJJilPUfaWbuBMfWA==
+  dependencies:
+    csv-generate "^4.2.2"
+    csv-parse "^5.3.6"
+    csv-stringify "^6.3.0"
+    stream-transform "^3.2.2"
 
 damerau-levenshtein@^1.0.8:
   version "1.0.8"
@@ -6055,6 +6085,13 @@ file-loader@^6.2.0:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
+
+file-selector@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/file-selector/-/file-selector-0.6.0.tgz#fa0a8d9007b829504db4d07dd4de0310b65287dc"
+  integrity sha512-QlZ5yJC0VxHxQQsQhXvBaC7VRJ2uaxTf+Tfpu4Z/OcVQJVpZO+DGU0rkoVW5ce2SccxugvpBJoMvUs59iILYdw==
+  dependencies:
+    tslib "^2.4.0"
 
 filelist@^1.0.1:
   version "1.0.4"
@@ -9865,6 +9902,15 @@ react-dom@18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-dropzone@^14.2.3:
+  version "14.2.3"
+  resolved "https://registry.yarnpkg.com/react-dropzone/-/react-dropzone-14.2.3.tgz#0acab68308fda2d54d1273a1e626264e13d4e84b"
+  integrity sha512-O3om8I+PkFKbxCukfIR3QAGftYXDZfOE2N1mr/7qebQJHs7U+/RSL/9xomJNpRg9kM5h9soQSdf0Gc7OHF5Fug==
+  dependencies:
+    attr-accept "^2.2.2"
+    file-selector "^0.6.0"
+    prop-types "^15.8.1"
+
 react-error-overlay@^6.0.11:
   version "6.0.11"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.11.tgz#92835de5841c5cf08ba00ddd2d677b6d17ff9adb"
@@ -10728,6 +10774,11 @@ stop-iteration-iterator@^1.0.0:
   integrity sha512-iCGQj+0l0HOdZ2AEeBADlsRC+vsnDsZsbdSiH1yNSjcfKM7fdpCMfqAL/dwF5BLiw/XhRft/Wax6zQbhq2BcjQ==
   dependencies:
     internal-slot "^1.0.4"
+
+stream-transform@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/stream-transform/-/stream-transform-3.2.2.tgz#3d6083d6582eddac233645fcee574fc56ebeb184"
+  integrity sha512-DHZQPNxvjU2qdQlGcpitn8pkJHQVTqdshtgXaLz6Vc5VCAognbGuuwGS5ugeqGVnyw8j4h89QcV8cwm0D1+V0A==
 
 streamsearch@^1.1.0:
   version "1.1.0"
