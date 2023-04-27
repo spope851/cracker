@@ -1,28 +1,43 @@
-import React, { useContext } from "react"
+import React, { useContext, useState } from "react"
 import Head from "next/head"
-import { Box } from "@mui/material"
+import { Box, Button, Stack } from "@mui/material"
 import { UserContext } from "@/context/userContext"
 import { PostTracker, UpdateTracker } from "@/components/track"
 
 const MOBILE_PY = 3
+import { UploadTracker } from "@/components/track/uploadTracker"
+import UploadFileIcon from "@mui/icons-material/UploadFile"
 
 export default function Track() {
-  const { hasPostedToday } = useContext(UserContext)
+  const { hasPostedToday, lastPost } = useContext(UserContext)
+  const [upload, setUpload] = useState(false)
+
+  const post = hasPostedToday ? <UpdateTracker /> : <PostTracker />
 
   return (
     <>
       <Head>
         <title>creativity tracker</title>
       </Head>
-      <Box
-        display="flex"
-        justifyContent="center"
+      <Stack
+        justifyContent={upload ? "center" : "flex-start"}
         alignItems="center"
-        mt="auto"
         py={{ sm: MOBILE_PY, xs: MOBILE_PY }}
+        rowGap={5}
+        flex={1}
+        p={5}
       >
-        {hasPostedToday ? <UpdateTracker /> : <PostTracker />}
-      </Box>
+        {!lastPost && !upload && (
+          <Button
+            variant="outlined"
+            onClick={() => setUpload(!upload)}
+            sx={{ alignSelf: "flex-end" }}
+          >
+            upload <UploadFileIcon />
+          </Button>
+        )}
+        {upload ? <UploadTracker setUpload={setUpload} /> : post}
+      </Stack>
     </>
   )
 }

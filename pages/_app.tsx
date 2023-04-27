@@ -7,7 +7,7 @@ import { SessionProvider } from "next-auth/react"
 import "animate.css"
 import "tippy.js/dist/tippy.css"
 import "tippy.js/animations/scale.css"
-import { UserContextProvider } from "@/context/providers"
+import { SnackbarContextProvider, UserContextProvider } from "@/context/providers"
 import { NextComponentWithAuth } from "@/types"
 import { Auth } from "@/components/auth"
 
@@ -19,17 +19,22 @@ export default function App({
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
         <UserContextProvider>
-          <ThemeProvider>
-            <Layout>
-              {Component.auth ? (
-                <Auth role={Component.auth.role} redirect={Component.auth.redirect}>
+          <SnackbarContextProvider>
+            <ThemeProvider>
+              <Layout>
+                {Component.auth ? (
+                  <Auth
+                    role={Component.auth.role}
+                    redirect={Component.auth.redirect}
+                  >
+                    <Component {...pageProps} />
+                  </Auth>
+                ) : (
                   <Component {...pageProps} />
-                </Auth>
-              ) : (
-                <Component {...pageProps} />
-              )}
-            </Layout>
-          </ThemeProvider>
+                )}
+              </Layout>
+            </ThemeProvider>
+          </SnackbarContextProvider>
         </UserContextProvider>
       </ApolloProvider>
     </SessionProvider>

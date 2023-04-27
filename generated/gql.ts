@@ -19,6 +19,7 @@ const documents = {
     "\n  query Me($refetch: Boolean) {\n    me(refetch: $refetch) {\n      me {\n        user {\n          email\n          username\n          role\n        }\n        lastPost {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n      }\n    }\n  }\n": types.MeDocument,
     "\n  mutation TrackerMutation($tracker: TrackerInput!) {\n    track(tracker: $tracker) {\n      errors {\n        message\n        field\n      }\n      track {\n        numberCreativeHours\n        overview\n        rating\n        user\n        id\n      }\n    }\n  }\n": types.TrackerMutationDocument,
     "\nmutation UpdateTracker($tracker: UpdateTrackerInput!) {\n  updateTrack(tracker: $tracker) {\n    track {\n      id\n      overview\n      numberCreativeHours\n      rating\n      user\n    }\n    errors {\n      field\n      message\n    }\n  }\n}\n": types.UpdateTrackerDocument,
+    "\n  mutation UploadTracker($data: [TrackerInput!]!) {\n    uploadTracker(data: $data) {\n      uploaded\n      errors {\n        field\n        message\n      }\n    }\n  }\n": types.UploadTrackerDocument,
 };
 
 /**
@@ -59,6 +60,10 @@ export function graphql(source: "\n  mutation TrackerMutation($tracker: TrackerI
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\nmutation UpdateTracker($tracker: UpdateTrackerInput!) {\n  updateTrack(tracker: $tracker) {\n    track {\n      id\n      overview\n      numberCreativeHours\n      rating\n      user\n    }\n    errors {\n      field\n      message\n    }\n  }\n}\n"): (typeof documents)["\nmutation UpdateTracker($tracker: UpdateTrackerInput!) {\n  updateTrack(tracker: $tracker) {\n    track {\n      id\n      overview\n      numberCreativeHours\n      rating\n      user\n    }\n    errors {\n      field\n      message\n    }\n  }\n}\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UploadTracker($data: [TrackerInput!]!) {\n    uploadTracker(data: $data) {\n      uploaded\n      errors {\n        field\n        message\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UploadTracker($data: [TrackerInput!]!) {\n    uploadTracker(data: $data) {\n      uploaded\n      errors {\n        field\n        message\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

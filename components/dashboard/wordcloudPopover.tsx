@@ -1,4 +1,4 @@
-import { Button, Popover, Stack } from "@mui/material"
+import { Button, Popover, Stack, Typography } from "@mui/material"
 import React, { useContext, useState } from "react"
 import { ratingColor } from "./functions"
 import { DashboardFilterContext } from "./context"
@@ -65,7 +65,10 @@ export const WordcloudPopover: React.FC<{
           word={word}
         />
       )}
-      <Stack rowGap={1} p={1} bgcolor="#666">
+      <Stack rowGap={1} p={1} bgcolor="#666" color="#fff">
+        <Typography variant="h5" alignSelf="center">
+          {`${analyzeEntities ? "Entity" : "Token"}: ${word}`}
+        </Typography>
         <Stack alignItems="end" width={POPOVER_WIDTH}>
           <StyledCalendar
             minDetail="month"
