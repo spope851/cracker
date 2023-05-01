@@ -4,3 +4,6 @@ export const pgDatabase = process.env.POSTGRES_DB
 export const serverHost = process.env.SERVER_HOST
 export const pgPort = process.env.POSTGRES_PORT
 export const redisPort = process.env.REDIS_PORT
+export const mongoUser = process.env.MONGO_USER
+export const mongoPassword = process.env.MONGO_PASSWORD
+export const mongoPort = process.env.MONGO_PORT

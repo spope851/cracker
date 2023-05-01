@@ -8,6 +8,7 @@ import { DashboardResponse } from "../schemas/dashboard"
 import { Track } from "../schemas/track"
 import language from "@google-cloud/language"
 import redis from "@/utils/redis"
+import { NLP_KEY } from "@/constants"
 
 @Resolver(DashboardResponse)
 export class DashboardReslover {
@@ -92,12 +93,12 @@ export class DashboardReslover {
         entities: annotate.entities,
       }
 
-      await redis.set(`nlp/${user}/${runningAvg}`, JSON.stringify(nlpData))
+      await redis.set(`${NLP_KEY}/${user}/${runningAvg}`, JSON.stringify(nlpData))
 
       return nlpData
     }
 
-    const cachedNlpData = await redis.get(`nlp/${user}/${runningAvg}`)
+    const cachedNlpData = await redis.get(`${NLP_KEY}/${user}/${runningAvg}`)
 
     if (cachedNlpData)
       return {

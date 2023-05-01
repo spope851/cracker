@@ -1,3 +1,5 @@
 const OVERVIEW_CHAR_LIMIT = 480
 
-export { OVERVIEW_CHAR_LIMIT }
+const NLP_KEY = "nlp"
+
+export { OVERVIEW_CHAR_LIMIT, NLP_KEY }
