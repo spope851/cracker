@@ -1,4 +1,10 @@
-import { DashboardMetrics, PartOfSpeech, Sentence } from "@/generated/graphql"
+import {
+  BasicSentence,
+  DashboardMetrics,
+  PartOfSpeech,
+  Sentence,
+  Word,
+} from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
@@ -7,11 +13,18 @@ import { DashboardFilterContext } from "../dashboardFilter"
 import { DashboardFilters, RunningAverage } from "@/types"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
+import { DASBOARD_BASIC_QUERY } from "@/graphql/client/dashboard/dashboardBasicQuery"
+
+const filterByMinCount = <T extends { count: number }>(
+  minCount: number,
+  words?: T[]
+): T[] | undefined => words?.filter((i) => i.count && i.count >= minCount)
 
 export const DashboardFilterContextProvider: React.FC<
-  DashboardFilters & { children: ReactNode }
+  DashboardFilters & { children: ReactNode; premium: boolean }
 > = ({
   children,
+  premium,
   runningAvg: cachedRunningAvg,
   analyzeEntities: cachedAnalyzeEntities,
   tokenTags: cachedTokenTags,
@@ -21,6 +34,8 @@ export const DashboardFilterContextProvider: React.FC<
   hiddenTokens: cachedHiddenTokens,
   hiddenEntities: cachedHiddenEntities,
   sentencesRating: cachedSentencesRating,
+  minWordCount: cachedMinWordCount,
+  basicSentencesRating: cachedBasicSentencesRating,
 }) => {
   const [analyzeEntities, setAnalyzeEntities] = useState<boolean>(
     JSON.parse(cachedAnalyzeEntities || "true")
@@ -55,10 +70,26 @@ export const DashboardFilterContextProvider: React.FC<
     (cachedSentenceTerms && JSON.parse(cachedSentenceTerms)) || []
   )
   const [avgHours, setAvgHours] = useState<DashboardMetrics["avgHours"]>()
+  const { data: premiumData, loading: loadingPremium } = useQuery(DASBOARD_QUERY, {
+    variables: { runningAvg },
+    onCompleted: (data) => console.log("premium", data),
+    skip: !premium,
+  })
 
-  const { data, loading } = useQuery(DASBOARD_QUERY, { variables: { runningAvg } })
+  const [basicWords, setBasicWords] = useState<Word[]>()
+  const [minWordCount, setMinWordCount] = useState(Number(cachedMinWordCount) || 2)
+  const [basicSentencesRating, setBasicSentencesRating] = useState(
+    cachedBasicSentencesRating ? Number(cachedBasicSentencesRating) : ("" as "")
+  )
+  const [basicSentences, setBasicSentences] = useState<BasicSentence[]>()
 
-  const dashboard = data?.dashboard.dashboard
+  const { data: basicData, loading: loadingBasic } = useQuery(DASBOARD_BASIC_QUERY, {
+    variables: { runningAvg },
+    onCompleted: (data) => console.log("basic", data),
+    skip: premium,
+  })
+
+  const dashboard = premiumData?.dashboard.dashboard
   const rawData = dashboard?.rawData
   const tokens = dashboard?.tokens
   const entities = dashboard?.entities
@@ -79,6 +110,8 @@ export const DashboardFilterContextProvider: React.FC<
           hiddenTokens: JSON.stringify(hiddenTokens),
           hiddenEntities: JSON.stringify(hiddenEntities),
           sentencesRating,
+          minWordCount,
+          basicSentencesRating,
         }),
       }))()
   }, [
@@ -91,6 +124,8 @@ export const DashboardFilterContextProvider: React.FC<
     hiddenTokens,
     hiddenEntities,
     sentencesRating,
+    minWordCount,
+    basicSentencesRating,
   ])
 
   // get tag counts
@@ -109,30 +144,33 @@ export const DashboardFilterContextProvider: React.FC<
   // filter tokens
   useEffect(() => {
     setFilteredTokens(
-      tokens
-        // filter by tag
-        ?.filter(
-          (i) => i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
-        )
-        // get counts
-        .reduce((p: FilteredToken[], c) => {
-          const r = p
-          const exists = p.find(
-            (i) =>
-              i.token.text?.content?.toLowerCase() === c.text?.content?.toLowerCase()
+      filterByMinCount(
+        minTokenCount,
+        tokens
+          // filter by tag
+          ?.filter(
+            (i) => i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
           )
-          if (!exists)
-            r.push({
-              token: c,
-              count: 1,
-              hide: hiddenTokens.includes(c.text?.content || ""),
-            })
-          else r[p.indexOf(exists)].count += 1
-          return r
-        }, [])
-        // filter by minCount
-        .filter((i) => i.count >= minTokenCount)
-        .sort((a, b) => (a.count < b.count ? 1 : -1))
+          // get counts
+          .reduce((p: FilteredToken[], c) => {
+            const r = p
+            const exists = p.find(
+              (i) =>
+                i.token.text?.content?.toLowerCase() ===
+                c.text?.content?.toLowerCase()
+            )
+            if (!exists)
+              r.push({
+                token: c,
+                count: 1,
+                hide: hiddenTokens.includes(c.text?.content || ""),
+              })
+            else r[p.indexOf(exists)].count += 1
+            return r
+          }, [])
+      )
+        // TODO: move all sorting to sql
+        ?.sort((a, b) => (a.count < b.count ? 1 : -1))
     )
   }, [tokens, tokenTags, minTokenCount])
 
@@ -184,18 +222,18 @@ export const DashboardFilterContextProvider: React.FC<
   // filter entities
   useEffect(() => {
     setFilteredEntities(
-      entities
-        ?.map((entity) => {
+      filterByMinCount(
+        minEntityCount,
+        entities?.map((entity) => {
           return {
             entity,
             count: entity.mentions?.length || 0,
             hide: hiddenEntities.includes(entity.name || ""),
           }
         })
-        // filter by minCount
-        .filter((i) => i.count >= minEntityCount)
+      )
         // order by count
-        .sort((a, b) =>
+        ?.sort((a, b) =>
           a.entity.name && b.entity.name
             ? a.entity.name < b.entity.name
               ? 1
@@ -269,6 +307,36 @@ export const DashboardFilterContextProvider: React.FC<
   const findSentence = (content?: string | null) =>
     content ? rawData?.find((datum) => datum.overview.search(content) > -1) : null
 
+  // BASIC FILTERS
+
+  const words = basicData?.dashboardBasic.dashboard?.words
+  const basicQuerySentences = basicData?.dashboardBasic.dashboard?.sentences
+
+  // filter words
+  useEffect(() => {
+    setBasicWords(filterByMinCount(minWordCount, words))
+  }, [words, minWordCount])
+
+  // filter sentences
+  useEffect(() => {
+    setBasicSentences(
+      basicQuerySentences
+        // filter by sentence terms
+        // ?.filter(
+        //   (sentence) =>
+        //     sentence.text?.content &&
+        //     new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
+        // )
+        // filter by sentence ratings
+        ?.filter((sentence) => {
+          if (basicSentencesRating === "") return true
+          if (sentence.text?.content) {
+            return sentence.rating === basicSentencesRating
+          }
+        })
+    )
+  }, [basicQuerySentences, basicSentencesRating])
+
   return (
     <DashboardFilterContext.Provider
       value={{
@@ -285,7 +353,8 @@ export const DashboardFilterContextProvider: React.FC<
         setTokenTags,
         minTokenCount,
         setMinTokenCount,
-        loading,
+        loadingPremium,
+        loadingBasic,
         avgHours,
         setAvgHours,
         hideToken,
@@ -303,6 +372,10 @@ export const DashboardFilterContextProvider: React.FC<
         sentenceTerms,
         addSentenceTerm,
         removeSentenceTerm,
+        basicWords,
+        basicSentences,
+        minWordCount: [minWordCount, setMinWordCount],
+        basicSentencesRating: [basicSentencesRating, setBasicSentencesRating],
       }}
     >
       {children}

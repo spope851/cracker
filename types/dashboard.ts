@@ -20,6 +20,8 @@ type DashboardFilters = {
   hiddenTokens: string | null
   hiddenEntities: string | null
   sentencesRating: string | null
+  minWordCount: string | null
+  basicSentencesRating: string | null
 }
 
 export type { PgDashboardMetrics, RunningAverage, DashboardFilters }

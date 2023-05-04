@@ -1,4 +1,11 @@
-import { DashboardMetrics, PartOfSpeech, Sentence, Track } from "@/generated/graphql"
+import {
+  BasicSentence,
+  DashboardMetrics,
+  PartOfSpeech,
+  Sentence,
+  Track,
+  Word,
+} from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import { createContext, Dispatch, SetStateAction } from "react"
 import type { FilteredEntity, FilteredToken, TagCount } from "../types"
@@ -18,7 +25,8 @@ type DashboardFilterContextProps = {
   setTokenTags: Dispatch<SetStateAction<PartOfSpeech["tag"][]>>
   minTokenCount: number
   setMinTokenCount: Dispatch<SetStateAction<number>>
-  loading: boolean
+  loadingPremium: boolean
+  loadingBasic: boolean
   avgHours?: DashboardMetrics["avgHours"]
   setAvgHours: Dispatch<SetStateAction<DashboardMetrics["avgHours"] | undefined>>
   hideToken: (hide: boolean, token: string) => void
@@ -36,6 +44,10 @@ type DashboardFilterContextProps = {
   sentenceTerms: string[]
   addSentenceTerm: (term?: string | null) => void
   removeSentenceTerm: (term: string) => void
+  basicWords?: Word[]
+  basicSentences?: BasicSentence[]
+  minWordCount: [number, Dispatch<SetStateAction<number>>]
+  basicSentencesRating: [number | "", Dispatch<SetStateAction<number | "">>]
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(

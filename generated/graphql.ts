@@ -14,6 +14,35 @@ export type Scalars = {
   Float: number;
 };
 
+export type BasicDashboard = {
+  __typename?: 'BasicDashboard';
+  sentences: Array<BasicSentence>;
+  words: Array<Word>;
+};
+
+export type BasicDashboardResponse = {
+  __typename?: 'BasicDashboardResponse';
+  dashboard?: Maybe<BasicDashboard>;
+  errors?: Maybe<Array<PsqlError>>;
+};
+
+export type BasicSentence = {
+  __typename?: 'BasicSentence';
+  createdAt?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  numberCreativeHours: Scalars['Float'];
+  overview: Scalars['String'];
+  rating: Scalars['Int'];
+  text?: Maybe<Text>;
+  user?: Maybe<Scalars['String']>;
+};
+
+export type BasicWord = {
+  __typename?: 'BasicWord';
+  mentions?: Maybe<Array<Track>>;
+  text?: Maybe<Text>;
+};
+
 export type Dashboard = {
   __typename?: 'Dashboard';
   entities?: Maybe<Array<Entity>>;
@@ -113,12 +142,18 @@ export type PsqlError = {
 export type Query = {
   __typename?: 'Query';
   dashboard: DashboardResponse;
+  dashboardBasic: BasicDashboardResponse;
   dashboardMetrics: DashboardMetricsResponse;
   me: MeQueryResponse;
 };
 
 
 export type QueryDashboardArgs = {
+  runningAvg: Scalars['String'];
+};
+
+
+export type QueryDashboardBasicArgs = {
   runningAvg: Scalars['String'];
 };
 
@@ -220,6 +255,20 @@ export type UserInput = {
   username: Scalars['String'];
 };
 
+export type Word = {
+  __typename?: 'Word';
+  count: Scalars['Int'];
+  hide: Scalars['Boolean'];
+  word: BasicWord;
+};
+
+export type DashboardBasicQueryQueryVariables = Exact<{
+  runningAvg: Scalars['String'];
+}>;
+
+
+export type DashboardBasicQueryQuery = { __typename?: 'Query', dashboardBasic: { __typename?: 'BasicDashboardResponse', dashboard?: { __typename?: 'BasicDashboard', sentences: Array<{ __typename?: 'BasicSentence', id: string, overview: string, numberCreativeHours: number, rating: number, createdAt?: string | null, text?: { __typename?: 'Text', content?: string | null } | null }>, words: Array<{ __typename?: 'Word', count: number, hide: boolean, word: { __typename?: 'BasicWord', text?: { __typename?: 'Text', content?: string | null } | null, mentions?: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, createdAt?: string | null }> | null } }> } | null } };
+
 export type DashboardMetricsQueryQueryVariables = Exact<{
   runningAvg: Scalars['String'];
 }>;
@@ -270,6 +319,7 @@ export type UploadTrackerMutationVariables = Exact<{
 export type UploadTrackerMutation = { __typename?: 'Mutation', uploadTracker: { __typename?: 'UploadTrackerResponse', uploaded?: string | null, errors?: Array<{ __typename?: 'PsqlError', field: string, message: string }> | null } };
 
 
+export const DashboardBasicQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardBasicQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardBasic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"words"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"hide"}},{"kind":"Field","name":{"kind":"Name","value":"word"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardBasicQueryQuery, DashboardBasicQueryQueryVariables>;
 export const DashboardMetricsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardMetricsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardMetrics"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardMetrics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"daysOfUse"}},{"kind":"Field","name":{"kind":"Name","value":"avgHours"}},{"kind":"Field","name":{"kind":"Name","value":"ratings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"countNegOne"}},{"kind":"Field","name":{"kind":"Name","value":"countNegTwo"}},{"kind":"Field","name":{"kind":"Name","value":"countZero"}},{"kind":"Field","name":{"kind":"Name","value":"countPlusOne"}},{"kind":"Field","name":{"kind":"Name","value":"countPlusTwo"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardMetricsQueryQuery, DashboardMetricsQueryQueryVariables>;
 export const DashboardQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rawData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sentences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"salience"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"partOfSpeech"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tag"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardQueryQuery, DashboardQueryQueryVariables>;
 export const RegisterMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutationMutation, RegisterMutationMutationVariables>;

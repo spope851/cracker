@@ -1,12 +1,12 @@
 import { Box, Checkbox, Grid, TextField } from "@mui/material"
 import React, { useContext } from "react"
-import { TH, TD } from "./components"
-import { DashboardFilterContext } from "./context"
-import { sentimentColor } from "./functions"
+import { TH, TD } from "../components"
+import { DashboardFilterContext } from "../context"
+import { sentimentColor } from "../functions"
 
 export const EntityTable: React.FC = () => {
   const {
-    loading,
+    loadingPremium: loading,
     filteredEntities: entities,
     hideEntity,
     minEntityCount: minCount,

@@ -12,14 +12,14 @@ import {
 } from "@mui/material"
 import React, { useContext } from "react"
 import { RunningAverage } from "@/types"
-import { DashboardFilterContext } from "./context"
+import { DashboardFilterContext } from "../context"
 import { useRouter } from "next/router"
 import { UserContext } from "@/context/userContext"
 import { EntityTable } from "./entityTable"
-import { Metrics } from "./metrics"
+import { Metrics } from "../metrics"
 import { SentencesTable } from "./sentencesTable"
 import { TokenTable } from "./tokenTable"
-import { Wordcloud } from "./wordcloud"
+import { Wordcloud } from "../wordcloud"
 
 const CALC_MAX_WIDTH = "calc(100vw - 40px)"
 
@@ -31,7 +31,7 @@ const maxWidth = {
 const RUNNING_AVG_WIDTH = 150
 const RUNNING_AVG_MR = 5
 
-const Dashboard: React.FC = () => {
+const PremiumDashboard: React.FC = () => {
   const router = useRouter()
   const { lastPost } = useContext(UserContext)
   const {
@@ -122,4 +122,4 @@ const Dashboard: React.FC = () => {
   )
 }
 
-export default Dashboard
+export default PremiumDashboard

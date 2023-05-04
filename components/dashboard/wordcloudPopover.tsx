@@ -27,13 +27,18 @@ export const WordcloudPopover: React.FC<{
 
   const {
     findTokens: findWords,
+    basicWords,
     hideEntity,
     hideToken,
     addSentenceTerm,
     analyzeEntities,
   } = useContext(DashboardFilterContext)
 
-  const foundData = findWords(word)
+  const foundData =
+    findWords(word) ||
+    basicWords?.find(({ word: { text } }) => text?.content === word)?.word.mentions
+
+  console.log(foundData)
 
   const StyledCalendar = styled(Calendar)(() =>
     foundData?.map(({ rating }, idx) => {

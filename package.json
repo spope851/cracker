@@ -10,7 +10,7 @@
     "compile": "graphql-codegen",
     "watch": "graphql-codegen -w",
     "codegen": "graphql-codegen --config codegen.ts",
-    "start:server": "cd server && docker-compose up -d",
+    "start:server": "cd server && docker-compose -p cracker up -d",
     "new:db": "cd server && rm -rf postgres-data && docker-compose build && docker-compose -p cracker up",
     "it:db": "docker exec -it pg sh",
     "it:cache": "docker exec -it redis redis-cli",
