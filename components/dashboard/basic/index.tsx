@@ -32,8 +32,7 @@ const BasicDashboard: React.FC = () => {
   const router = useRouter()
   const { lastPost } = useContext(UserContext)
   const {
-    runningAvg,
-    setRunningAvg,
+    basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
     daysOfUse,
     basicWords: tokens,
   } = useContext(DashboardFilterContext)
@@ -60,9 +59,11 @@ const BasicDashboard: React.FC = () => {
         >
           <InputLabel>running average</InputLabel>
           <Select
-            value={runningAvg}
+            value={basicRunningAvg}
             label="Running Average"
-            onChange={(e) => setRunningAvg(e.target.value as RunningAverage)}
+            onChange={(e) => {
+              setBasicRunningAvg(e.target.value as RunningAverage)
+            }}
           >
             <MenuItem value="30">30 days</MenuItem>
             <MenuItem disabled={daysOfUse ? daysOfUse < 30 : true} value={"60"}>

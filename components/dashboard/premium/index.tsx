@@ -35,8 +35,7 @@ const PremiumDashboard: React.FC = () => {
   const router = useRouter()
   const { lastPost } = useContext(UserContext)
   const {
-    runningAvg,
-    setRunningAvg,
+    premiumRunningAvg: [premiumRunningAvg, setPremiumRunningAvg],
     analyzeEntities,
     setAnalyzeEntities,
     daysOfUse,
@@ -66,9 +65,9 @@ const PremiumDashboard: React.FC = () => {
         >
           <InputLabel>running average</InputLabel>
           <Select
-            value={runningAvg}
+            value={premiumRunningAvg}
             label="Running Average"
-            onChange={(e) => setRunningAvg(e.target.value as RunningAverage)}
+            onChange={(e) => setPremiumRunningAvg(e.target.value as RunningAverage)}
           >
             <MenuItem value="30">30 days</MenuItem>
             <MenuItem disabled={daysOfUse ? daysOfUse < 30 : true} value={"60"}>

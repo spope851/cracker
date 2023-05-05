@@ -3,18 +3,10 @@ import {
   DashboardMetrics,
   PartOfSpeech,
   Sentence,
-  Text,
-  Track,
   Word,
 } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
-import React, {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react"
+import React, { ReactNode, useEffect, useState } from "react"
 import { defaultTags } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
@@ -22,60 +14,19 @@ import { DashboardFilters, RunningAverage } from "@/types"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 import { DASBOARD_BASIC_QUERY } from "@/graphql/client/dashboard/dashboardBasicQuery"
-
-const setHiddenFilter = (
-  hide: boolean,
-  newFilter: string,
-  setter: Dispatch<SetStateAction<string[]>>
-) => {
-  if (hide)
-    setter((oldTokens) => {
-      let newTokens = [...oldTokens]
-      newTokens.push(newFilter)
-      return newTokens
-    })
-  else
-    setter((oldTokens) =>
-      [...oldTokens].filter((newToken) => newToken !== newFilter)
-    )
-}
-
-const filterBySentenceTerms = <T extends { text?: Text | null }>(
-  sentenceTerms: string[],
-  sentences?: T[] | null
-): T[] | undefined =>
-  sentences?.filter(
-    (sentence) =>
-      sentence.text?.content &&
-      new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
-  )
-
-const filterBySentenceRating = <T extends { text?: Text | null; rating?: number }>(
-  sentencesRating: number | "",
-  sentences?: T[],
-  findSentence?: (content?: string) => Track | null | undefined
-): T[] | undefined =>
-  sentences?.filter((sentence) => {
-    if (sentencesRating === "") return true
-    else if (sentence.text?.content) {
-      const rating =
-        sentence.rating ||
-        (findSentence && findSentence(sentence.text?.content)?.rating)
-      return rating === sentencesRating
-    }
-  })
-
-const filterByMinCount = <T extends { count: number }>(
-  minCount: number,
-  words?: T[]
-): T[] | undefined => words?.filter((i) => i.count && i.count >= minCount)
+import {
+  filterByMinCount,
+  setHiddenFilter,
+  filterBySentenceRating,
+  filterBySentenceTerms,
+} from "../../functions"
 
 export const DashboardFilterContextProvider: React.FC<
   DashboardFilters & { children: ReactNode; premium: boolean }
 > = ({
   children,
   premium,
-  runningAvg: cachedRunningAvg,
+  premiumRunningAvg: cachedPremiumRunningAvg,
   analyzeEntities: cachedAnalyzeEntities,
   tokenTags: cachedTokenTags,
   minTokenCount: cachedMinTokenCount,
@@ -84,6 +35,7 @@ export const DashboardFilterContextProvider: React.FC<
   hiddenTokens: cachedHiddenTokens,
   hiddenEntities: cachedHiddenEntities,
   sentencesRating: cachedSentencesRating,
+  basicRunningAvg: cachedBasicRunningAvg,
   minWordCount: cachedMinWordCount,
   basicSentencesRating: cachedBasicSentencesRating,
   hiddenWords: cachedHiddenWords,
@@ -94,8 +46,8 @@ export const DashboardFilterContextProvider: React.FC<
   const [analyzeEntities, setAnalyzeEntities] = useState<boolean>(
     JSON.parse(cachedAnalyzeEntities || "true")
   )
-  const [runningAvg, setRunningAvg] = useState<RunningAverage>(
-    cachedRunningAvg || "30"
+  const [premiumRunningAvg, setPremiumRunningAvg] = useState<RunningAverage>(
+    cachedPremiumRunningAvg || "30"
   )
   const [daysOfUse, setDaysOfUse] = useState<DashboardMetrics["daysOfUse"]>()
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
@@ -125,7 +77,7 @@ export const DashboardFilterContextProvider: React.FC<
   )
   const [avgHours, setAvgHours] = useState<DashboardMetrics["avgHours"]>()
   const { data: premiumData, loading: loadingPremium } = useQuery(DASBOARD_QUERY, {
-    variables: { runningAvg },
+    variables: { runningAvg: premiumRunningAvg },
     onCompleted: (data) => console.log("premium", data),
     skip: !premium,
   })
@@ -138,6 +90,9 @@ export const DashboardFilterContextProvider: React.FC<
 
   // BASIC FILTERS
 
+  const [basicRunningAvg, setBasicRunningAvg] = useState<RunningAverage>(
+    cachedBasicRunningAvg || "30"
+  )
   const [minWordCount, setMinWordCount] = useState(Number(cachedMinWordCount) || 2)
   const [basicSentencesRating, setBasicSentencesRating] = useState(
     cachedBasicSentencesRating ? Number(cachedBasicSentencesRating) : ("" as "")
@@ -155,7 +110,7 @@ export const DashboardFilterContextProvider: React.FC<
       await fetch("/api/cacheDashboardFilters", {
         method: "post",
         body: JSON.stringify({
-          runningAvg,
+          premiumRunningAvg,
           analyzeEntities,
           tokenTags: JSON.stringify(tokenTags),
           minTokenCount,
@@ -165,6 +120,7 @@ export const DashboardFilterContextProvider: React.FC<
           hiddenEntities: JSON.stringify(hiddenEntities),
           sentencesRating,
           // basic caches
+          basicRunningAvg,
           minWordCount,
           basicSentencesRating,
           hiddenWords: JSON.stringify(hiddenWords),
@@ -172,7 +128,7 @@ export const DashboardFilterContextProvider: React.FC<
         }),
       }))()
   }, [
-    runningAvg,
+    premiumRunningAvg,
     analyzeEntities,
     tokenTags,
     minTokenCount,
@@ -182,6 +138,7 @@ export const DashboardFilterContextProvider: React.FC<
     hiddenEntities,
     sentencesRating,
     // basic caches
+    basicRunningAvg,
     minWordCount,
     basicSentencesRating,
     hiddenWords,
@@ -337,7 +294,7 @@ export const DashboardFilterContextProvider: React.FC<
   const [basicSentences, setBasicSentences] = useState<BasicSentence[]>()
 
   const { data: basicData, loading: loadingBasic } = useQuery(DASBOARD_BASIC_QUERY, {
-    variables: { runningAvg },
+    variables: { runningAvg: basicRunningAvg },
     onCompleted: (data) => console.log("basic", data),
     skip: premium,
   })
@@ -384,8 +341,7 @@ export const DashboardFilterContextProvider: React.FC<
         // TODO: move premium to global dashboard context
         premium,
         // PREMIUM FEATURES
-        runningAvg,
-        setRunningAvg,
+        premiumRunningAvg: [premiumRunningAvg, setPremiumRunningAvg],
         analyzeEntities,
         setAnalyzeEntities,
         daysOfUse,
@@ -417,6 +373,7 @@ export const DashboardFilterContextProvider: React.FC<
         addSentenceTerm,
         removeSentenceTerm,
         // BASIC FEATURES
+        basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
         basicWords,
         basicSentences,
         minWordCount: [minWordCount, setMinWordCount],

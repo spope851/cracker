@@ -15,8 +15,7 @@ type DashboardFilterContextProps = {
   // TODO: move premium to global dashboard context
   premium: boolean
   // PREMIUM FEATURES
-  runningAvg: RunningAverage
-  setRunningAvg: Dispatch<SetStateAction<RunningAverage>>
+  premiumRunningAvg: [RunningAverage, Dispatch<SetStateAction<RunningAverage>>]
   analyzeEntities: boolean
   setAnalyzeEntities: Dispatch<SetStateAction<boolean>>
   daysOfUse?: DashboardMetrics["daysOfUse"]
@@ -48,6 +47,7 @@ type DashboardFilterContextProps = {
   addSentenceTerm: (term?: string | null) => void
   removeSentenceTerm: (term: string) => void
   // BASIC FEATURES
+  basicRunningAvg: [RunningAverage, Dispatch<SetStateAction<RunningAverage>>]
   basicWords?: Word[]
   basicSentences?: BasicSentence[]
   minWordCount: [number, Dispatch<SetStateAction<number>>]
