@@ -26,17 +26,19 @@ export const WordcloudPopover: React.FC<{
   const [calendarPopOpen, setCalendarPopOpen] = useState(false)
 
   const {
+    premium,
     findTokens: findWords,
     basicWords,
     hideEntity,
     hideToken,
+    hideWord,
     addSentenceTerm,
     analyzeEntities,
   } = useContext(DashboardFilterContext)
 
-  const foundData =
-    findWords(word) ||
-    basicWords?.find(({ word: { text } }) => text?.content === word)?.word.mentions
+  const foundData = premium
+    ? findWords(word)
+    : basicWords?.find(({ word: { text } }) => text?.content === word)?.word.mentions
 
   console.log(foundData)
 
@@ -49,6 +51,9 @@ export const WordcloudPopover: React.FC<{
       }
     })
   )
+
+  const premiumHideFns = () =>
+    analyzeEntities ? hideEntity(true, word) : hideToken(true, word)
 
   return (
     <Popover
@@ -94,7 +99,7 @@ export const WordcloudPopover: React.FC<{
         <Stack rowGap={1} direction="row" justifyContent="space-around">
           <Button
             onClick={() => {
-              analyzeEntities ? hideEntity(true, word) : hideToken(true, word)
+              premium ? premiumHideFns() : hideWord(true, word)
               setSelfOpen(false)
             }}
             variant="outlined"

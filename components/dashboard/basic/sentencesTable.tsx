@@ -8,10 +8,11 @@ import { aboveAverage, ratingColor } from "../functions"
 
 export const SentencesTable: React.FC = () => {
   const {
+    premium,
     basicSentences: sentences,
     loadingBasic: loading,
     avgHours,
-    sentenceTerms,
+    basicSentenceTerms,
     removeSentenceTerm,
     basicSentencesRating: [sentencesRating, setSentencesRating],
   } = useContext(DashboardFilterContext)
@@ -37,10 +38,10 @@ export const SentencesTable: React.FC = () => {
             alignItems="center"
             columnGap={1}
           >
-            {sentenceTerms.length > 0 && (
+            {basicSentenceTerms.length > 0 && (
               <>
                 <Typography>term:</Typography>
-                {sentenceTerms.map((term, idx) => (
+                {basicSentenceTerms.map((term, idx) => (
                   <Chip
                     key={idx}
                     label={term}
@@ -101,13 +102,13 @@ export const SentencesTable: React.FC = () => {
                     <Box key={idx} component="tr" color={"#000"}>
                       <TD>
                         <Typography>
-                          {sentenceTerms.length > 0
+                          {basicSentenceTerms.length > 0
                             ? text?.content
                                 ?.split(
                                   new RegExp(
-                                    `(\\b)(?=${sentenceTerms.join(
+                                    `(\\b)(?=${basicSentenceTerms.join(
                                       "|"
-                                    )})|(?<=${sentenceTerms.join("|")})(\\b)`,
+                                    )})|(?<=${basicSentenceTerms.join("|")})(\\b)`,
                                     "g"
                                   )
                                 )
@@ -116,7 +117,7 @@ export const SentencesTable: React.FC = () => {
                                     key={idx}
                                     component="span"
                                     fontWeight={
-                                      sentenceTerms.includes(part)
+                                      basicSentenceTerms.includes(part)
                                         ? "bold"
                                         : "normal"
                                     }

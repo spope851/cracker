@@ -8,7 +8,7 @@ export const WordTable: React.FC = () => {
     minWordCount: [minCount, setMinCount],
     basicWords,
     loadingBasic: loading,
-    hideToken,
+    hideWord,
   } = useContext(DashboardFilterContext)
 
   return (
@@ -56,8 +56,8 @@ export const WordTable: React.FC = () => {
                         checked={!hide}
                         onChange={(e) => {
                           if (word.text?.content) {
-                            if (e.target.checked) hideToken(false, word.text.content)
-                            else hideToken(true, word.text.content)
+                            if (e.target.checked) hideWord(false, word.text.content)
+                            else hideWord(true, word.text.content)
                           }
                         }}
                       />

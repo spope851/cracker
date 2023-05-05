@@ -12,6 +12,9 @@ import type { FilteredEntity, FilteredToken, TagCount } from "../types"
 import { RunningAverage } from "@/types"
 
 type DashboardFilterContextProps = {
+  // TODO: move premium to global dashboard context
+  premium: boolean
+  // PREMIUM FEATURES
   runningAvg: RunningAverage
   setRunningAvg: Dispatch<SetStateAction<RunningAverage>>
   analyzeEntities: boolean
@@ -44,10 +47,13 @@ type DashboardFilterContextProps = {
   sentenceTerms: string[]
   addSentenceTerm: (term?: string | null) => void
   removeSentenceTerm: (term: string) => void
+  // BASIC FEATURES
   basicWords?: Word[]
   basicSentences?: BasicSentence[]
   minWordCount: [number, Dispatch<SetStateAction<number>>]
   basicSentencesRating: [number | "", Dispatch<SetStateAction<number | "">>]
+  hideWord: (hide: boolean, word: string) => void
+  basicSentenceTerms: string[]
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(

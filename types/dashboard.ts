@@ -22,6 +22,8 @@ type DashboardFilters = {
   sentencesRating: string | null
   minWordCount: string | null
   basicSentencesRating: string | null
+  hiddenWords: string | null
+  basicSentenceTerms: string | null
 }
 
 export type { PgDashboardMetrics, RunningAverage, DashboardFilters }
