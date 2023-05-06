@@ -87,7 +87,6 @@ export const DashboardFilterContextProvider: React.FC<
   const [avgHours, setAvgHours] = useState<DashboardMetrics["avgHours"]>()
   const { data: premiumData, loading: loadingPremium } = useQuery(DASBOARD_QUERY, {
     variables: { runningAvg: premiumRunningAvg },
-    onCompleted: (data) => console.log("premium", data),
     skip: !premium,
   })
 
@@ -304,7 +303,6 @@ export const DashboardFilterContextProvider: React.FC<
 
   const { data: basicData, loading: loadingBasic } = useQuery(DASBOARD_BASIC_QUERY, {
     variables: { runningAvg: basicRunningAvg },
-    onCompleted: (data) => console.log("basic", data),
     skip: premium,
   })
 
