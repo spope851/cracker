@@ -1,4 +1,4 @@
 import redis from "./redis"
-export * from "./deletsNlpCache"
+export * from "./deleteNlpCache"
 
 export default redis
