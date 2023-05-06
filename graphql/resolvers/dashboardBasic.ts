@@ -1,30 +1,17 @@
 import { authOptions } from "@/pages/api/auth/[...nextauth]"
 import { type MyContext } from "@/pages/api/graphql"
-import { PgQueryError, PgQueryResponse } from "@/types"
+import {
+  PgBasicCount,
+  PgQueryError,
+  PgQueryResponse,
+  PgBasicSentence,
+  PgBasicWord,
+} from "@/types"
 import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import redis from "@/utils/redis"
 import { BasicDashboardResponse } from "../schemas/dashboard/basicDashboardResponse"
-
-type Word = {
-  word: string
-  rating: number
-  number_creative_hours: string
-  overview: string
-  created_at: string
-  id: number
-}
-
-type Count = { word: string; count: string }
-
-type Sentence = {
-  sentence: string
-  rating: number
-  number_creative_hours: string
-  created_at: string
-  overview: string
-}
 
 @Resolver(BasicDashboardResponse)
 export class DashboardBasicReslover {
@@ -43,9 +30,9 @@ export class DashboardBasicReslover {
         dashboard: JSON.parse(cachedMetrics),
       }
 
-    const queryWords: Word[] = []
-    const queryCounts: Count[] = []
-    const querySentences: Sentence[] = []
+    const queryWords: PgBasicWord[] = []
+    const queryCounts: PgBasicCount[] = []
+    const querySentences: PgBasicSentence[] = []
     return await pool
       .connect()
       .then(async (client: any) => {
@@ -59,13 +46,17 @@ export class DashboardBasicReslover {
             return Promise.all([
               await client
                 .query(`FETCH ALL FROM "<unnamed portal 1>";`)
-                .then((r: PgQueryResponse<Word>) => queryWords.push(...r.rows)),
+                .then((r: PgQueryResponse<PgBasicWord>) =>
+                  queryWords.push(...r.rows)
+                ),
               await client
                 .query(`FETCH ALL FROM "<unnamed portal 2>";`)
-                .then((r: PgQueryResponse<Count>) => queryCounts.push(...r.rows)),
+                .then((r: PgQueryResponse<PgBasicCount>) =>
+                  queryCounts.push(...r.rows)
+                ),
               await client
                 .query(`FETCH ALL FROM "<unnamed portal 3>";`)
-                .then((r: PgQueryResponse<Sentence>) =>
+                .then((r: PgQueryResponse<PgBasicSentence>) =>
                   querySentences.push(...r.rows)
                 ),
             ]).then(async () => {
