@@ -35,7 +35,7 @@ export const WordTable: React.FC = () => {
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
-              <TH>token</TH>
+              <TH>word</TH>
               <TH>count</TH>
             </Box>
           </Box>

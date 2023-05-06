@@ -8,7 +8,6 @@ import { aboveAverage, ratingColor } from "../functions"
 
 export const SentencesTable: React.FC = () => {
   const {
-    premium,
     basicSentences: sentences,
     loadingBasic: loading,
     avgHours,

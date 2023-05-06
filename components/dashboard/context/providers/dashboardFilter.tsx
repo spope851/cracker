@@ -6,7 +6,13 @@ import {
   Word,
 } from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
-import React, { ReactNode, useEffect, useState } from "react"
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react"
 import { defaultTags } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
@@ -22,10 +28,13 @@ import {
 } from "../../functions"
 
 export const DashboardFilterContextProvider: React.FC<
-  DashboardFilters & { children: ReactNode; premium: boolean }
+  DashboardFilters & {
+    children: ReactNode
+    premium: [boolean, Dispatch<SetStateAction<boolean>>]
+  }
 > = ({
   children,
-  premium,
+  premium: [premium, setPremium],
   premiumRunningAvg: cachedPremiumRunningAvg,
   analyzeEntities: cachedAnalyzeEntities,
   tokenTags: cachedTokenTags,
@@ -339,7 +348,7 @@ export const DashboardFilterContextProvider: React.FC<
     <DashboardFilterContext.Provider
       value={{
         // TODO: move premium to global dashboard context
-        premium,
+        premium: [premium, setPremium],
         // PREMIUM FEATURES
         premiumRunningAvg: [premiumRunningAvg, setPremiumRunningAvg],
         analyzeEntities,

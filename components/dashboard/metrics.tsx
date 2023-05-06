@@ -6,8 +6,13 @@ import { useQuery } from "@apollo/client"
 import { DashboardFilterContext } from "./context"
 
 export const Metrics: React.FC = () => {
-  const { premium, basicRunningAvg, premiumRunningAvg, setDaysOfUse, setAvgHours } =
-    useContext(DashboardFilterContext)
+  const {
+    premium: [premium],
+    basicRunningAvg,
+    premiumRunningAvg,
+    setDaysOfUse,
+    setAvgHours,
+  } = useContext(DashboardFilterContext)
   const { data, loading } = useQuery(DASBOARD_METRICS_QUERY, {
     variables: { runningAvg: premium ? premiumRunningAvg[0] : basicRunningAvg[0] },
   })

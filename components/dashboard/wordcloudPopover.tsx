@@ -26,7 +26,7 @@ export const WordcloudPopover: React.FC<{
   const [calendarPopOpen, setCalendarPopOpen] = useState(false)
 
   const {
-    premium,
+    premium: [premium],
     findTokens: findWords,
     basicWords,
     hideEntity,

@@ -47,7 +47,10 @@ export default function Home({
         m="auto"
       >
         {session.status === "authenticated" ? (
-          <DashboardFilterContextProvider {...dashboardFilters} premium={premium}>
+          <DashboardFilterContextProvider
+            {...dashboardFilters}
+            premium={[premium, setPremium]}
+          >
             {premium ? <PremiumDashboard /> : <BasicDashboard />}
           </DashboardFilterContextProvider>
         ) : (

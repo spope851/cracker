@@ -13,7 +13,7 @@ import { RunningAverage } from "@/types"
 
 type DashboardFilterContextProps = {
   // TODO: move premium to global dashboard context
-  premium: boolean
+  premium: [boolean, Dispatch<SetStateAction<boolean>>]
   // PREMIUM FEATURES
   premiumRunningAvg: [RunningAverage, Dispatch<SetStateAction<RunningAverage>>]
   analyzeEntities: boolean

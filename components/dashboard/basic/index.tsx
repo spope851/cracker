@@ -2,11 +2,13 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
   Select,
   Stack,
+  Switch,
 } from "@mui/material"
 import React, { useContext } from "react"
 import { RunningAverage } from "@/types"
@@ -32,6 +34,7 @@ const BasicDashboard: React.FC = () => {
   const router = useRouter()
   const { lastPost } = useContext(UserContext)
   const {
+    premium: [, setPremium],
     basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
     daysOfUse,
     basicWords: tokens,
@@ -47,14 +50,17 @@ const BasicDashboard: React.FC = () => {
   return (
     <Box m={5}>
       <Stack
-        flexDirection={{ md: "row", sm: "row", xs: "column" }}
+        flexDirection="row"
         mb={1}
         rowGap={1}
+        justifyContent="space-between"
+        alignItems="center"
       >
         <FormControl
           sx={{
             width: { md: RUNNING_AVG_WIDTH, sm: RUNNING_AVG_WIDTH },
             mr: { md: RUNNING_AVG_MR, sm: RUNNING_AVG_MR },
+            flexGrow: { md: 0, sm: 0, xs: 1 },
           }}
         >
           <InputLabel>running average</InputLabel>
@@ -74,6 +80,11 @@ const BasicDashboard: React.FC = () => {
             </MenuItem>
           </Select>
         </FormControl>
+        <FormControlLabel
+          control={<Switch onChange={() => setPremium(true)} />}
+          label="premium"
+          labelPlacement="start"
+        />
       </Stack>
       <Grid
         container
