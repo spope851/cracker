@@ -84,6 +84,7 @@ const BasicDashboard: React.FC = () => {
           control={<Switch onChange={() => setPremium(true)} />}
           label="premium"
           labelPlacement="start"
+          sx={{ mb: { md: 1, sm: 1 }, mr: { md: 0, sm: 0 } }}
         />
       </Stack>
       <Grid

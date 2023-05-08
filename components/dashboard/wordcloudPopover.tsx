@@ -40,8 +40,6 @@ export const WordcloudPopover: React.FC<{
     ? findWords(word)
     : basicWords?.find(({ word: { text } }) => text?.content === word)?.word.mentions
 
-  console.log(foundData)
-
   const StyledCalendar = styled(Calendar)(() =>
     foundData?.map(({ rating }, idx) => {
       return {
