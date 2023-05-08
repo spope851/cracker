@@ -88,6 +88,7 @@ export const DashboardFilterContextProvider: React.FC<
   const { data: premiumData, loading: loadingPremium } = useQuery(DASBOARD_QUERY, {
     variables: { runningAvg: premiumRunningAvg },
     skip: !premium,
+    // onCompleted: (data) => console.log(data),
   })
 
   const dashboard = premiumData?.dashboard.dashboard
@@ -304,6 +305,7 @@ export const DashboardFilterContextProvider: React.FC<
   const { data: basicData, loading: loadingBasic } = useQuery(DASBOARD_BASIC_QUERY, {
     variables: { runningAvg: basicRunningAvg },
     skip: premium,
+    // onCompleted: (data) => console.log(data),
   })
 
   const words = basicData?.dashboardBasic.dashboard?.words
