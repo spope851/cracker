@@ -117,6 +117,9 @@ const PremiumDashboard: React.FC = () => {
           <ResponsiveSwitch onChange={() => setPremium(false)} mobile />
         </Stack>
         <Tabs
+          scrollButtons
+          variant="scrollable"
+          allowScrollButtonsMobile
           value={analyzeEntities ? 0 : 1}
           onChange={(e) => {
             if (e.type === "change") setPremium(false)

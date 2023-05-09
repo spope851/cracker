@@ -32,7 +32,9 @@ export default function Home({
   dashboardFilters: DashboardFilters
 }) {
   const session = useSession()
-  const [premium, setPremium] = useState(false)
+  const [premium, setPremium] = useState(
+    JSON.parse(dashboardFilters.cachedPremium || "false")
+  )
 
   return (
     <>

@@ -11,6 +11,7 @@ interface PgDashboardMetrics {
 }
 
 type DashboardFilters = {
+  cachedPremium: string | null
   premiumRunningAvg: RunningAverage | null
   analyzeEntities: string | null
   tokenTags: string | null

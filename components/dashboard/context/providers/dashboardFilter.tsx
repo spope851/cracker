@@ -119,6 +119,7 @@ export const DashboardFilterContextProvider: React.FC<
       await fetch("/api/cacheDashboardFilters", {
         method: "post",
         body: JSON.stringify({
+          cachedPremium: premium,
           premiumRunningAvg,
           analyzeEntities,
           tokenTags: JSON.stringify(tokenTags),
@@ -137,6 +138,7 @@ export const DashboardFilterContextProvider: React.FC<
         }),
       }))()
   }, [
+    premium,
     premiumRunningAvg,
     analyzeEntities,
     tokenTags,
