@@ -2,7 +2,7 @@
 
 -- DROP PROCEDURE IF EXISTS public.get_user_dashboard_basic(integer, character varying, refcursor, refcursor, refcursor);
 
-CREATE OR REPLACE PROCEDURE public.get_user_dashboard_basic(
+CREATE OR REPLACE PROCEDURE public.get_dashboard_basic(
 	IN user_id integer,
 	IN running_avg character varying,
 	INOUT _words refcursor,
@@ -70,5 +70,5 @@ begin
 		and created_at > now() - (running_avg || ' day')::interval;
 end; 
 $BODY$;
-ALTER PROCEDURE public.get_user_dashboard_basic(integer, character varying, refcursor, refcursor, refcursor)
+ALTER PROCEDURE public.get_dashboard_basic(integer, character varying, refcursor, refcursor, refcursor)
     OWNER TO postgres;

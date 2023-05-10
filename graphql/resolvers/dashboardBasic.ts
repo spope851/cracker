@@ -11,10 +11,10 @@ import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import redis from "@/utils/redis"
-import { BasicDashboardResponse } from "../schemas/dashboard/basicDashboardResponse"
+import { BasicDashboardResponse } from "../schemas/dashboard"
 
 @Resolver(BasicDashboardResponse)
-export class DashboardBasicReslover {
+export class BasicDashboardReslover {
   @Query(() => BasicDashboardResponse)
   async dashboardBasic(
     @Arg("runningAvg", () => String!) runningAvg: string,

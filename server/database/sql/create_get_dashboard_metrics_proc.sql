@@ -2,7 +2,7 @@
 
 -- DROP PROCEDURE IF EXISTS public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor);
 
-CREATE OR REPLACE PROCEDURE public.get_user_dashboard(
+CREATE OR REPLACE PROCEDURE public.get_dashboard_metrics(
 	IN user_id integer,
 	IN running_avg character varying,
 	INOUT _days_of_use refcursor DEFAULT 'total numbers of times user has tracked data'::refcursor,
@@ -68,5 +68,5 @@ begin
 
 end; 
 $BODY$;
-ALTER PROCEDURE public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
+ALTER PROCEDURE public.get_dashboard_metrics(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
     OWNER TO postgres;
