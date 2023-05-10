@@ -11,6 +11,7 @@ import {
   UploadTrackerResolver,
   UpdateTrackerResolver,
   BasicDashboardReslover,
+  UpgradeResolver,
 } from "@/graphql/resolvers"
 import { NextApiRequest, NextApiResponse } from "next"
 
@@ -24,6 +25,7 @@ const schema = await buildSchema({
     BasicDashboardReslover,
     UploadTrackerResolver,
     UpdateTrackerResolver,
+    UpgradeResolver,
   ],
   validate: false,
 })
