@@ -9,6 +9,7 @@ import {
   Select,
   Stack,
   Switch,
+  Typography,
 } from "@mui/material"
 import React, { useContext } from "react"
 import { RunningAverage } from "@/types"
@@ -19,6 +20,9 @@ import { Metrics } from "../metrics"
 import { Wordcloud } from "../wordcloud"
 import { SentencesTable } from "./sentencesTable"
 import { WordTable } from "./wordTable"
+import { useSession } from "next-auth/react"
+import { ModalContext } from "@/context/modalContext"
+import { Modal } from "@/components/wrappers"
 
 const CALC_MAX_WIDTH = "calc(100vw - 40px)"
 
@@ -31,7 +35,9 @@ const RUNNING_AVG_WIDTH = 150
 const RUNNING_AVG_MR = 5
 
 const BasicDashboard: React.FC = () => {
+  const session = useSession()
   const router = useRouter()
+  const { setModalContent, setModalOpen } = useContext(ModalContext)
   const { lastPost } = useContext(UserContext)
   const {
     premium: [, setPremium],
@@ -81,7 +87,33 @@ const BasicDashboard: React.FC = () => {
           </Select>
         </FormControl>
         <FormControlLabel
-          control={<Switch onChange={() => setPremium(true)} />}
+          control={
+            <Switch
+              checked={false}
+              onChange={() => {
+                if (session.data?.user.role === 3) setPremium(true)
+                else {
+                  setModalContent(
+                    <Modal>
+                      <Typography>
+                        You must be a premium member to use this feature
+                      </Typography>
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setModalOpen(false)
+                          router.push("/upgrade")
+                        }}
+                      >
+                        upgrade
+                      </Button>
+                    </Modal>
+                  )
+                  setModalOpen(true)
+                }
+              }}
+            />
+          }
           label="premium"
           labelPlacement="start"
           sx={{ mb: { md: 1, sm: 1 }, mr: { md: 0, sm: 0 } }}
