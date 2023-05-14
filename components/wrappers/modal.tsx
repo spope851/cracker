@@ -1,10 +1,12 @@
 import { Stack } from "@mui/material"
-import { ReactNode } from "react"
+import React, { ReactNode } from "react"
 
-export const Modal: React.FC<{
-  children: ReactNode
-}> = ({ children }) => (
+export const Modal: React.FC<{ children?: ReactNode }> = React.forwardRef<
+  HTMLDivElement,
+  { children?: ReactNode }
+>((props, ref) => (
   <Stack
+    ref={ref}
     alignItems="center"
     p={3}
     rowGap={2}
@@ -17,6 +19,6 @@ export const Modal: React.FC<{
       transform: "translate(-50%, -50%)",
     }}
   >
-    {children}
+    {props.children}
   </Stack>
-)
+))

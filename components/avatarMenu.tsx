@@ -14,6 +14,7 @@ import React, { useContext, useState } from "react"
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings"
 import { signOut } from "next-auth/react"
 import { UserContext } from "@/context/userContext"
+import { FeatureFlag } from "./featureFlag"
 
 const AvatarMenu: React.FC = () => {
   const router = useRouter()
@@ -72,20 +73,14 @@ const AvatarMenu: React.FC = () => {
           <Typography ml={1}>{loading ? "...loading" : user?.username}</Typography>
         </Box>
         <Divider />
-        {user?.role === 2 && (
+        <FeatureFlag name="adminDashboardMenuItem">
           <MenuItem onClick={() => router.push("/admin")}>
             <ListItemIcon>
               <AdminPanelSettingsIcon fontSize="small" />
             </ListItemIcon>
             Admin
           </MenuItem>
-        )}
-        {/* <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem> */}
+        </FeatureFlag>
         <MenuItem onClick={() => signOut()}>
           <ListItemIcon>
             <Logout fontSize="small" />

@@ -16,7 +16,7 @@ class UpgradeResolver {
     const query: Promise<string> = await pool
       .query(
         `UPDATE "user"
-         SET role = 3
+         SET role = 2
          WHERE id = $1;`,
         [user]
       )

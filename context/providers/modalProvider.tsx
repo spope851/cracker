@@ -1,4 +1,4 @@
-import { Modal } from "@mui/material"
+import { DialogContent, Modal } from "@mui/material"
 import React, { JSXElementConstructor, ReactElement, useState } from "react"
 import { ModalContext } from "../modalContext"
 
@@ -22,7 +22,7 @@ export const ModalContextProvider: React.FC<{ children: React.ReactNode }> = ({
     <ModalContext.Provider value={{ setModalContent, setModalOpen }}>
       {children}
       <Modal open={open} onClose={handleClose}>
-        {content}
+        <DialogContent>{content}</DialogContent>
       </Modal>
     </ModalContext.Provider>
   )

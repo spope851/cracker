@@ -11,6 +11,7 @@ import {
   SnackbarContextProvider,
   UserContextProvider,
   ModalContextProvider,
+  FeatureFlagsContextProvider,
 } from "@/context/providers"
 import { NextComponentWithAuth } from "@/types"
 import { Auth } from "@/components/auth"
@@ -22,26 +23,28 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
-        <UserContextProvider>
-          <ModalContextProvider>
-            <SnackbarContextProvider>
-              <ThemeProvider>
-                <Layout>
-                  {Component.auth ? (
-                    <Auth
-                      role={Component.auth.role}
-                      redirect={Component.auth.redirect}
-                    >
+        <FeatureFlagsContextProvider>
+          <UserContextProvider>
+            <ModalContextProvider>
+              <SnackbarContextProvider>
+                <ThemeProvider>
+                  <Layout>
+                    {Component.auth ? (
+                      <Auth
+                        role={Component.auth.role}
+                        redirect={Component.auth.redirect}
+                      >
+                        <Component {...pageProps} />
+                      </Auth>
+                    ) : (
                       <Component {...pageProps} />
-                    </Auth>
-                  ) : (
-                    <Component {...pageProps} />
-                  )}
-                </Layout>
-              </ThemeProvider>
-            </SnackbarContextProvider>
-          </ModalContextProvider>
-        </UserContextProvider>
+                    )}
+                  </Layout>
+                </ThemeProvider>
+              </SnackbarContextProvider>
+            </ModalContextProvider>
+          </UserContextProvider>
+        </FeatureFlagsContextProvider>
       </ApolloProvider>
     </SessionProvider>
   )
