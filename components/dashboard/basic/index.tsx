@@ -21,7 +21,7 @@ import { Wordcloud } from "../wordcloud"
 import { SentencesTable } from "./sentencesTable"
 import { WordTable } from "./wordTable"
 import { ModalContext } from "@/context/modalContext"
-import { Modal } from "@/components/wrappers"
+import { ModalContentWrapper } from "@/components/wrappers"
 import { FeatureFlagsContext } from "@/context/featureFlagsContext"
 import { FeatureFlag } from "@/components/featureFlag"
 
@@ -97,7 +97,7 @@ const BasicDashboard: React.FC = () => {
                   if (role === 2) setPremium(true)
                   else {
                     setModalContent(
-                      <Modal>
+                      <ModalContentWrapper>
                         <Typography>
                           You must be a premium member to use this feature
                         </Typography>
@@ -110,7 +110,7 @@ const BasicDashboard: React.FC = () => {
                         >
                           upgrade
                         </Button>
-                      </Modal>
+                      </ModalContentWrapper>
                     )
                     setModalOpen(true)
                   }
