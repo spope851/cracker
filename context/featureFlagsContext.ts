@@ -13,4 +13,4 @@ const defaultFlag = { isEnabled: false, requiredRole: -1 }
 export const FeatureFlagsContext = createContext<FeatureFlagsContextProps>({
   premiumDashboardSwitch: defaultFlag,
   adminDashboardMenuItem: defaultFlag,
-} as FeatureFlagsContextProps)
+})
