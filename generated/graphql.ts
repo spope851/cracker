@@ -64,18 +64,21 @@ export type DashboardMetricsResponse = {
   errors?: Maybe<Array<PsqlError>>;
 };
 
-export type DashboardResponse = {
-  __typename?: 'DashboardResponse';
-  dashboard?: Maybe<Dashboard>;
-  errors?: Maybe<Array<PsqlError>>;
-};
-
 export type Entity = {
   __typename?: 'Entity';
   mentions?: Maybe<Array<Sentence>>;
   name?: Maybe<Scalars['String']>;
   salience?: Maybe<Scalars['Float']>;
   sentiment?: Maybe<Sentiment>;
+};
+
+export type FeatureFlag = {
+  __typename?: 'FeatureFlag';
+  description: Scalars['String'];
+  id: Scalars['ID'];
+  isEnabled: Scalars['Boolean'];
+  name: Scalars['String'];
+  requiredRole?: Maybe<Scalars['Int']>;
 };
 
 export type LastPost = {
@@ -105,6 +108,7 @@ export type Mutation = {
   register: RegisterResponse;
   track: TrackerResponse;
   updateTrack: TrackerResponse;
+  upgrade: Scalars['String'];
   uploadTracker: UploadTrackerResponse;
 };
 
@@ -133,6 +137,12 @@ export type PartOfSpeech = {
   tag?: Maybe<Scalars['String']>;
 };
 
+export type PremiumDashboardResponse = {
+  __typename?: 'PremiumDashboardResponse';
+  dashboard?: Maybe<Dashboard>;
+  errors?: Maybe<Array<PsqlError>>;
+};
+
 export type PsqlError = {
   __typename?: 'PsqlError';
   field: Scalars['String'];
@@ -141,9 +151,10 @@ export type PsqlError = {
 
 export type Query = {
   __typename?: 'Query';
-  dashboard: DashboardResponse;
+  dashboard: PremiumDashboardResponse;
   dashboardBasic: BasicDashboardResponse;
   dashboardMetrics: DashboardMetricsResponse;
+  featureFlags: Array<FeatureFlag>;
   me: MeQueryResponse;
 };
 
@@ -281,7 +292,7 @@ export type DashboardQueryQueryVariables = Exact<{
 }>;
 
 
-export type DashboardQueryQuery = { __typename?: 'Query', dashboard: { __typename?: 'DashboardResponse', dashboard?: { __typename?: 'Dashboard', rawData: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt?: string | null }>, sentences?: Array<{ __typename?: 'Sentence', sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null, entities?: Array<{ __typename?: 'Entity', name?: string | null, salience?: number | null, sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, mentions?: Array<{ __typename?: 'Sentence', sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null }> | null, tokens?: Array<{ __typename?: 'Token', partOfSpeech?: { __typename?: 'PartOfSpeech', tag?: string | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null } | null } };
+export type DashboardQueryQuery = { __typename?: 'Query', dashboard: { __typename?: 'PremiumDashboardResponse', dashboard?: { __typename?: 'Dashboard', rawData: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt?: string | null }>, sentences?: Array<{ __typename?: 'Sentence', sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null, entities?: Array<{ __typename?: 'Entity', name?: string | null, salience?: number | null, sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, mentions?: Array<{ __typename?: 'Sentence', sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null }> | null, tokens?: Array<{ __typename?: 'Token', partOfSpeech?: { __typename?: 'PartOfSpeech', tag?: string | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null } | null } };
 
 export type RegisterMutationMutationVariables = Exact<{
   user: UserInput;
@@ -290,12 +301,22 @@ export type RegisterMutationMutationVariables = Exact<{
 
 export type RegisterMutationMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', errors?: Array<{ __typename?: 'PsqlError', field: string, message: string }> | null, user?: { __typename?: 'User', username: string } | null } };
 
+export type FeatureFlagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FeatureFlagsQuery = { __typename?: 'Query', featureFlags: Array<{ __typename?: 'FeatureFlag', name: string, isEnabled: boolean, requiredRole?: number | null }> };
+
 export type MeQueryVariables = Exact<{
   refetch?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'MeQueryResponse', me?: { __typename?: 'Me', user: { __typename?: 'User', email: string, username: string, role: number }, lastPost?: { __typename?: 'LastPost', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt: string } | null } | null } };
+
+export type UpgradeMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UpgradeMutation = { __typename?: 'Mutation', upgrade: string };
 
 export type TrackerMutationMutationVariables = Exact<{
   tracker: TrackerInput;
@@ -323,7 +344,9 @@ export const DashboardBasicQueryDocument = {"kind":"Document","definitions":[{"k
 export const DashboardMetricsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardMetricsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardMetrics"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardMetrics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"daysOfUse"}},{"kind":"Field","name":{"kind":"Name","value":"avgHours"}},{"kind":"Field","name":{"kind":"Name","value":"ratings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"countNegOne"}},{"kind":"Field","name":{"kind":"Name","value":"countNegTwo"}},{"kind":"Field","name":{"kind":"Name","value":"countZero"}},{"kind":"Field","name":{"kind":"Name","value":"countPlusOne"}},{"kind":"Field","name":{"kind":"Name","value":"countPlusTwo"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardMetricsQueryQuery, DashboardMetricsQueryQueryVariables>;
 export const DashboardQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rawData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sentences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"salience"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"partOfSpeech"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tag"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardQueryQuery, DashboardQueryQueryVariables>;
 export const RegisterMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutationMutation, RegisterMutationMutationVariables>;
+export const FeatureFlagsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FeatureFlags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"featureFlags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"requiredRole"}}]}}]}}]} as unknown as DocumentNode<FeatureFlagsQuery, FeatureFlagsQueryVariables>;
 export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refetch"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastPost"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
+export const UpgradeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Upgrade"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"upgrade"}}]}}]} as unknown as DocumentNode<UpgradeMutation, UpgradeMutationVariables>;
 export const TrackerMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TrackerMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TrackerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"track"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tracker"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"field"}}]}},{"kind":"Field","name":{"kind":"Name","value":"track"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<TrackerMutationMutation, TrackerMutationMutationVariables>;
 export const UpdateTrackerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTracker"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateTrackerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTrack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tracker"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tracker"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"track"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateTrackerMutation, UpdateTrackerMutationVariables>;
 export const UploadTrackerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadTracker"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TrackerInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadTracker"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploaded"}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]}}]}}]} as unknown as DocumentNode<UploadTrackerMutation, UploadTrackerMutationVariables>;

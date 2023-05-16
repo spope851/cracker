@@ -9,6 +9,7 @@ import {
   Select,
   Stack,
   Switch,
+  Typography,
 } from "@mui/material"
 import React, { useContext } from "react"
 import { RunningAverage } from "@/types"
@@ -19,6 +20,10 @@ import { Metrics } from "../metrics"
 import { Wordcloud } from "../wordcloud"
 import { SentencesTable } from "./sentencesTable"
 import { WordTable } from "./wordTable"
+import { ModalContext } from "@/context/modalContext"
+import { ModalContentWrapper } from "@/components/wrappers"
+import { FeatureFlagsContext } from "@/context/featureFlagsContext"
+import { FeatureFlag } from "@/components/featureFlag"
 
 const CALC_MAX_WIDTH = "calc(100vw - 40px)"
 
@@ -32,7 +37,8 @@ const RUNNING_AVG_MR = 5
 
 const BasicDashboard: React.FC = () => {
   const router = useRouter()
-  const { lastPost } = useContext(UserContext)
+  const { setModalContent, setModalOpen } = useContext(ModalContext)
+  const { lastPost, user } = useContext(UserContext)
   const {
     premium: [, setPremium],
     basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
@@ -46,6 +52,8 @@ const BasicDashboard: React.FC = () => {
         no data... click to track
       </Button>
     )
+
+  const { role } = user
 
   return (
     <Box m={5}>
@@ -80,12 +88,40 @@ const BasicDashboard: React.FC = () => {
             </MenuItem>
           </Select>
         </FormControl>
-        <FormControlLabel
-          control={<Switch onChange={() => setPremium(true)} />}
-          label="premium"
-          labelPlacement="start"
-          sx={{ mb: { md: 1, sm: 1 }, mr: { md: 0, sm: 0 } }}
-        />
+        <FeatureFlag name="premiumDashboardSwitch">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={false}
+                onChange={() => {
+                  if (role === 2) setPremium(true)
+                  else {
+                    setModalContent(
+                      <ModalContentWrapper>
+                        <Typography>
+                          You must be a premium member to use this feature
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          onClick={() => {
+                            setModalOpen(false)
+                            router.push("/upgrade")
+                          }}
+                        >
+                          upgrade
+                        </Button>
+                      </ModalContentWrapper>
+                    )
+                    setModalOpen(true)
+                  }
+                }}
+              />
+            }
+            label="premium"
+            labelPlacement="start"
+            sx={{ mb: { md: 1, sm: 1 }, mr: { md: 0, sm: 0 } }}
+          />
+        </FeatureFlag>
       </Stack>
       <Grid
         container

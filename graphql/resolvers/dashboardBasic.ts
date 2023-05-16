@@ -38,7 +38,7 @@ export class BasicDashboardReslover {
       .then(async (client: any) => {
         client.query("BEGIN")
         return client
-          .query(`CALL get_user_dashboard_basic($1, $2, null, null, null);`, [
+          .query(`CALL get_dashboard_basic($1, $2, null, null, null);`, [
             1,
             runningAvg,
           ])
