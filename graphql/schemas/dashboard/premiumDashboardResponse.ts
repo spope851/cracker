@@ -22,7 +22,7 @@ class Dashboard {
 }
 
 @ObjectType()
-class DashboardResponse {
+class PremiumDashboardResponse {
   @Field(() => Dashboard, { nullable: true })
   dashboard?: Dashboard
 
@@ -30,4 +30,4 @@ class DashboardResponse {
   errors?: PsqlError[]
 }
 
-export { DashboardResponse, Dashboard }
+export { PremiumDashboardResponse, Dashboard }

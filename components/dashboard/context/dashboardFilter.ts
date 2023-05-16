@@ -1,12 +1,21 @@
-import { DashboardMetrics, PartOfSpeech, Sentence, Track } from "@/generated/graphql"
+import {
+  BasicSentence,
+  DashboardMetrics,
+  PartOfSpeech,
+  Sentence,
+  Track,
+  Word,
+} from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
 import { createContext, Dispatch, SetStateAction } from "react"
 import type { FilteredEntity, FilteredToken, TagCount } from "../types"
 import { RunningAverage } from "@/types"
 
 type DashboardFilterContextProps = {
-  runningAvg: RunningAverage
-  setRunningAvg: Dispatch<SetStateAction<RunningAverage>>
+  // TODO: move premium to global dashboard context
+  premium: [boolean, Dispatch<SetStateAction<boolean>>]
+  // PREMIUM FEATURES
+  premiumRunningAvg: [RunningAverage, Dispatch<SetStateAction<RunningAverage>>]
   analyzeEntities: boolean
   setAnalyzeEntities: Dispatch<SetStateAction<boolean>>
   daysOfUse?: DashboardMetrics["daysOfUse"]
@@ -18,7 +27,8 @@ type DashboardFilterContextProps = {
   setTokenTags: Dispatch<SetStateAction<PartOfSpeech["tag"][]>>
   minTokenCount: number
   setMinTokenCount: Dispatch<SetStateAction<number>>
-  loading: boolean
+  loadingPremium: boolean
+  loadingBasic: boolean
   avgHours?: DashboardMetrics["avgHours"]
   setAvgHours: Dispatch<SetStateAction<DashboardMetrics["avgHours"] | undefined>>
   hideToken: (hide: boolean, token: string) => void
@@ -36,6 +46,14 @@ type DashboardFilterContextProps = {
   sentenceTerms: string[]
   addSentenceTerm: (term?: string | null) => void
   removeSentenceTerm: (term: string) => void
+  // BASIC FEATURES
+  basicRunningAvg: [RunningAverage, Dispatch<SetStateAction<RunningAverage>>]
+  basicWords?: Word[]
+  basicSentences?: BasicSentence[]
+  minWordCount: [number, Dispatch<SetStateAction<number>>]
+  basicSentencesRating: [number | "", Dispatch<SetStateAction<number | "">>]
+  hideWord: (hide: boolean, word: string) => void
+  basicSentenceTerms: string[]
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(

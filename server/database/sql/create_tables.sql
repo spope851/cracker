@@ -4,6 +4,15 @@ create table if not exists role_lookup (
     description varchar (255) not null
 );
 
+create table if not exists feature_flags (
+    id serial primary key,
+    name varchar (50) not null unique,
+    description varchar (255) not null,
+    is_enabled bit not null,
+    required_role integer,
+    foreign key(required_role) references role_lookup(id)
+);
+
 create table if not exists "user" (
     id serial primary key,
     username varchar (50) not null unique,
@@ -26,17 +35,15 @@ create table if not exists tracker (
     foreign key("user") references "user"(id)
 );
 
--- PROD only feature
 -- unique index for tracker table
 -- this index is saying a new row cannot be added unless all 4 values (day, month and year of created_at, and "user") are unique
-/*
+
 create unique index day_uq on tracker (
     extract(day from created_at),
     extract(month from created_at),
     extract(year from created_at),
     "user"
 );
-*/
 
 -- statement for elevating user role to admin:
 /*

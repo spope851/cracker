@@ -1,8 +1,9 @@
-import React from "react"
+import React, { useState } from "react"
 import Head from "next/head"
 import { useSession } from "next-auth/react"
 import { Box } from "@mui/material"
-import Dashboard from "@/components/dashboard"
+import PremiumDashboard from "@/components/dashboard/premium"
+import BasicDashboard from "@/components/dashboard/basic"
 import { Unauthenticated } from "@/components/forms"
 import redis from "@/utils/redis"
 import { DashboardFilters } from "@/types"
@@ -31,6 +32,9 @@ export default function Home({
   dashboardFilters: DashboardFilters
 }) {
   const session = useSession()
+  const [premium, setPremium] = useState(
+    JSON.parse(dashboardFilters.cachedPremium || "false")
+  )
 
   return (
     <>
@@ -45,8 +49,11 @@ export default function Home({
         m="auto"
       >
         {session.status === "authenticated" ? (
-          <DashboardFilterContextProvider {...dashboardFilters}>
-            <Dashboard />
+          <DashboardFilterContextProvider
+            {...dashboardFilters}
+            premium={[premium, setPremium]}
+          >
+            {premium ? <PremiumDashboard /> : <BasicDashboard />}
           </DashboardFilterContextProvider>
         ) : (
           <Unauthenticated />

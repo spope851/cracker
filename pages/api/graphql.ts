@@ -6,10 +6,13 @@ import {
   RegistrationResolver,
   MeReslover,
   TrackerResolver,
-  DashboardReslover,
+  PremiumDashboardReslover,
   DashboardMetricsReslover,
   UploadTrackerResolver,
   UpdateTrackerResolver,
+  BasicDashboardReslover,
+  UpgradeResolver,
+  FeatureFlagsResolver,
 } from "@/graphql/resolvers"
 import { NextApiRequest, NextApiResponse } from "next"
 
@@ -18,10 +21,13 @@ const schema = await buildSchema({
     RegistrationResolver,
     MeReslover,
     TrackerResolver,
-    DashboardReslover,
+    PremiumDashboardReslover,
     DashboardMetricsReslover,
+    BasicDashboardReslover,
     UploadTrackerResolver,
     UpdateTrackerResolver,
+    UpgradeResolver,
+    FeatureFlagsResolver,
   ],
   validate: false,
 })
