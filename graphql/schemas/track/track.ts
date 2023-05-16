@@ -15,6 +15,9 @@ class Track {
   rating!: number
 
   @Field(() => String, { nullable: true })
+  createdAt?: string
+
+  @Field(() => String, { nullable: true })
   user?: string
 }
 

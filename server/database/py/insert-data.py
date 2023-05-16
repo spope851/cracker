@@ -5,6 +5,12 @@ import numpy
 from psycopg2.extensions import register_adapter, AsIs
 from datetime import datetime, timezone, timedelta
 
+###
+# SET YOUR POSTGRES USER ID BELOW
+###
+
+userId = 1
+
 dt = datetime.now(timezone.utc)
 
 def addapt_numpy_float64(numpy_float64):
@@ -46,7 +52,7 @@ def insert_many(list):
         cur = conn.cursor()
         
 	# execute a statement
-        sql = 'INSERT INTO tracker (number_creative_hours, rating, overview, created_at, "user") VALUES(%s, %s, %s, %s, 1);'
+        sql = 'INSERT INTO tracker (number_creative_hours, rating, overview, created_at, "user") VALUES(%s, %s, %s, %s, %s);'
         cur.executemany(sql,list)
         
 
@@ -67,15 +73,18 @@ def insert_many(list):
 
 spreadsheet = pandas.read_csv('/Users/spope/Desktop/dev/creativity-tracker/server/database/raw/creativity.csv')
 
+idx = len(spreadsheet['hours']) - 1
 count = 0
 insertion_rows = []
 for item in spreadsheet['hours']:
     insertion_rows.append((
-        spreadsheet['hours'][count],
-        spreadsheet['rating'][count],
-        spreadsheet['overview'][count],
+        spreadsheet['hours'][idx],
+        spreadsheet['rating'][idx],
+        spreadsheet['overview'][idx][:480], #first 480 characters
         dt-timedelta(days=count),
+        userId,
     ))
+    idx -= 1
     count += 1
 
 # print(insertion_rows)

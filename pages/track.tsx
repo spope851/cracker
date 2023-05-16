@@ -1,27 +1,29 @@
 import React, { useContext, useState } from "react"
 import Head from "next/head"
-import { Box, Button } from "@mui/material"
+import { Button, Stack } from "@mui/material"
 import { UserContext } from "@/context/userContext"
-import { Tracker, UpdateTracker } from "@/components/forms"
-import { UploadTracker } from "@/components/uploadTracker"
+import { PostTracker, UpdateTracker } from "@/components/track"
+
+const MOBILE_PY = 3
+import { UploadTracker } from "@/components/track/uploadTracker"
 import UploadFileIcon from "@mui/icons-material/UploadFile"
 
 export default function Track() {
   const { hasPostedToday, lastPost } = useContext(UserContext)
   const [upload, setUpload] = useState(false)
 
-  const post = hasPostedToday ? <UpdateTracker /> : <Tracker />
+  const post = hasPostedToday ? <UpdateTracker /> : <PostTracker />
 
   return (
     <>
       <Head>
         <title>creativity tracker</title>
       </Head>
-      <Box
-        display="flex"
-        justifyContent="center"
+      <Stack
+        justifyContent={upload ? "center" : "flex-start"}
         alignItems="center"
-        flexDirection="column"
+        py={{ sm: MOBILE_PY, xs: MOBILE_PY }}
+        rowGap={5}
         flex={1}
         p={5}
       >
@@ -29,13 +31,13 @@ export default function Track() {
           <Button
             variant="outlined"
             onClick={() => setUpload(!upload)}
-            sx={{ alignSelf: "flex-end", mb: "auto" }}
+            sx={{ alignSelf: "flex-end" }}
           >
             upload <UploadFileIcon />
           </Button>
         )}
-        <Box m="auto">{upload ? <UploadTracker setUpload={setUpload} /> : post}</Box>
-      </Box>
+        {upload ? <UploadTracker setUpload={setUpload} /> : post}
+      </Stack>
     </>
   )
 }

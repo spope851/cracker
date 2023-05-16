@@ -6,6 +6,7 @@ import { postgresErrorDetails } from "@/utils/stringUtils"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
 import { TrackerInput, UploadTrackerResponse } from "../schemas/track"
+import { deleteNlpCache } from "@/utils/redis"
 
 @Resolver(UploadTrackerResponse)
 class UploadTrackerResolver {
@@ -17,7 +18,7 @@ class UploadTrackerResolver {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
-
+    await deleteNlpCache(user)
     return await pool.connect().then((client: typeof pool) => {
       const insertRows: Promise<UploadTrackerResponse> = Promise.all(
         data.map(async (item: TrackerInput, idx: number) => {

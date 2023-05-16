@@ -2,6 +2,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]"
 import { type MyContext } from "@/pages/api/graphql"
 import { PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
+import { deleteNlpCache } from "@/utils/redis"
 import { postgresErrorDetails } from "@/utils/stringUtils"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
@@ -19,6 +20,7 @@ class TrackerResolver {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
+    await deleteNlpCache(user)
     const query: Promise<TrackerResponse> = await pool
       .query(
         `INSERT INTO tracker (overview, number_creative_hours, rating, "user")

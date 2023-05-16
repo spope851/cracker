@@ -1,86 +1,91 @@
-import React, { useContext, useState } from "react"
+import React, { useState } from "react"
 import {
-  Box,
   Button,
   FormControl,
   FormLabel,
-  Input,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextareaAutosize,
+  TextField,
   Typography,
 } from "@mui/material"
-import { useMutation } from "@apollo/client"
-import { useRouter } from "next/router"
-import { UserContext } from "@/context/userContext"
-import { TRACKER_MUTATION } from "@/graphql/client"
 import { OVERVIEW_CHAR_LIMIT } from "@/constants"
+import { RatingInput } from "./components"
 
+type StateVar<T> = {
+  value: T
+  setter: (val: T) => void
+}
 
-export const Tracker: React.FC = () => {
-  const { refetch } = useContext(UserContext)
-  const router = useRouter()
-  const [overview, setOverview] = useState<string>()
-  const [numberCreativeHours, setNumberCreativeHours] = useState(0)
-  const [rating, setRating] = useState(0)
-  const [track, { data: _data, loading }] = useMutation(TRACKER_MUTATION)
+type TrackerProps = {
+  overview: StateVar<string | undefined>
+  numberCreativeHours: StateVar<number>
+  rating: StateVar<number>
+  loading: boolean
+  onSubmit: () => void
+}
 
+export const Tracker: React.FC<TrackerProps> = ({
+  overview,
+  numberCreativeHours,
+  rating,
+  loading,
+  onSubmit,
+}) => {
+  const [hoursInvalid, setHoursInvalid] = useState(false)
   return (
-    <form style={{ display: "flex", flexDirection: "column" }}>
-      <FormControl sx={{ width: "200%", alignSelf: "center", mb: 5 }}>
+    <Grid container item flexDirection="column" rowGap={5} md={4} sm={8} xs={11}>
+      <FormControl>
         <FormLabel>overview</FormLabel>
         <TextareaAutosize
+          defaultValue={overview.value}
           minRows={10}
           maxLength={OVERVIEW_CHAR_LIMIT}
           placeholder="what did you do today?"
-          onChange={(e) => setOverview(e.target.value)}
+          onChange={(e) => overview.setter(e.target.value)}
         />
         <Typography textAlign="right" variant="caption">{`{ remaining: ${
-          OVERVIEW_CHAR_LIMIT - (overview?.length || 0)
+          OVERVIEW_CHAR_LIMIT - (overview.value?.length || 0)
         } }`}</Typography>
       </FormControl>
-      <FormControl sx={{ mb: 5 }}>
-        <FormLabel>number creative hours</FormLabel>
-        <Input
-          defaultValue={0}
-          type="number"
-          inputProps={{ min: 0, max: 24, step: 0.5 }}
-          onChange={(e) => setNumberCreativeHours(Number(e.target.value))}
-        />
-      </FormControl>
-      <FormControl sx={{ mb: 5 }}>
-        <FormLabel>rating</FormLabel>
-        <Box display="flex" alignItems="center">
-          {rating > 0 && "+"}
-          <Input
-            fullWidth
-            defaultValue={0}
-            type="number"
-            inputProps={{ min: -2, max: 2 }}
-            onChange={(e) => setRating(Number(e.target.value))}
-          />
-        </Box>
-      </FormControl>
+      <Grid container columnSpacing={5}>
+        <Grid container item md={6} mb={{ md: 0, sm: 5, xs: 5 }}>
+          <FormControl fullWidth>
+            <TextField
+              label="number creative hours"
+              defaultValue={numberCreativeHours.value}
+              type="number"
+              inputProps={{ min: 0, max: 24, step: 0.5 }}
+              onChange={(e) => {
+                const input = Number(e.target.value)
+                setHoursInvalid(input >= 24 || input < 0)
+                numberCreativeHours.setter(input)
+              }}
+              error={hoursInvalid}
+            />
+          </FormControl>
+        </Grid>
+        <Grid container item md={6}>
+          <FormControl fullWidth>
+            <RatingInput
+              label="rating"
+              value={rating.value}
+              onChange={(e) => rating.setter(Number(e.target.value))}
+            />
+          </FormControl>
+        </Grid>
+      </Grid>
       <FormControl>
         <Button
           variant="outlined"
-          disabled={!overview}
-          onClick={() => {
-            if (overview)
-              track({
-                variables: {
-                  tracker: {
-                    numberCreativeHours,
-                    overview,
-                    rating,
-                  },
-                },
-              })
-                .then(() => refetch({ refetch: true }))
-                .finally(() => router.push("/"))
-          }}
+          disabled={!overview.value || hoursInvalid}
+          onClick={onSubmit}
         >
           {loading ? "...processing" : "submit"}
         </Button>
       </FormControl>
-    </form>
+    </Grid>
   )
 }

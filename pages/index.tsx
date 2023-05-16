@@ -1,14 +1,40 @@
-import React, { useContext } from "react"
+import React, { useState } from "react"
 import Head from "next/head"
 import { useSession } from "next-auth/react"
-import { Box, Typography } from "@mui/material"
-import Dashboard from "@/components/dashboard"
-import { UserContext } from "@/context/userContext"
+import { Box } from "@mui/material"
+import PremiumDashboard from "@/components/dashboard/premium"
+import BasicDashboard from "@/components/dashboard/basic"
 import { Unauthenticated } from "@/components/forms"
+import redis from "@/utils/redis"
+import { DashboardFilters } from "@/types"
+import { NextApiRequest, NextApiResponse } from "next"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "./api/auth/[...nextauth]"
+import { DashboardFilterContextProvider } from "@/components/dashboard/context"
 
-export default function Home() {
+export async function getServerSideProps({
+  req,
+  res,
+}: {
+  req: NextApiRequest
+  res: NextApiResponse
+}) {
+  let dashboardFilters = {}
+  const session = await getServerSession(req, res, authOptions)
+  if (session)
+    dashboardFilters = await redis.hgetall(`dashboardFilters/${session.user.id}`)
+  return { props: { dashboardFilters } }
+}
+
+export default function Home({
+  dashboardFilters,
+}: {
+  dashboardFilters: DashboardFilters
+}) {
   const session = useSession()
-  const { hasPostedToday } = useContext(UserContext)
+  const [premium, setPremium] = useState(
+    JSON.parse(dashboardFilters.cachedPremium || "false")
+  )
 
   return (
     <>
@@ -23,14 +49,12 @@ export default function Home() {
         m="auto"
       >
         {session.status === "authenticated" ? (
-          <>
-            {!hasPostedToday && (
-              <Typography color="red" mb={5}>
-                you have not tracked your data today
-              </Typography>
-            )}
-            <Dashboard />
-          </>
+          <DashboardFilterContextProvider
+            {...dashboardFilters}
+            premium={[premium, setPremium]}
+          >
+            {premium ? <PremiumDashboard /> : <BasicDashboard />}
+          </DashboardFilterContextProvider>
         ) : (
           <Unauthenticated />
         )}

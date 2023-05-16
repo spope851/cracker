@@ -39,8 +39,9 @@ public/static/svelte-apps
 
 *.code-workspace
 
-**/postgres-data/**
-**/cache/**
-**/pgadmin_data/**
+**/postgres/**
+**/redis/**
+**/pgadmin/**
+**/mongo/**
 
 .env*
