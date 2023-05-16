@@ -1,23 +1,15 @@
+import { RatingInput } from "@/components/forms"
 import { Box, Chip, FormControl, Grid, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import React, { useContext } from "react"
-import { TH, TD } from "./components"
-import { DashboardFilterContext } from "./context"
-import { ratingColor, sentimentColor, aboveAverage } from "./functions"
-import { RatingInput } from "../forms"
-
-// const tableCellMobileSx = {
-//   display: {
-//     sm: "table-cell",
-//     md: "table-cell",
-//     xs: "none",
-//   },
-// }
+import { TH, TD } from "../components"
+import { DashboardFilterContext } from "../context"
+import { sentimentColor, aboveAverage, ratingColor } from "../functions"
 
 export const SentencesTable: React.FC = () => {
   const {
     filteredSentences: sentences,
-    loading,
+    loadingPremium: loading,
     findSentence,
     avgHours,
     sentenceTerms,

@@ -3,7 +3,7 @@ import pkg from "pg"
 delete pkg.native
 const { Pool } = pkg
 
-const pool = new Pool({
+const pool: typeof Pool = new Pool({
   user: keys.pgUser,
   host: keys.serverHost,
   database: keys.pgDatabase,

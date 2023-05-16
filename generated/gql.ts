@@ -13,10 +13,13 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
+    "\n  query DashboardBasicQuery($runningAvg: String!) {\n    dashboardBasic(runningAvg: $runningAvg) {\n      dashboard {\n        sentences {\n          id\n          overview\n          numberCreativeHours\n          rating\n          createdAt\n          text {\n            content\n          }\n        }\n        words {\n          count\n          hide\n          word {\n            text {\n              content\n            }\n            mentions {\n              id\n              overview\n              numberCreativeHours\n              rating\n              createdAt\n            }\n          }\n        }\n      }\n    }\n  }\n": types.DashboardBasicQueryDocument,
     "\n  query DashboardMetricsQuery($runningAvg: String!) {\n    dashboardMetrics(runningAvg: $runningAvg) {\n      dashboardMetrics {\n        daysOfUse\n        avgHours\n        ratings {\n          countNegOne\n          countNegTwo\n          countZero\n          countPlusOne\n          countPlusTwo\n        }\n      }\n    }\n  }\n": types.DashboardMetricsQueryDocument,
     "\n  query DashboardQuery($runningAvg: String!) {\n    dashboard(runningAvg: $runningAvg) {\n      dashboard {\n        rawData {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n        sentences {\n          sentiment {\n            magnitude\n            score\n          }\n          text {\n            content\n            beginOffset\n          }\n        }\n        entities {\n          sentiment {\n            magnitude\n            score\n          }\n          mentions {\n            sentiment {\n              magnitude\n              score\n            }\n            text {\n              content\n              beginOffset\n            }\n          }\n          name\n          salience\n        }\n        tokens {\n          partOfSpeech {\n            tag\n          }\n          text {\n            content\n            beginOffset\n          }\n        }\n      }\n    }\n  }\n": types.DashboardQueryDocument,
     "\n  mutation RegisterMutation($user: UserInput!) {\n    register(user: $user) {\n      errors {\n        field\n        message\n      }\n      user {\n        username\n      }\n    }\n  }\n": types.RegisterMutationDocument,
+    "\n  query FeatureFlags {\n    featureFlags {\n      name\n      isEnabled\n      requiredRole\n    }\n  }\n": types.FeatureFlagsDocument,
     "\n  query Me($refetch: Boolean) {\n    me(refetch: $refetch) {\n      me {\n        user {\n          email\n          username\n          role\n        }\n        lastPost {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n      }\n    }\n  }\n": types.MeDocument,
+    "\n  mutation Upgrade {\n    upgrade\n  }\n": types.UpgradeDocument,
     "\n  mutation TrackerMutation($tracker: TrackerInput!) {\n    track(tracker: $tracker) {\n      errors {\n        message\n        field\n      }\n      track {\n        numberCreativeHours\n        overview\n        rating\n        user\n        id\n      }\n    }\n  }\n": types.TrackerMutationDocument,
     "\nmutation UpdateTracker($tracker: UpdateTrackerInput!) {\n  updateTrack(tracker: $tracker) {\n    track {\n      id\n      overview\n      numberCreativeHours\n      rating\n      user\n    }\n    errors {\n      field\n      message\n    }\n  }\n}\n": types.UpdateTrackerDocument,
     "\n  mutation UploadTracker($data: [TrackerInput!]!) {\n    uploadTracker(data: $data) {\n      uploaded\n      errors {\n        field\n        message\n      }\n    }\n  }\n": types.UploadTrackerDocument,
@@ -39,6 +42,10 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query DashboardBasicQuery($runningAvg: String!) {\n    dashboardBasic(runningAvg: $runningAvg) {\n      dashboard {\n        sentences {\n          id\n          overview\n          numberCreativeHours\n          rating\n          createdAt\n          text {\n            content\n          }\n        }\n        words {\n          count\n          hide\n          word {\n            text {\n              content\n            }\n            mentions {\n              id\n              overview\n              numberCreativeHours\n              rating\n              createdAt\n            }\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query DashboardBasicQuery($runningAvg: String!) {\n    dashboardBasic(runningAvg: $runningAvg) {\n      dashboard {\n        sentences {\n          id\n          overview\n          numberCreativeHours\n          rating\n          createdAt\n          text {\n            content\n          }\n        }\n        words {\n          count\n          hide\n          word {\n            text {\n              content\n            }\n            mentions {\n              id\n              overview\n              numberCreativeHours\n              rating\n              createdAt\n            }\n          }\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query DashboardMetricsQuery($runningAvg: String!) {\n    dashboardMetrics(runningAvg: $runningAvg) {\n      dashboardMetrics {\n        daysOfUse\n        avgHours\n        ratings {\n          countNegOne\n          countNegTwo\n          countZero\n          countPlusOne\n          countPlusTwo\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query DashboardMetricsQuery($runningAvg: String!) {\n    dashboardMetrics(runningAvg: $runningAvg) {\n      dashboardMetrics {\n        daysOfUse\n        avgHours\n        ratings {\n          countNegOne\n          countNegTwo\n          countZero\n          countPlusOne\n          countPlusTwo\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -51,7 +58,15 @@ export function graphql(source: "\n  mutation RegisterMutation($user: UserInput!
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query FeatureFlags {\n    featureFlags {\n      name\n      isEnabled\n      requiredRole\n    }\n  }\n"): (typeof documents)["\n  query FeatureFlags {\n    featureFlags {\n      name\n      isEnabled\n      requiredRole\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query Me($refetch: Boolean) {\n    me(refetch: $refetch) {\n      me {\n        user {\n          email\n          username\n          role\n        }\n        lastPost {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query Me($refetch: Boolean) {\n    me(refetch: $refetch) {\n      me {\n        user {\n          email\n          username\n          role\n        }\n        lastPost {\n          id\n          overview\n          numberCreativeHours\n          rating\n          user\n          createdAt\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation Upgrade {\n    upgrade\n  }\n"): (typeof documents)["\n  mutation Upgrade {\n    upgrade\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

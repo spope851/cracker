@@ -9,6 +9,7 @@ export const deleteNlpCache = async (user: string) =>
       async (cache) =>
         await redis
           .del(`${NLP_KEY}/${user}/${cache}`)
+          .then(async () => await redis.del(`basic/${user}/${cache}`))
           .then(async () => await redis.del(`metrics/${user}/${cache}`))
     )
   )

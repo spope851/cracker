@@ -11,7 +11,8 @@ interface PgDashboardMetrics {
 }
 
 type DashboardFilters = {
-  runningAvg: RunningAverage | null
+  cachedPremium: string | null
+  premiumRunningAvg: RunningAverage | null
   analyzeEntities: string | null
   tokenTags: string | null
   minTokenCount: string | null
@@ -20,6 +21,11 @@ type DashboardFilters = {
   hiddenTokens: string | null
   hiddenEntities: string | null
   sentencesRating: string | null
+  basicRunningAvg: RunningAverage | null
+  minWordCount: string | null
+  basicSentencesRating: string | null
+  hiddenWords: string | null
+  basicSentenceTerms: string | null
 }
 
 export type { PgDashboardMetrics, RunningAverage, DashboardFilters }

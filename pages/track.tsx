@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react"
 import Head from "next/head"
-import { Box, Button, Stack } from "@mui/material"
+import { Button, Stack } from "@mui/material"
 import { UserContext } from "@/context/userContext"
 import { PostTracker, UpdateTracker } from "@/components/track"
 

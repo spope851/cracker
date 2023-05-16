@@ -14,15 +14,15 @@ import {
   Typography,
 } from "@mui/material"
 import React, { useContext } from "react"
-import { TH, TD } from "./components"
-import { DashboardFilterContext } from "./context"
+import { TH, TD } from "../components"
+import { DashboardFilterContext } from "../context"
 
 export const TokenTable: React.FC = () => {
   const {
     minTokenCount: minCount,
     setMinTokenCount: setMinCount,
     filteredTokens: tokens,
-    loading,
+    loadingPremium: loading,
     handleTokenTagsChange: handleTagsChange,
     hideToken,
     tokenTags: tags,

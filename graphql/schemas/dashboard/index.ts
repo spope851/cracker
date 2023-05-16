@@ -1,3 +1,4 @@
 export * from "./dashboardMetrics"
-export * from "./dashboardResponse"
+export * from "./premiumDashboardResponse"
 export * from "./dashboardMetricsResponse"
+export * from "./basicDashboardResponse"

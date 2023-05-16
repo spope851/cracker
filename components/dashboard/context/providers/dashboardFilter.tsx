@@ -1,18 +1,41 @@
-import { DashboardMetrics, PartOfSpeech, Sentence } from "@/generated/graphql"
+import {
+  BasicSentence,
+  DashboardMetrics,
+  PartOfSpeech,
+  Sentence,
+  Word,
+} from "@/generated/graphql"
 import { SelectChangeEvent } from "@mui/material"
-import React, { ReactNode, useEffect, useState } from "react"
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react"
 import { defaultTags } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
 import { DashboardFilters, RunningAverage } from "@/types"
 import { DASBOARD_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
+import { DASBOARD_BASIC_QUERY } from "@/graphql/client/dashboard/dashboardBasicQuery"
+import {
+  filterByMinCount,
+  setHiddenFilter,
+  filterBySentenceRating,
+  filterBySentenceTerms,
+} from "../../functions"
 
 export const DashboardFilterContextProvider: React.FC<
-  DashboardFilters & { children: ReactNode }
+  DashboardFilters & {
+    children: ReactNode
+    premium: [boolean, Dispatch<SetStateAction<boolean>>]
+  }
 > = ({
   children,
-  runningAvg: cachedRunningAvg,
+  premium: [premium, setPremium],
+  premiumRunningAvg: cachedPremiumRunningAvg,
   analyzeEntities: cachedAnalyzeEntities,
   tokenTags: cachedTokenTags,
   minTokenCount: cachedMinTokenCount,
@@ -21,12 +44,19 @@ export const DashboardFilterContextProvider: React.FC<
   hiddenTokens: cachedHiddenTokens,
   hiddenEntities: cachedHiddenEntities,
   sentencesRating: cachedSentencesRating,
+  basicRunningAvg: cachedBasicRunningAvg,
+  minWordCount: cachedMinWordCount,
+  basicSentencesRating: cachedBasicSentencesRating,
+  hiddenWords: cachedHiddenWords,
+  basicSentenceTerms: cachedBasicSentenceTerms,
 }) => {
+  // PREMIUM FILTERS
+
   const [analyzeEntities, setAnalyzeEntities] = useState<boolean>(
     JSON.parse(cachedAnalyzeEntities || "true")
   )
-  const [runningAvg, setRunningAvg] = useState<RunningAverage>(
-    cachedRunningAvg || "30"
+  const [premiumRunningAvg, setPremiumRunningAvg] = useState<RunningAverage>(
+    cachedPremiumRunningAvg || "30"
   )
   const [daysOfUse, setDaysOfUse] = useState<DashboardMetrics["daysOfUse"]>()
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
@@ -55,14 +85,33 @@ export const DashboardFilterContextProvider: React.FC<
     (cachedSentenceTerms && JSON.parse(cachedSentenceTerms)) || []
   )
   const [avgHours, setAvgHours] = useState<DashboardMetrics["avgHours"]>()
+  const { data: premiumData, loading: loadingPremium } = useQuery(DASBOARD_QUERY, {
+    variables: { runningAvg: premiumRunningAvg },
+    skip: !premium,
+    // onCompleted: (data) => console.log(data),
+  })
 
-  const { data, loading } = useQuery(DASBOARD_QUERY, { variables: { runningAvg } })
-
-  const dashboard = data?.dashboard.dashboard
+  const dashboard = premiumData?.dashboard.dashboard
   const rawData = dashboard?.rawData
   const tokens = dashboard?.tokens
   const entities = dashboard?.entities
   const sentences = dashboard?.sentences
+
+  // BASIC FILTERS
+
+  const [basicRunningAvg, setBasicRunningAvg] = useState<RunningAverage>(
+    cachedBasicRunningAvg || "30"
+  )
+  const [minWordCount, setMinWordCount] = useState(Number(cachedMinWordCount) || 2)
+  const [basicSentencesRating, setBasicSentencesRating] = useState(
+    cachedBasicSentencesRating ? Number(cachedBasicSentencesRating) : ("" as "")
+  )
+  const [hiddenWords, setHiddenWords] = useState<string[]>(
+    (cachedHiddenWords && JSON.parse(cachedHiddenWords)) || []
+  )
+  const [basicSentenceTerms, setBasicSentenceTerms] = useState<string[]>(
+    (cachedBasicSentenceTerms && JSON.parse(cachedBasicSentenceTerms)) || []
+  )
 
   // cache filters
   useEffect(() => {
@@ -70,7 +119,8 @@ export const DashboardFilterContextProvider: React.FC<
       await fetch("/api/cacheDashboardFilters", {
         method: "post",
         body: JSON.stringify({
-          runningAvg,
+          cachedPremium: premium,
+          premiumRunningAvg,
           analyzeEntities,
           tokenTags: JSON.stringify(tokenTags),
           minTokenCount,
@@ -79,10 +129,17 @@ export const DashboardFilterContextProvider: React.FC<
           hiddenTokens: JSON.stringify(hiddenTokens),
           hiddenEntities: JSON.stringify(hiddenEntities),
           sentencesRating,
+          // basic caches
+          basicRunningAvg,
+          minWordCount,
+          basicSentencesRating,
+          hiddenWords: JSON.stringify(hiddenWords),
+          basicSentenceTerms: JSON.stringify(basicSentenceTerms),
         }),
       }))()
   }, [
-    runningAvg,
+    premium,
+    premiumRunningAvg,
     analyzeEntities,
     tokenTags,
     minTokenCount,
@@ -91,7 +148,15 @@ export const DashboardFilterContextProvider: React.FC<
     hiddenTokens,
     hiddenEntities,
     sentencesRating,
+    // basic caches
+    basicRunningAvg,
+    minWordCount,
+    basicSentencesRating,
+    hiddenWords,
+    basicSentenceTerms,
   ])
+
+  // PREMIUM LOGIC
 
   // get tag counts
   useEffect(() => {
@@ -109,61 +174,47 @@ export const DashboardFilterContextProvider: React.FC<
   // filter tokens
   useEffect(() => {
     setFilteredTokens(
-      tokens
-        // filter by tag
-        ?.filter(
-          (i) => i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
-        )
-        // get counts
-        .reduce((p: FilteredToken[], c) => {
-          const r = p
-          const exists = p.find(
-            (i) =>
-              i.token.text?.content?.toLowerCase() === c.text?.content?.toLowerCase()
+      filterByMinCount(
+        minTokenCount,
+        tokens
+          // filter by tag
+          ?.filter(
+            (i) => i.partOfSpeech?.tag && tokenTags.indexOf(i.partOfSpeech.tag) > -1
           )
-          if (!exists)
-            r.push({
-              token: c,
-              count: 1,
-              hide: hiddenTokens.includes(c.text?.content || ""),
-            })
-          else r[p.indexOf(exists)].count += 1
-          return r
-        }, [])
-        // filter by minCount
-        .filter((i) => i.count >= minTokenCount)
-        .sort((a, b) => (a.count < b.count ? 1 : -1))
+          // get counts
+          .reduce((p: FilteredToken[], c) => {
+            const r = p
+            const exists = p.find(
+              (i) =>
+                i.token.text?.content?.toLowerCase() ===
+                c.text?.content?.toLowerCase()
+            )
+            if (!exists)
+              r.push({
+                token: c,
+                count: 1,
+                hide: hiddenTokens.includes(c.text?.content || ""),
+              })
+            else r[p.indexOf(exists)].count += 1
+            return r
+          }, [])
+      )
+        // TODO: move all sorting to sql
+        ?.sort((a, b) => (a.count < b.count ? 1 : -1))
     )
   }, [tokens, tokenTags, minTokenCount])
 
   const hideToken = (hide: boolean, token: string) => {
-    setFilteredTokens((oldTokens) => {
-      let newTokens
-      if (oldTokens) {
-        newTokens = [...oldTokens].map((oldToken) => {
-          return {
-            ...oldToken,
-            hide: oldToken.token.text?.content === token ? hide : oldToken.hide,
-          }
-        })
-      }
-      return newTokens
-    })
-
-    if (hide)
-      setHiddenTokens((oldTokens) => {
-        let newTokens = [...oldTokens]
-        filteredTokens && newTokens.push(token)
-        return newTokens
-      })
-    else
-      setHiddenTokens((oldTokens) => {
-        let newTokens = [...oldTokens]
-        if (filteredTokens) {
-          newTokens = newTokens.filter((newToken) => newToken !== token)
+    setFilteredTokens((oldTokens) =>
+      [...oldTokens!].map((oldToken) => {
+        return {
+          ...oldToken,
+          hide: oldToken.token.text?.content === token ? hide : oldToken.hide,
         }
-        return newTokens
       })
+    )
+
+    setHiddenFilter(hide, token, setHiddenTokens)
   }
 
   const findTokens = (content?: string | null) =>
@@ -184,18 +235,18 @@ export const DashboardFilterContextProvider: React.FC<
   // filter entities
   useEffect(() => {
     setFilteredEntities(
-      entities
-        ?.map((entity) => {
+      filterByMinCount(
+        minEntityCount,
+        entities?.map((entity) => {
           return {
             entity,
             count: entity.mentions?.length || 0,
             hide: hiddenEntities.includes(entity.name || ""),
           }
         })
-        // filter by minCount
-        .filter((i) => i.count >= minEntityCount)
+      )
         // order by count
-        .sort((a, b) =>
+        ?.sort((a, b) =>
           a.entity.name && b.entity.name
             ? a.entity.name < b.entity.name
               ? 1
@@ -208,72 +259,100 @@ export const DashboardFilterContextProvider: React.FC<
   }, [entities, minEntityCount])
 
   const hideEntity = (hide: boolean, entity: string) => {
-    setFilteredEntities((oldEntities) => {
-      let newEntities
-      if (oldEntities) {
-        newEntities = [...oldEntities].map((oldEntity) => {
-          return {
-            ...oldEntity,
-            hide: oldEntity.entity.name === entity ? hide : oldEntity.hide,
-          }
-        })
-      }
-      return newEntities
-    })
-
-    if (hide)
-      setHiddenEntities((oldEntities) => {
-        let newEntities = [...oldEntities]
-        newEntities.push(entity)
-        return newEntities
-      })
-    else
-      setHiddenEntities((oldEntities) => {
-        let newEntities = [...oldEntities]
-        if (filteredEntities) {
-          newEntities = newEntities.filter((newEntity) => newEntity !== entity)
+    setFilteredEntities((oldEntities) =>
+      [...oldEntities!].map((oldEntity) => {
+        return {
+          ...oldEntity,
+          hide: oldEntity.entity.name === entity ? hide : oldEntity.hide,
         }
-        return newEntities
       })
+    )
+
+    setHiddenFilter(hide, entity, setHiddenEntities)
   }
 
   // filter sentences
   useEffect(() => {
     setFilteredSentences(
-      sentences
-        // filter by sentence terms
-        ?.filter(
-          (sentence) =>
-            sentence.text?.content &&
-            new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
-        )
-        // filter by sentence ratings
-        .filter((sentence) => {
-          if (sentencesRating === "") return true
-          if (sentence.text?.content) {
-            const foundSentence = findSentence(sentence.text.content)
-            return foundSentence?.rating === sentencesRating
-          }
-        })
+      filterBySentenceRating(
+        sentencesRating,
+        filterBySentenceTerms(sentenceTerms, sentences),
+        findSentence
+      )
     )
   }, [sentences, sentenceTerms, sentencesRating])
 
   const removeSentenceTerm = (term: string) => {
-    setSentenceTerms((oldTerms) => [...oldTerms.filter((ot) => ot !== term)])
+    if (premium)
+      setSentenceTerms((oldTerms) => [...oldTerms.filter((ot) => ot !== term)])
+    else
+      setBasicSentenceTerms((oldTerms) => [...oldTerms.filter((ot) => ot !== term)])
   }
 
   const addSentenceTerm = (term?: string | null) => {
-    term && setSentenceTerms((oldTerms) => [...oldTerms, term])
+    if (term) {
+      if (premium) setSentenceTerms((oldTerms) => [...oldTerms, term])
+      else setBasicSentenceTerms((oldTerms) => [...oldTerms, term])
+    }
   }
 
   const findSentence = (content?: string | null) =>
     content ? rawData?.find((datum) => datum.overview.search(content) > -1) : null
 
+  // BASIC LOGIC
+
+  const [basicWords, setBasicWords] = useState<Word[]>()
+  const [basicSentences, setBasicSentences] = useState<BasicSentence[]>()
+
+  const { data: basicData, loading: loadingBasic } = useQuery(DASBOARD_BASIC_QUERY, {
+    variables: { runningAvg: basicRunningAvg },
+    skip: premium,
+    // onCompleted: (data) => console.log(data),
+  })
+
+  const words = basicData?.dashboardBasic.dashboard?.words
+  const basicQuerySentences = basicData?.dashboardBasic.dashboard?.sentences
+
+  // filter words
+  useEffect(() => {
+    setBasicWords(
+      filterByMinCount(minWordCount, words)?.map((word) => {
+        return { ...word, hide: hiddenWords.includes(word.word.text?.content || "") }
+      })
+    )
+  }, [words, minWordCount])
+
+  const hideWord = (hide: boolean, word: string) => {
+    // TODO: write generic function
+    setBasicWords((oldWords) =>
+      [...oldWords!].map((oldWord) => {
+        return {
+          ...oldWord,
+          hide: oldWord.word.text?.content === word ? hide : oldWord.hide,
+        }
+      })
+    )
+
+    setHiddenFilter(hide, word, setHiddenWords)
+  }
+
+  // filter sentences
+  useEffect(() => {
+    setBasicSentences(
+      filterBySentenceRating(
+        basicSentencesRating,
+        filterBySentenceTerms(basicSentenceTerms, basicQuerySentences)
+      )
+    )
+  }, [basicQuerySentences, basicSentencesRating, basicSentenceTerms])
+
   return (
     <DashboardFilterContext.Provider
       value={{
-        runningAvg,
-        setRunningAvg,
+        // TODO: move premium to global dashboard context
+        premium: [premium, setPremium],
+        // PREMIUM FEATURES
+        premiumRunningAvg: [premiumRunningAvg, setPremiumRunningAvg],
         analyzeEntities,
         setAnalyzeEntities,
         daysOfUse,
@@ -285,7 +364,8 @@ export const DashboardFilterContextProvider: React.FC<
         setTokenTags,
         minTokenCount,
         setMinTokenCount,
-        loading,
+        loadingPremium,
+        loadingBasic,
         avgHours,
         setAvgHours,
         hideToken,
@@ -303,6 +383,14 @@ export const DashboardFilterContextProvider: React.FC<
         sentenceTerms,
         addSentenceTerm,
         removeSentenceTerm,
+        // BASIC FEATURES
+        basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
+        basicWords,
+        basicSentences,
+        minWordCount: [minWordCount, setMinWordCount],
+        basicSentencesRating: [basicSentencesRating, setBasicSentencesRating],
+        hideWord,
+        basicSentenceTerms,
       }}
     >
       {children}

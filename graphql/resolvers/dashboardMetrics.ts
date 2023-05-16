@@ -25,7 +25,7 @@ export class DashboardMetricsReslover {
       }
 
     return await pool
-      .query(`CALL get_user_dashboard($1, $2);`, [user, runningAvg])
+      .query(`CALL get_dashboard_metrics($1, $2);`, [user, runningAvg])
       .then(async (res: PgQueryResponse<PgDashboardMetrics>) => {
         const {
           _days_of_use,

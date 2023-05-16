@@ -15,4 +15,30 @@ interface PgQueryError {
   detail: string
 }
 
-export type { PgTrackerRow, PgQueryError, PgQueryResponse }
+type PgBasicWord = {
+  word: string
+  rating: number
+  number_creative_hours: string
+  overview: string
+  created_at: string
+  id: number
+}
+
+type PgBasicCount = { word: string; count: string }
+
+type PgBasicSentence = {
+  sentence: string
+  rating: number
+  number_creative_hours: string
+  created_at: string
+  overview: string
+}
+
+export type {
+  PgTrackerRow,
+  PgQueryError,
+  PgQueryResponse,
+  PgBasicWord,
+  PgBasicCount,
+  PgBasicSentence,
+}

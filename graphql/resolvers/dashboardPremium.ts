@@ -4,19 +4,19 @@ import { PgQueryError, PgQueryResponse, PgTrackerRow } from "@/types"
 import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
-import { DashboardResponse } from "../schemas/dashboard"
+import { PremiumDashboardResponse } from "../schemas/dashboard"
 import { Track } from "../schemas/track"
 import language from "@google-cloud/language"
 import redis from "@/utils/redis"
 import { NLP_KEY } from "@/constants"
 
-@Resolver(DashboardResponse)
-export class DashboardReslover {
-  @Query(() => DashboardResponse)
+@Resolver(PremiumDashboardResponse)
+export class PremiumDashboardReslover {
+  @Query(() => PremiumDashboardResponse)
   async dashboard(
     @Arg("runningAvg", () => String!) runningAvg: string,
     @Ctx() { req, res }: MyContext
-  ): Promise<DashboardResponse> {
+  ): Promise<PremiumDashboardResponse> {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
