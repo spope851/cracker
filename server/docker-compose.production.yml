@@ -11,7 +11,7 @@ services:
       - "${POSTGRES_PORT}:5432"
     restart: always
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - ./cache/postgres:/var/lib/postgresql/data
   cache:
     image: redis:6.2-alpine
     container_name: redis
@@ -19,7 +19,7 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
-      - ./redis:/data
+      - ./cache/redis:/data
   mongodb:
     image: mongo:4.4.21
     container_name: mongo
@@ -31,5 +31,5 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
-      - ./mongo:/data/db
+      - ./cache/mongo:/data/db
       - ./initmongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro

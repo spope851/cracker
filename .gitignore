@@ -45,3 +45,5 @@ public/static/svelte-apps
 **/mongo/**
 
 .env*
+
+initmongo.js

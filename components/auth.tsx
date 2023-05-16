@@ -1,6 +1,7 @@
+import { UserContext } from "@/context/userContext"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import { ReactNode, useEffect } from "react"
+import { ReactNode, useContext, useEffect } from "react"
 
 export const Auth: React.FC<{
   children: ReactNode
@@ -8,18 +9,20 @@ export const Auth: React.FC<{
   redirect: string
 }> = ({ children, role, redirect }) => {
   // if `{ required: true }` is supplied, `status` can only be "loading" or "authenticated"
-  const { status, data } = useSession({ required: true })
+  const { status } = useSession({ required: true })
+  const { user } = useContext(UserContext)
   const router = useRouter()
 
   useEffect(() => {
-    if (status === "authenticated" && data?.user.role !== role) router.push(redirect)
-  })
+    if (!user) return
+    else if (status === "authenticated" && user.role !== role) router.push(redirect)
+  }, [status, user])
 
-  if (status === "loading") {
+  if (status === "loading" || !user) {
     return <>...loading</>
   }
 
-  if (data.user.role !== role) return <>...redirecting</>
+  if (user.role !== role) return <>...redirecting</>
 
   return <>{children}</>
 }
