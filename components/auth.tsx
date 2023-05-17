@@ -14,15 +14,15 @@ export const Auth: React.FC<{
   const router = useRouter()
 
   useEffect(() => {
-    if (!user) return
-    else if (status === "authenticated" && user.role !== role) router.push(redirect)
+    if (!user.role) return
+    else if (status === "authenticated" && user.role < role) router.push(redirect)
   }, [status, user])
 
-  if (status === "loading" || !user) {
+  if (status === "loading" || !user.role) {
     return <>...loading</>
   }
 
-  if (user.role !== role) return <>...redirecting</>
+  if (user.role < role) return <>...redirecting</>
 
   return <>{children}</>
 }

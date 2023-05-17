@@ -94,7 +94,7 @@ const BasicDashboard: React.FC = () => {
               <Switch
                 checked={false}
                 onChange={() => {
-                  if (role === 2) setPremium(true)
+                  if (role && role >= 2) setPremium(true)
                   else {
                     setModalContent(
                       <ModalContentWrapper>

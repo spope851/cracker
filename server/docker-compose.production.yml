@@ -2,7 +2,7 @@ version: "3"
 services:
   database:
     image: spope5/cracker-db:latest
-    container_name: pg
+    container_name: cracker-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -14,7 +14,7 @@ services:
       - ./cache/postgres:/var/lib/postgresql/data
   cache:
     image: redis:6.2-alpine
-    container_name: redis
+    container_name: cracker-redis
     restart: always
     ports:
       - "${REDIS_PORT}:6379"
@@ -22,7 +22,7 @@ services:
       - ./cache/redis:/data
   mongodb:
     image: mongo:4.4.21
-    container_name: mongo
+    container_name: cracker-mongo
     command: mongod --auth
     ports:
       - "${MONGO_PORT}:27017"

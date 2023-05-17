@@ -116,7 +116,7 @@ export const DashboardFilterContextProvider: React.FC<
   // cache filters
   useEffect(() => {
     ;(async () =>
-      await fetch("/api/cacheDashboardFilters", {
+      await fetch("/api/cache/cacheDashboardFilters", {
         method: "post",
         body: JSON.stringify({
           cachedPremium: premium,
