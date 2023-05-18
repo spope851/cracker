@@ -14,7 +14,8 @@
     "new:db": "cd server && rm -rf postgres-data && docker-compose build && docker-compose -p cracker up -d",
     "it:db": "docker exec -it pg sh",
     "it:cache": "docker exec -it redis redis-cli",
-    "inspect:db": "docker inspect $(docker ps -aqf 'name=^pg$') | grep IPAddress"
+    "inspect:db": "docker inspect $(docker ps -aqf 'name=^pg$') | grep IPAddress",
+    "start:prod": "cd server && docker compose -f docker-compose.production.yml -p cracker-production up -d"
   },
   "dependencies": {
     "@apollo/client": "^3.7.3",

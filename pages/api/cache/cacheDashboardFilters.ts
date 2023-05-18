@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import redis from "@/utils/redis"
 import { getServerSession } from "next-auth"
-import { authOptions } from "./auth/[...nextauth]"
+import { authOptions } from "../auth/[...nextauth]"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const {

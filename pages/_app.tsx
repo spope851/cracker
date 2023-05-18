@@ -23,11 +23,11 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
-        <FeatureFlagsContextProvider>
-          <UserContextProvider>
-            <ModalContextProvider>
-              <SnackbarContextProvider>
-                <ThemeProvider>
+        <ThemeProvider>
+          <FeatureFlagsContextProvider>
+            <UserContextProvider>
+              <ModalContextProvider>
+                <SnackbarContextProvider>
                   <Layout>
                     {Component.auth ? (
                       <Auth
@@ -40,11 +40,11 @@ export default function App({
                       <Component {...pageProps} />
                     )}
                   </Layout>
-                </ThemeProvider>
-              </SnackbarContextProvider>
-            </ModalContextProvider>
-          </UserContextProvider>
-        </FeatureFlagsContextProvider>
+                </SnackbarContextProvider>
+              </ModalContextProvider>
+            </UserContextProvider>
+          </FeatureFlagsContextProvider>
+        </ThemeProvider>
       </ApolloProvider>
     </SessionProvider>
   )

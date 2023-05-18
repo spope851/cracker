@@ -55,11 +55,16 @@ const TEAMMATES: TeammateProps[] = [
 
 export default function Team() {
   return (
-      <Stack direction='row' justifyContent='center' py={8} columnGap={10}>
+    <Stack
+      direction={{ md: "row", sm: "column-reverse", xs: "column-reverse" }}
+      rowGap={5}
+      justifyContent="center"
+      py={8}
+      columnGap={10}
+    >
       {TEAMMATES.map((teammate) => (
         <Teammate key={teammate.name} {...teammate} />
       ))}
     </Stack>
-    
   )
 }

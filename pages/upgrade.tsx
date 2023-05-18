@@ -17,7 +17,7 @@ export default function Upgrade() {
     onCompleted: (data) => {
       refetch({ refetch: true })
       router.push("/")
-      setSnackbarMessage(`${data.upgrade} Please sign back in to try it out.`)
+      setSnackbarMessage(data.upgrade)
       setSnackbarOpen(true)
     },
   })
