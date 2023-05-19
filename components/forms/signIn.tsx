@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Typography } from "@mui/material"
+import { Box, Button, Stack, TextField, Typography } from "@mui/material"
 import { signIn } from "next-auth/react"
 
 export const SignIn: React.FC = () => {
@@ -9,7 +9,8 @@ export const SignIn: React.FC = () => {
   const [signInLoading, setSignInLoading] = useState(false)
 
   return (
-    <form
+    <Box
+      component="form"
       onSubmit={async (e) => {
         e.preventDefault()
         setSignInLoading(true)
@@ -24,32 +25,32 @@ export const SignIn: React.FC = () => {
           }
         })
       }}
-      style={{ display: "flex", flexDirection: "column" }}
+      mb={1}
     >
-      <label>
-        Username
-        <input
+      <Stack rowGap={2}>
+        <TextField
           name="username"
+          label="Username"
           type="text"
+          size="small"
           onChange={(e) => setUsername(e.target.value)}
         />
-      </label>
-      <label>
-        Password
-        <input
+        <TextField
           name="password"
+          label="Password"
           type="password"
+          size="small"
           onChange={(e) => setPassword(e.target.value)}
         />
-      </label>
-      <button type="submit" disabled={!username || !password}>
-        {signInLoading ? "...processing" : "sign in"}
-      </button>
-      {signInError && (
-        <Typography variant="caption" color="red" mt={1} textAlign="center">
-          {signInError}
-        </Typography>
-      )}
-    </form>
+        <Button type="submit" variant="outlined" disabled={!username || !password}>
+          {signInLoading ? "...processing" : "sign in"}
+        </Button>
+        {signInError && (
+          <Typography variant="caption" color="red" mt={1} textAlign="center">
+            {signInError}
+          </Typography>
+        )}
+      </Stack>
+    </Box>
   )
 }
