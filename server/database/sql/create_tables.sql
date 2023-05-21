@@ -35,6 +35,20 @@ create table if not exists tracker (
     foreign key("user") references "user"(id)
 );
 
+create table if not exists word (
+    id serial primary key,
+    word varchar (50) not null,
+    tracker integer not null,
+    foreign key(tracker) references tracker(id)
+);
+
+create table if not exists sentence (
+    id serial primary key,
+    sentence varchar (512) not null,
+    tracker integer not null,
+    foreign key(tracker) references tracker(id)
+);
+
 -- unique index for tracker table
 -- this index is saying a new row cannot be added unless all 4 values (day, month and year of created_at, and "user") are unique
 

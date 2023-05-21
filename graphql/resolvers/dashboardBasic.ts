@@ -24,6 +24,8 @@ export class BasicDashboardReslover {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
 
+    const args = [user, runningAvg]
+
     const cachedMetrics = await redis.get(`basic/${user}/${runningAvg}`)
     if (cachedMetrics)
       return {
@@ -36,89 +38,71 @@ export class BasicDashboardReslover {
     return await pool
       .connect()
       .then(async (client: any) => {
-        client.query("BEGIN")
-        return client
-          .query(`CALL get_dashboard_basic($1, $2, null, null, null);`, [
-            user,
-            runningAvg,
-          ])
-          .then(async () => {
-            return Promise.all([
-              await client
-                .query(`FETCH ALL FROM "<unnamed portal 1>";`)
-                .then((r: PgQueryResponse<PgBasicWord>) =>
-                  queryWords.push(...r.rows)
-                ),
-              await client
-                .query(`FETCH ALL FROM "<unnamed portal 2>";`)
-                .then((r: PgQueryResponse<PgBasicCount>) =>
-                  queryCounts.push(...r.rows)
-                ),
-              await client
-                .query(`FETCH ALL FROM "<unnamed portal 3>";`)
-                .then((r: PgQueryResponse<PgBasicSentence>) =>
-                  querySentences.push(...r.rows)
-                ),
-            ]).then(async () => {
-              const sentences = querySentences.map(
-                (
-                  { sentence, rating, number_creative_hours, created_at, overview },
-                  idx
-                ) => {
-                  return {
-                    text: {
-                      content: sentence,
-                    },
-                    id: idx.toString(),
-                    rating,
-                    numberCreativeHours: Number(number_creative_hours),
-                    createdAt: created_at.toString(),
-                    overview,
-                  }
-                }
-              )
+        return Promise.all([
+          await client
+            .query(`SELECT * FROM get_dashboard_words($1, $2);`, args)
+            .then((r: PgQueryResponse<PgBasicWord>) => queryWords.push(...r.rows)),
+          await client
+            .query(`SELECT * FROM get_dashboard_counts($1, $2);`, args)
+            .then((r: PgQueryResponse<PgBasicCount>) => queryCounts.push(...r.rows)),
+          await client
+            .query(`SELECT * FROM get_dashboard_sentences($1, $2);`, args)
+            .then((r: PgQueryResponse<PgBasicSentence>) =>
+              querySentences.push(...r.rows)
+            ),
+        ]).then(async () => {
+          const sentences = querySentences.map(
+            (
+              { sentence, rating, number_creative_hours, created_at, overview },
+              idx
+            ) => {
+              return {
+                text: {
+                  content: sentence,
+                },
+                id: idx.toString(),
+                rating,
+                numberCreativeHours: Number(number_creative_hours),
+                createdAt: created_at.toString(),
+                overview,
+              }
+            }
+          )
 
-              const words = queryCounts.map(({ word, count }) => {
-                return {
-                  word: {
-                    text: {
-                      content: word,
-                    },
-                    mentions: queryWords
-                      .filter(({ word: queryWord }) => word === queryWord)
-                      .map(
-                        ({
-                          rating,
-                          number_creative_hours,
-                          overview,
-                          created_at,
-                          id,
-                        }) => {
-                          return {
-                            id: id.toString(),
-                            overview,
-                            rating,
-                            numberCreativeHours: Number(number_creative_hours),
-                            createdAt: created_at.toString(),
-                          }
-                        }
-                      ),
-                  },
-                  count: Number(count),
-                  hide: false,
-                }
-              })
-
-              const dashboard = { sentences, words }
-
-              await redis.set(
-                `basic/${user}/${runningAvg}`,
-                JSON.stringify(dashboard)
-              )
-
-              return { dashboard }
-            })
+          const words = queryCounts.map(({ word, count }) => {
+            return {
+              word: {
+                text: {
+                  content: word,
+                },
+                mentions: queryWords
+                  .filter(({ word: queryWord }) => word === queryWord)
+                  .map(
+                    (
+                      { rating, number_creative_hours, overview, created_at },
+                      idx
+                    ) => {
+                      return {
+                        id: idx.toString(),
+                        overview,
+                        rating,
+                        numberCreativeHours: Number(number_creative_hours),
+                        createdAt: created_at.toString(),
+                      }
+                    }
+                  ),
+              },
+              count: Number(count),
+              hide: false,
+            }
           })
+
+          const dashboard = { sentences, words }
+
+          await redis.set(`basic/${user}/${runningAvg}`, JSON.stringify(dashboard))
+
+          return { dashboard }
+        })
       })
       .catch((e: PgQueryError) => {
         console.log(e)
