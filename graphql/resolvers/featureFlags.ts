@@ -15,7 +15,7 @@ class FeatureFlagsResolver {
         is_enabled: string
         required_role: number | null
       }>
-    > = await pool.query(`SELECT * from feature_flags;`)
+    > = await pool.query(`SELECT * from feature_flag;`)
 
     return (await query).rows.map(
       ({ id, name, description, is_enabled, required_role }) => {
