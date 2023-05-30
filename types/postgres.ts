@@ -15,16 +15,7 @@ interface PgQueryError {
   detail: string
 }
 
-type PgBasicWord = {
-  word: string
-  rating: number
-  number_creative_hours: string
-  overview: string
-  created_at: string
-  id: number
-}
-
-type PgBasicCount = { word: string; count: string }
+type PgBasicWord = { word: string; count: string; days_used: number[] }
 
 type PgBasicSentence = {
   sentence: string
@@ -39,6 +30,5 @@ export type {
   PgQueryError,
   PgQueryResponse,
   PgBasicWord,
-  PgBasicCount,
   PgBasicSentence,
 }

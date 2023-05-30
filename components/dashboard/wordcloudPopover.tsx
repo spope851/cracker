@@ -7,6 +7,8 @@ import { styled } from "@mui/material/styles"
 import { isSameDay } from "@/utils/date"
 import { CalendarPopover } from "./calendarPopover"
 import { POPOVER_WIDTH } from "./constants"
+import { useQuery } from "@apollo/client"
+import { GET_MENTIONS_QUERY } from "@/graphql/client"
 
 const FOUND_DAY_PREFIX = "found-calendar-day-"
 
@@ -36,12 +38,21 @@ export const WordcloudPopover: React.FC<{
     analyzeEntities,
   } = useContext(DashboardFilterContext)
 
-  const foundData = premium
+  const foundData = basicWords?.find(({ word: { text } }) => text?.content === word)
+    ?.word.mentions
+
+  const { data: mentionsQuery, loading } = useQuery(GET_MENTIONS_QUERY, {
+    variables: { mentions: foundData as number[] },
+    skip: premium,
+    // onCompleted: (data) => console.log(data),
+  })
+
+  const mentions = premium
     ? findWords(word)
-    : basicWords?.find(({ word: { text } }) => text?.content === word)?.word.mentions
+    : mentionsQuery?.getWordMentions.mentions
 
   const StyledCalendar = styled(Calendar)(() =>
-    foundData?.map(({ rating }, idx) => {
+    mentions?.map(({ rating }, idx) => {
       return {
         [`& .${FOUND_DAY_PREFIX}${idx}`]: {
           backgroundColor: ratingColor(rating),
@@ -64,7 +75,7 @@ export const WordcloudPopover: React.FC<{
     >
       {selectedDate && foundData && (
         <CalendarPopover
-          track={foundData.find(({ createdAt }) =>
+          track={mentions?.find(({ createdAt }) =>
             isSameDay(selectedDate, createdAt)
           )}
           open={calendarPopOpen}
@@ -85,12 +96,12 @@ export const WordcloudPopover: React.FC<{
               setCalendarPopOpen(true)
             }}
             tileClassName={({ date }) =>
-              `${FOUND_DAY_PREFIX}${foundData?.findIndex(({ createdAt }) =>
+              `${FOUND_DAY_PREFIX}${mentions?.findIndex(({ createdAt }) =>
                 isSameDay(date, createdAt)
               )}`
             }
             tileDisabled={({ date }) =>
-              !foundData?.find(({ createdAt }) => isSameDay(date, createdAt))
+              !mentions?.find(({ createdAt }) => isSameDay(date, createdAt))
             }
           />
         </Stack>

@@ -8,8 +8,8 @@ class BasicWord {
   @Field(() => Text, { nullable: true })
   text?: Text | null
 
-  @Field(() => [Track], { nullable: true })
-  mentions?: Track[] | null
+  @Field(() => [Int])
+  mentions!: number[]
 }
 
 @ObjectType()
@@ -31,21 +31,30 @@ class BasicSentence extends Track {
 }
 
 @ObjectType()
-class BasicDashboard {
-  @Field(() => [BasicSentence])
+class GetSentences {
+  @Field(() => [BasicSentence], { nullable: true })
   sentences?: BasicSentence[]
-
-  @Field(() => [Word])
-  words?: Word[]
-}
-
-@ObjectType()
-class BasicDashboardResponse {
-  @Field(() => BasicDashboard, { nullable: true })
-  dashboard?: BasicDashboard
 
   @Field(() => [PsqlError], { nullable: true })
   errors?: PsqlError[]
 }
 
-export { BasicDashboardResponse, BasicDashboard }
+@ObjectType()
+class GetWords {
+  @Field(() => [Word])
+  words?: Word[]
+
+  @Field(() => [PsqlError], { nullable: true })
+  errors?: PsqlError[]
+}
+
+@ObjectType()
+class GetMentions {
+  @Field(() => [Track])
+  mentions?: Track[]
+
+  @Field(() => [PsqlError], { nullable: true })
+  errors?: PsqlError[]
+}
+
+export { GetWords, GetSentences, Word, BasicSentence, GetMentions }

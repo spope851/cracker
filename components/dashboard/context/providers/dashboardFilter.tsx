@@ -17,9 +17,12 @@ import { defaultTags } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
 import { DashboardFilters, RunningAverage } from "@/types"
-import { DASBOARD_QUERY } from "@/graphql/client"
+import {
+  BASIC_DASBOARD_WORDS_QUERY,
+  DASBOARD_QUERY,
+  BASIC_DASBOARD_SENTENCES_QUERY,
+} from "@/graphql/client"
 import { useQuery } from "@apollo/client"
-import { DASBOARD_BASIC_QUERY } from "@/graphql/client/dashboard/dashboardBasicQuery"
 import {
   filterByMinCount,
   setHiddenFilter,
@@ -304,14 +307,26 @@ export const DashboardFilterContextProvider: React.FC<
   const [basicWords, setBasicWords] = useState<Word[]>()
   const [basicSentences, setBasicSentences] = useState<BasicSentence[]>()
 
-  const { data: basicData, loading: loadingBasic } = useQuery(DASBOARD_BASIC_QUERY, {
-    variables: { runningAvg: basicRunningAvg },
-    skip: premium,
-    // onCompleted: (data) => console.log(data),
-  })
+  const { data: basicSentencessQuery, loading: loadingBasicSentences } = useQuery(
+    BASIC_DASBOARD_SENTENCES_QUERY,
+    {
+      variables: { runningAvg: basicRunningAvg },
+      skip: premium,
+      // onCompleted: (data) => console.log(data),
+    }
+  )
 
-  const words = basicData?.dashboardBasic.dashboard?.words
-  const basicQuerySentences = basicData?.dashboardBasic.dashboard?.sentences
+  const { data: basicWordsQuery, loading: loadingBasicWords } = useQuery(
+    BASIC_DASBOARD_WORDS_QUERY,
+    {
+      variables: { runningAvg: basicRunningAvg },
+      skip: premium,
+      // onCompleted: (data) => console.log(data),
+    }
+  )
+
+  const words = basicWordsQuery?.basicDashboardWords.words
+  const basicQuerySentences = basicSentencessQuery?.basicDashboardSentences.sentences
 
   // filter words
   useEffect(() => {
@@ -365,7 +380,6 @@ export const DashboardFilterContextProvider: React.FC<
         minTokenCount,
         setMinTokenCount,
         loadingPremium,
-        loadingBasic,
         avgHours,
         setAvgHours,
         hideToken,
@@ -384,6 +398,7 @@ export const DashboardFilterContextProvider: React.FC<
         addSentenceTerm,
         removeSentenceTerm,
         // BASIC FEATURES
+        loadingBasic: loadingBasicWords || loadingBasicSentences,
         basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
         basicWords,
         basicSentences,
