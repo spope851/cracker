@@ -3,7 +3,7 @@ import { type MyContext } from "@/pages/api/graphql"
 import { PgBasicWord, PgQueryError, PgQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
-import { Arg, Ctx, Query, Resolver } from "type-graphql"
+import { Arg, Ctx, Float, Int, Query, Resolver } from "type-graphql"
 import redis from "@/utils/redis"
 import { GetWords, Word } from "../schemas/dashboard"
 
@@ -12,13 +12,16 @@ export class BasicDashboardWords {
   @Query(() => GetWords)
   async basicDashboardWords(
     @Arg("runningAvg", () => String!) runningAvg: string,
+    @Arg("rating", () => [Int], { nullable: true }) rating: number[] | null,
+    @Arg("minHours", () => Float, { nullable: true }) minHours: number | null,
+    @Arg("maxHours", () => Float, { nullable: true }) maxHours: number | null,
     @Ctx() { req, res }: MyContext
   ): Promise<GetWords> {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
 
-    const args = [user, runningAvg]
+    const args = [user, runningAvg, rating, minHours, maxHours]
 
     // const cachedMetrics = await redis.get(`basic/${user}/${runningAvg}`)
     // if (cachedMetrics)
@@ -28,7 +31,7 @@ export class BasicDashboardWords {
 
     return await pool
       .query(
-        `SELECT * FROM get_dashboard_words($1, $2) order by "count" desc;`,
+        `SELECT * FROM get_dashboard_words($1, $2, $3, $4, $5) order by "count" desc;`,
         args
       )
       .then(async (r: PgQueryResponse<PgBasicWord>) => {

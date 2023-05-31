@@ -306,11 +306,23 @@ export const DashboardFilterContextProvider: React.FC<
 
   const [basicWords, setBasicWords] = useState<Word[]>()
   const [basicSentences, setBasicSentences] = useState<BasicSentence[]>()
+  const [basicPreQueryRating, setBasicPreQueryRating] = useState<number[] | null>(
+    null
+  )
+  const [basicPreQueryMinHours, setBasicPreQueryMinHours] = useState(0)
+  const [basicPreQueryMaxHours, setBasicPreQueryMaxHours] = useState(24)
+
+  const variables = {
+    runningAvg: basicRunningAvg,
+    rating: basicPreQueryRating,
+    minHours: basicPreQueryMinHours,
+    maxHours: basicPreQueryMaxHours,
+  }
 
   const { data: basicSentencessQuery, loading: loadingBasicSentences } = useQuery(
     BASIC_DASBOARD_SENTENCES_QUERY,
     {
-      variables: { runningAvg: basicRunningAvg },
+      variables,
       skip: premium,
       // onCompleted: (data) => console.log(data),
     }
@@ -319,7 +331,7 @@ export const DashboardFilterContextProvider: React.FC<
   const { data: basicWordsQuery, loading: loadingBasicWords } = useQuery(
     BASIC_DASBOARD_WORDS_QUERY,
     {
-      variables: { runningAvg: basicRunningAvg },
+      variables,
       skip: premium,
       // onCompleted: (data) => console.log(data),
     }
@@ -399,6 +411,9 @@ export const DashboardFilterContextProvider: React.FC<
         removeSentenceTerm,
         // BASIC FEATURES
         loadingBasic: loadingBasicWords || loadingBasicSentences,
+        basicPreQueryRating: [basicPreQueryRating, setBasicPreQueryRating],
+        basicPreQueryMinHours: [basicPreQueryMinHours, setBasicPreQueryMinHours],
+        basicPreQueryMaxHours: [basicPreQueryMaxHours, setBasicPreQueryMaxHours],
         basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
         basicWords,
         basicSentences,

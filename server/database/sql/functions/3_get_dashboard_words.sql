@@ -4,11 +4,10 @@
 
 CREATE OR REPLACE FUNCTION public.get_dashboard_words(
 	user_id integer,
-	running_avg character varying
-	-- ,
-	-- p_rating integer[] DEFAULT NULL::integer[],
-	-- min_hours numeric DEFAULT 0,
-	-- max_hours numeric DEFAULT 24
+	running_avg character varying,
+	p_rating integer[] DEFAULT NULL::integer[],
+	min_hours numeric DEFAULT 0,
+	max_hours numeric DEFAULT 24
 	)
     RETURNS TABLE(word character varying, count integer, days_used integer[]) 
     LANGUAGE 'sql'
@@ -21,10 +20,10 @@ AS $BODY$
 	from tracker join word on tracker.id = word.tracker
 	and "user" = user_id
 	and created_at > now() - (running_avg || ' day')::interval
-	-- and rating = ANY(COALESCE(p_rating, ARRAY [-2, -1, 0, 1, 2]))
-	-- and number_creative_hours between min_hours and max_hours
+	and rating = ANY(COALESCE(p_rating, ARRAY [-2, -1, 0, 1, 2]))
+	and number_creative_hours between min_hours and max_hours
 	group by word.word;
 $BODY$;
 
-ALTER FUNCTION public.get_dashboard_words(integer, character varying) -- , integer[], numeric, numeric)
+ALTER FUNCTION public.get_dashboard_words(integer, character varying, integer[], numeric, numeric)
     OWNER TO postgres;

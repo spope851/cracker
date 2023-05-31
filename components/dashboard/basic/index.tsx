@@ -7,11 +7,12 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Slider,
   Stack,
   Switch,
   Typography,
 } from "@mui/material"
-import React, { useContext } from "react"
+import React, { useContext, useMemo } from "react"
 import { RunningAverage } from "@/types"
 import { DashboardFilterContext } from "../context"
 import { useRouter } from "next/router"
@@ -22,7 +23,6 @@ import { SentencesTable } from "./sentencesTable"
 import { WordTable } from "./wordTable"
 import { ModalContext } from "@/context/modalContext"
 import { ModalContentWrapper } from "@/components/wrappers"
-import { FeatureFlagsContext } from "@/context/featureFlagsContext"
 import { FeatureFlag } from "@/components/featureFlag"
 
 const CALC_MAX_WIDTH = "calc(100vw - 40px)"
@@ -42,8 +42,11 @@ const BasicDashboard: React.FC = () => {
   const {
     premium: [, setPremium],
     basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
+    basicPreQueryMaxHours: [basicPreQueryMaxHours, setBasicPreQueryMaxHours],
+    basicPreQueryMinHours: [basicPreQueryMinHours, setBasicPreQueryMinHours],
+    basicPreQueryRating: [basicPreQueryRating, setBasicPreQueryRating],
     daysOfUse,
-    basicWords: tokens,
+    basicWords,
   } = useContext(DashboardFilterContext)
 
   if (!lastPost)
@@ -54,6 +57,17 @@ const BasicDashboard: React.FC = () => {
     )
 
   const { role } = user
+
+  const wordcloudWords = useMemo(
+    () =>
+      basicWords &&
+      basicWords.map(({ word, count, hide }, idx) => {
+        return hide
+          ? { text: "", value: 0, key: idx }
+          : { text: word.text?.content || "", value: count, key: idx }
+      }),
+    [basicWords]
+  )
 
   return (
     <Box m={5}>
@@ -87,6 +101,48 @@ const BasicDashboard: React.FC = () => {
               90 days
             </MenuItem>
           </Select>
+        </FormControl>
+        <FormControl
+          sx={{
+            width: { md: RUNNING_AVG_WIDTH, sm: RUNNING_AVG_WIDTH },
+            flexGrow: { md: 0, sm: 0, xs: 1 },
+            mr: RUNNING_AVG_MR,
+          }}
+        >
+          <InputLabel>rating(s)</InputLabel>
+          <Select
+            multiple
+            value={basicPreQueryRating || []}
+            label="rating(s)"
+            onChange={(e) => {
+              setBasicPreQueryRating(
+                e.target.value ? (e.target.value as number[]) : null
+              )
+            }}
+          >
+            <MenuItem value={2}>+2</MenuItem>
+            <MenuItem value={1}>+1</MenuItem>
+            <MenuItem value={0}>0</MenuItem>
+            <MenuItem value={-1}>-1</MenuItem>
+            <MenuItem value={-2}>-2</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl sx={{ width: 200, mr: "auto" }}>
+          <Typography gutterBottom>min/max hours</Typography>
+          <Slider
+            getAriaLabel={() => "Temperature range"}
+            value={[basicPreQueryMinHours, basicPreQueryMaxHours]}
+            onChange={(_e, newValue: number | number[]) => {
+              setBasicPreQueryMinHours((newValue as number[])[0])
+              setBasicPreQueryMaxHours((newValue as number[])[1])
+            }}
+            valueLabelDisplay="auto"
+            max={24}
+            marks={[
+              { value: 0, label: "0" },
+              { value: 24, label: "24" },
+            ]}
+          />
         </FormControl>
         <FeatureFlag name="premiumDashboardSwitch">
           <FormControlLabel
@@ -127,24 +183,15 @@ const BasicDashboard: React.FC = () => {
         container
         justifyContent="space-between"
         columnSpacing={5}
-        maxWidth={maxWidth}
+        width={maxWidth}
         mb={5}
       >
         <Metrics />
         <WordTable />
       </Grid>
-      <Grid container columnSpacing={5} maxWidth={maxWidth}>
+      <Grid container columnSpacing={5} width={maxWidth}>
         <SentencesTable />
-        <Wordcloud
-          words={
-            tokens &&
-            tokens.map(({ word, count, hide }, idx) => {
-              return hide
-                ? { text: "", value: 0, key: idx }
-                : { text: word.text?.content || "", value: count, key: idx }
-            })
-          }
-        />
+        <Wordcloud words={wordcloudWords} />
       </Grid>
     </Box>
   )

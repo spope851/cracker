@@ -48,6 +48,9 @@ type DashboardFilterContextProps = {
   removeSentenceTerm: (term: string) => void
   // BASIC FEATURES
   basicRunningAvg: [RunningAverage, Dispatch<SetStateAction<RunningAverage>>]
+  basicPreQueryRating: [number[] | null, Dispatch<SetStateAction<number[] | null>>]
+  basicPreQueryMinHours: [number, Dispatch<SetStateAction<number>>]
+  basicPreQueryMaxHours: [number, Dispatch<SetStateAction<number>>]
   basicWords?: Word[]
   basicSentences?: BasicSentence[]
   minWordCount: [number, Dispatch<SetStateAction<number>>]
