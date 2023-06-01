@@ -12,7 +12,7 @@ import {
   Switch,
   Typography,
 } from "@mui/material"
-import React, { useContext, useMemo } from "react"
+import React, { useContext } from "react"
 import { RunningAverage } from "@/types"
 import { DashboardFilterContext } from "../context"
 import { useRouter } from "next/router"
@@ -57,17 +57,6 @@ const BasicDashboard: React.FC = () => {
     )
 
   const { role } = user
-
-  const wordcloudWords = useMemo(
-    () =>
-      basicWords &&
-      basicWords.map(({ word, count, hide }, idx) => {
-        return hide
-          ? { text: "", value: 0, key: idx }
-          : { text: word.text?.content || "", value: count, key: idx }
-      }),
-    [basicWords]
-  )
 
   return (
     <Box m={5}>
@@ -191,7 +180,16 @@ const BasicDashboard: React.FC = () => {
       </Grid>
       <Grid container columnSpacing={5} width={maxWidth}>
         <SentencesTable />
-        <Wordcloud words={wordcloudWords} />
+        <Wordcloud
+          words={
+            basicWords &&
+            basicWords.map(({ word, count, hide }, idx) => {
+              return hide
+                ? { text: "", value: 0, key: idx }
+                : { text: word.text?.content || "", value: count, key: idx }
+            })
+          }
+        />
       </Grid>
     </Box>
   )
