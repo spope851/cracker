@@ -82,8 +82,8 @@ export const DashboardFilterContextProvider: React.FC<
     Number(cachedMinEntityCount) || 2
   )
   const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
-  const [sentencesRating, setSentencesRating] = useState(
-    cachedSentencesRating ? Number(cachedSentencesRating) : ("" as "")
+  const [sentencesRating, setSentencesRating] = useState<number[] | null>(
+    cachedSentencesRating && JSON.parse(cachedSentencesRating)
   )
   const [sentenceTerms, setSentenceTerms] = useState<string[]>(
     (cachedSentenceTerms && JSON.parse(cachedSentenceTerms)) || []
@@ -107,8 +107,8 @@ export const DashboardFilterContextProvider: React.FC<
     cachedBasicRunningAvg || "30"
   )
   const [minWordCount, setMinWordCount] = useState(Number(cachedMinWordCount) || 2)
-  const [basicSentencesRating, setBasicSentencesRating] = useState(
-    cachedBasicSentencesRating ? Number(cachedBasicSentencesRating) : ("" as "")
+  const [basicSentencesRating, setBasicSentencesRating] = useState<number[] | null>(
+    cachedBasicSentencesRating && JSON.parse(cachedBasicSentencesRating)
   )
   const [hiddenWords, setHiddenWords] = useState<string[]>(
     (cachedHiddenWords && JSON.parse(cachedHiddenWords)) || []
@@ -132,11 +132,11 @@ export const DashboardFilterContextProvider: React.FC<
           sentenceTerms: JSON.stringify(sentenceTerms),
           hiddenTokens: JSON.stringify(hiddenTokens),
           hiddenEntities: JSON.stringify(hiddenEntities),
-          sentencesRating,
+          sentencesRating: JSON.stringify(sentencesRating),
           // basic caches
           basicRunningAvg,
           minWordCount,
-          basicSentencesRating,
+          basicSentencesRating: JSON.stringify(basicSentencesRating),
           hiddenWords: JSON.stringify(hiddenWords),
           basicSentenceTerms: JSON.stringify(basicSentenceTerms),
         }),
@@ -277,6 +277,11 @@ export const DashboardFilterContextProvider: React.FC<
 
   // filter sentences
 
+  // for later implementation of pre query filters on premium dashboard
+  // useEffect(() => {
+  //   setSentencesRating(null)
+  // }, [preQuyeryRating])
+
   const findSentence = useCallback(
     (content?: string | null) =>
       content ? rawData?.find((datum) => datum.overview.search(content) > -1) : null,
@@ -286,7 +291,7 @@ export const DashboardFilterContextProvider: React.FC<
   useEffect(() => {
     setFilteredSentences(
       filterBySentenceRating(
-        sentencesRating,
+        sentencesRating || [],
         filterBySentenceTerms(sentenceTerms, sentences),
         findSentence
       )
@@ -368,11 +373,15 @@ export const DashboardFilterContextProvider: React.FC<
     setHiddenFilter(hide, word, setHiddenWords)
   }
 
+  useEffect(() => {
+    setBasicSentencesRating(null)
+  }, [basicPreQueryRating])
+
   // filter sentences
   useEffect(() => {
     setBasicSentences(
       filterBySentenceRating(
-        basicSentencesRating,
+        basicSentencesRating || [],
         filterBySentenceTerms(basicSentenceTerms, basicQuerySentences)
       )
     )
@@ -408,8 +417,7 @@ export const DashboardFilterContextProvider: React.FC<
         setMinEntityCount,
         filteredSentences,
         setFilteredSentences,
-        sentencesRating,
-        setSentencesRating,
+        sentencesRating: [sentencesRating, setSentencesRating],
         findSentence,
         sentenceTerms,
         addSentenceTerm,

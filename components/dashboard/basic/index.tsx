@@ -105,7 +105,7 @@ const BasicDashboard: React.FC = () => {
             label="rating(s)"
             onChange={(e) => {
               setBasicPreQueryRating(
-                e.target.value ? (e.target.value as number[]) : null
+                e.target.value.length > 0 ? (e.target.value as number[]) : null
               )
             }}
           >
