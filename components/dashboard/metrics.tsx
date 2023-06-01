@@ -22,7 +22,13 @@ export const Metrics: React.FC = () => {
   useEffect(() => {
     setDaysOfUse(dashboardMetrics?.daysOfUse)
     setAvgHours(dashboardMetrics?.avgHours)
-  }, [data])
+  }, [
+    data,
+    dashboardMetrics?.avgHours,
+    dashboardMetrics?.daysOfUse,
+    setAvgHours,
+    setDaysOfUse,
+  ])
 
   return (
     <Grid container item md={4} sm={12} xs={12} mb={{ md: 0, sm: 5, xs: 5 }}>

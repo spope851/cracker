@@ -39,7 +39,7 @@ export const Wordcloud: React.FC<{ words?: Word[] }> = ({ words: wordsProp }) =>
         setPopoverEntity(word.text)
       },
     }
-  }, [])
+  }, [sentenceTerms])
 
   const words: Word[] | undefined = useMemo(() => {
     return wordsProp

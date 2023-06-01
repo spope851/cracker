@@ -10,6 +10,7 @@ import React, {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useEffect,
   useState,
 } from "react"
@@ -205,7 +206,7 @@ export const DashboardFilterContextProvider: React.FC<
         // TODO: move all sorting to sql
         ?.sort((a, b) => (a.count < b.count ? 1 : -1))
     )
-  }, [tokens, tokenTags, minTokenCount])
+  }, [tokens, tokenTags, minTokenCount, hiddenTokens])
 
   const hideToken = (hide: boolean, token: string) => {
     setFilteredTokens((oldTokens) =>
@@ -259,7 +260,7 @@ export const DashboardFilterContextProvider: React.FC<
         .sort((a, _b) => (isNaN(Number(a.entity.name)) ? 1 : -1))
         .sort((a, b) => (a.count < b.count ? 1 : -1))
     )
-  }, [entities, minEntityCount])
+  }, [entities, minEntityCount, hiddenEntities])
 
   const hideEntity = (hide: boolean, entity: string) => {
     setFilteredEntities((oldEntities) =>
@@ -275,6 +276,13 @@ export const DashboardFilterContextProvider: React.FC<
   }
 
   // filter sentences
+
+  const findSentence = useCallback(
+    (content?: string | null) =>
+      content ? rawData?.find((datum) => datum.overview.search(content) > -1) : null,
+    [rawData]
+  )
+
   useEffect(() => {
     setFilteredSentences(
       filterBySentenceRating(
@@ -283,7 +291,7 @@ export const DashboardFilterContextProvider: React.FC<
         findSentence
       )
     )
-  }, [sentences, sentenceTerms, sentencesRating])
+  }, [sentences, sentenceTerms, sentencesRating, findSentence])
 
   const removeSentenceTerm = (term: string) => {
     if (premium)
@@ -298,9 +306,6 @@ export const DashboardFilterContextProvider: React.FC<
       else setBasicSentenceTerms((oldTerms) => [...oldTerms, term])
     }
   }
-
-  const findSentence = (content?: string | null) =>
-    content ? rawData?.find((datum) => datum.overview.search(content) > -1) : null
 
   // BASIC LOGIC
 
@@ -347,7 +352,7 @@ export const DashboardFilterContextProvider: React.FC<
         return { ...word, hide: hiddenWords.includes(word.word.text?.content || "") }
       })
     )
-  }, [words, minWordCount])
+  }, [words, minWordCount, hiddenWords])
 
   const hideWord = (hide: boolean, word: string) => {
     // TODO: write generic function

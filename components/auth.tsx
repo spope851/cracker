@@ -16,7 +16,7 @@ export const Auth: React.FC<{
   useEffect(() => {
     if (!user.role) return
     else if (status === "authenticated" && user.role < role) router.push(redirect)
-  }, [status, user])
+  }, [status, user, redirect, role, router])
 
   if (status === "loading" || !user.role) {
     return <>...loading</>
