@@ -1,5 +1,11 @@
 type RunningAverage = "30" | "60" | "90" | "365"
 
+type SentenceTableSortColumn = "sentence" | "hours" | "rating" | "date"
+
+type WordTableSortColumn = "count" | "word"
+
+type SortDir = "asc" | "desc"
+
 interface PgDashboardMetrics {
   _days_of_use: number
   _avg_hours: number
@@ -28,4 +34,11 @@ type DashboardFilters = {
   basicSentenceTerms: string | null
 }
 
-export type { PgDashboardMetrics, RunningAverage, DashboardFilters }
+export type {
+  PgDashboardMetrics,
+  RunningAverage,
+  DashboardFilters,
+  WordTableSortColumn,
+  SentenceTableSortColumn,
+  SortDir,
+}

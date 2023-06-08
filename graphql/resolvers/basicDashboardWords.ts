@@ -15,13 +15,15 @@ export class BasicDashboardWords {
     @Arg("rating", () => [Int], { nullable: true }) rating: number[] | null,
     @Arg("minHours", () => Float, { nullable: true }) minHours: number | null,
     @Arg("maxHours", () => Float, { nullable: true }) maxHours: number | null,
+    @Arg("sortColumn", () => String, { nullable: true }) sortColumn: string | null,
+    @Arg("sortDir", () => String, { nullable: true }) sortDir: string | null,
     @Ctx() { req, res }: MyContext
   ): Promise<GetWords> {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
 
-    const args = [user, runningAvg, rating, minHours, maxHours]
+    const args = [user, runningAvg, rating, minHours, maxHours, sortColumn, sortDir]
 
     // const cachedMetrics = await redis.get(`basic/${user}/${runningAvg}`)
     // if (cachedMetrics)
@@ -30,10 +32,7 @@ export class BasicDashboardWords {
     //   }
 
     return await pool
-      .query(
-        `SELECT * FROM get_dashboard_words($1, $2, $3, $4, $5) order by "count" desc;`,
-        args
-      )
+      .query(`SELECT * FROM get_dashboard_words($1, $2, $3, $4, $5, $6, $7)`, args)
       .then(async (r: PgQueryResponse<PgBasicWord>) => {
         const words: Word[] = r.rows.map(({ word, count, days_used }) => {
           return {

@@ -2,6 +2,9 @@ import { Box, Checkbox, Grid, Stack, TextField } from "@mui/material"
 import React, { useContext } from "react"
 import { TH, TD } from "../components"
 import { DashboardFilterContext } from "../context"
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp"
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown"
+import { WordTableSortColumn } from "@/types"
 
 export const WordTable: React.FC = () => {
   const {
@@ -9,7 +12,33 @@ export const WordTable: React.FC = () => {
     basicWords,
     loadingBasic: loading,
     hideWord,
+    basicWordSortColumn: [sortColumn, setSortColumn],
+    basicWordSortDir: [sortDir, setSortDir],
   } = useContext(DashboardFilterContext)
+
+  const sortArrow =
+    sortDir === "asc" ? (
+      <KeyboardDoubleArrowUpIcon />
+    ) : (
+      <KeyboardDoubleArrowDownIcon />
+    )
+
+  const thSx = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  }
+
+  const reverseDir = () =>
+    setSortDir((c) => {
+      if (c === "asc") return "desc"
+      else return "asc"
+    })
+
+  const sort = (col: WordTableSortColumn) => {
+    if (sortColumn === col) reverseDir()
+    else setSortColumn(col)
+  }
 
   return (
     <Grid container item md={8} sm={12} xs={12}>
@@ -35,8 +64,12 @@ export const WordTable: React.FC = () => {
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
-              <TH>word</TH>
-              <TH>count</TH>
+              <TH sx={thSx} onClick={() => sort("word")}>
+                word {sortColumn === "word" && sortArrow}
+              </TH>
+              <TH sx={thSx} onClick={() => sort("count")}>
+                count {sortColumn === "count" && sortArrow}
+              </TH>
             </Box>
           </Box>
           <Box component="tbody">

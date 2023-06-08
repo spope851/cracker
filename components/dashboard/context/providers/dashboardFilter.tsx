@@ -17,7 +17,13 @@ import React, {
 import { defaultTags } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
-import { DashboardFilters, RunningAverage } from "@/types"
+import {
+  DashboardFilters,
+  RunningAverage,
+  SentenceTableSortColumn,
+  SortDir,
+  WordTableSortColumn,
+} from "@/types"
 import {
   BASIC_DASBOARD_WORDS_QUERY,
   DASBOARD_QUERY,
@@ -329,19 +335,35 @@ export const DashboardFilterContextProvider: React.FC<
     maxHours: basicPreQueryMaxHours,
   }
 
-  const { data: basicSentencessQuery, loading: loadingBasicSentences } = useQuery(
-    BASIC_DASBOARD_SENTENCES_QUERY,
+  const [basicWordSortColumn, setBasicWordSortColumn] =
+    useState<WordTableSortColumn>("count")
+  const [basicWordSortDir, setBasicWordSortDir] = useState<SortDir>("desc")
+
+  const { data: basicWordsQuery, loading: loadingBasicWords } = useQuery(
+    BASIC_DASBOARD_WORDS_QUERY,
     {
-      variables,
+      variables: {
+        ...variables,
+        sortColumn: basicWordSortColumn,
+        sortDir: basicWordSortDir,
+      },
       skip: premium,
       // onCompleted: (data) => console.log(data),
     }
   )
 
-  const { data: basicWordsQuery, loading: loadingBasicWords } = useQuery(
-    BASIC_DASBOARD_WORDS_QUERY,
+  const [basicSentenceSortColumn, setBasicSentenceSortColumn] =
+    useState<SentenceTableSortColumn>("date")
+  const [basicSentenceSortDir, setBasicSentenceSortDir] = useState<SortDir>("desc")
+
+  const { data: basicSentencessQuery, loading: loadingBasicSentences } = useQuery(
+    BASIC_DASBOARD_SENTENCES_QUERY,
     {
-      variables,
+      variables: {
+        ...variables,
+        sortColumn: basicSentenceSortColumn,
+        sortDir: basicSentenceSortDir,
+      },
       skip: premium,
       // onCompleted: (data) => console.log(data),
     }
@@ -434,6 +456,13 @@ export const DashboardFilterContextProvider: React.FC<
         basicSentencesRating: [basicSentencesRating, setBasicSentencesRating],
         hideWord,
         basicSentenceTerms,
+        basicWordSortColumn: [basicWordSortColumn, setBasicWordSortColumn],
+        basicWordSortDir: [basicWordSortDir, setBasicWordSortDir],
+        basicSentenceSortColumn: [
+          basicSentenceSortColumn,
+          setBasicSentenceSortColumn,
+        ],
+        basicSentenceSortDir: [basicSentenceSortDir, setBasicSentenceSortDir],
       }}
     >
       {children}

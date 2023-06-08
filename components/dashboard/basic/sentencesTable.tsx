@@ -13,6 +13,9 @@ import React, { useContext } from "react"
 import { TH, TD } from "../components"
 import { DashboardFilterContext } from "../context"
 import { aboveAverage, ratingColor } from "../functions"
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp"
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown"
+import { SentenceTableSortColumn } from "@/types"
 
 export const SentencesTable: React.FC = () => {
   const {
@@ -23,6 +26,8 @@ export const SentencesTable: React.FC = () => {
     removeSentenceTerm,
     basicSentencesRating: [sentencesRating, setSentencesRating],
     basicPreQueryRating: [preQueryRating],
+    basicSentenceSortColumn: [sortColumn, setSortColumn],
+    basicSentenceSortDir: [sortDir, setSortDir],
   } = useContext(DashboardFilterContext)
 
   const menuItemsFromRatings = (ratings: number[] | null) =>
@@ -31,6 +36,30 @@ export const SentencesTable: React.FC = () => {
         rating > 0 ? "+" : ""
       }${rating}`}</MenuItem>
     ))
+
+  const sortArrow =
+    sortDir === "asc" ? (
+      <KeyboardDoubleArrowUpIcon />
+    ) : (
+      <KeyboardDoubleArrowDownIcon />
+    )
+
+  const thSx = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  }
+
+  const reverseDir = () =>
+    setSortDir((c) => {
+      if (c === "asc") return "desc"
+      else return "asc"
+    })
+
+  const sort = (col: SentenceTableSortColumn) => {
+    if (sortColumn === col) reverseDir()
+    else setSortColumn(col)
+  }
 
   return (
     <Grid container item md={7} sm={12} xs={12} mb={{ md: 0, sm: 5, xs: 5 }}>
@@ -98,10 +127,18 @@ export const SentencesTable: React.FC = () => {
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
-              <TH>sentence</TH>
-              <TH>hours</TH>
-              <TH>rating</TH>
-              <TH>date</TH>
+              <TH sx={thSx} onClick={() => sort("sentence")}>
+                sentence {sortColumn === "sentence" && sortArrow}
+              </TH>
+              <TH sx={thSx} onClick={() => sort("hours")}>
+                hours {sortColumn === "hours" && sortArrow}
+              </TH>
+              <TH sx={thSx} onClick={() => sort("rating")}>
+                rating {sortColumn === "rating" && sortArrow}
+              </TH>
+              <TH sx={thSx} onClick={() => sort("date")}>
+                date {sortColumn === "date" && sortArrow}
+              </TH>
             </Box>
           </Box>
           <Box component="tbody">

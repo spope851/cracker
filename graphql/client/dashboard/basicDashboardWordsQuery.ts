@@ -6,12 +6,16 @@ export const BASIC_DASBOARD_WORDS_QUERY = graphql(`
     $maxHours: Float
     $minHours: Float
     $rating: [Int!]
+    $sortColumn: String
+    $sortDir: String
   ) {
     basicDashboardWords(
       runningAvg: $runningAvg
       maxHours: $maxHours
       minHours: $minHours
       rating: $rating
+      sortColumn: $sortColumn
+      sortDir: $sortDir
     ) {
       words {
         word {

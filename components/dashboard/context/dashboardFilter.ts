@@ -9,7 +9,12 @@ import {
 import { SelectChangeEvent } from "@mui/material"
 import { createContext, Dispatch, SetStateAction } from "react"
 import type { FilteredEntity, FilteredToken, TagCount } from "../types"
-import { RunningAverage } from "@/types"
+import {
+  RunningAverage,
+  SentenceTableSortColumn,
+  SortDir,
+  WordTableSortColumn,
+} from "@/types"
 
 type DashboardFilterContextProps = {
   // TODO: move premium to global dashboard context
@@ -56,6 +61,16 @@ type DashboardFilterContextProps = {
   basicSentencesRating: [number[] | null, Dispatch<SetStateAction<number[] | null>>]
   hideWord: (hide: boolean, word: string) => void
   basicSentenceTerms: string[]
+  basicWordSortColumn: [
+    WordTableSortColumn,
+    Dispatch<SetStateAction<WordTableSortColumn>>
+  ]
+  basicWordSortDir: [SortDir, Dispatch<SetStateAction<SortDir>>]
+  basicSentenceSortColumn: [
+    SentenceTableSortColumn,
+    Dispatch<SetStateAction<SentenceTableSortColumn>>
+  ]
+  basicSentenceSortDir: [SortDir, Dispatch<SetStateAction<SortDir>>]
 }
 
 export const DashboardFilterContext = createContext<DashboardFilterContextProps>(
