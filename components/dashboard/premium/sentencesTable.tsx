@@ -1,5 +1,13 @@
-import { RatingInput } from "@/components/forms"
-import { Box, Chip, FormControl, Grid, Typography } from "@mui/material"
+import {
+  Box,
+  Chip,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material"
 import { Stack } from "@mui/system"
 import React, { useContext } from "react"
 import { TH, TD } from "../components"
@@ -14,9 +22,15 @@ export const SentencesTable: React.FC = () => {
     avgHours,
     sentenceTerms,
     removeSentenceTerm,
-    sentencesRating,
-    setSentencesRating,
+    sentencesRating: [sentencesRating, setSentencesRating],
   } = useContext(DashboardFilterContext)
+
+  const menuItemsFromRatings = (ratings: number[] | null) =>
+    ratings?.map((rating) => (
+      <MenuItem key={rating} value={rating}>{`${
+        rating > 0 ? "+" : ""
+      }${rating}`}</MenuItem>
+    ))
 
   return (
     <Grid container item md={7} sm={12} xs={12} mb={{ md: 0, sm: 5, xs: 5 }}>
@@ -62,22 +76,20 @@ export const SentencesTable: React.FC = () => {
             alignItems="center"
             columnGap={1}
           >
-            {typeof sentencesRating === "number" && (
-              <Chip
-                onDelete={() => setSentencesRating("")}
-                sx={{
-                  "& .MuiChip-label": {
-                    pr: 0,
-                  },
+            <FormControl sx={{ width: 150 }}>
+              <InputLabel>rating(s)</InputLabel>
+              <Select
+                multiple
+                value={sentencesRating || []}
+                label="rating(s)"
+                onChange={(e) => {
+                  setSentencesRating(
+                    e.target.value.length > 0 ? (e.target.value as number[]) : null
+                  )
                 }}
-              />
-            )}
-            <FormControl sx={{ width: 80 }}>
-              <RatingInput
-                label="rating"
-                value={sentencesRating}
-                onChange={(e) => setSentencesRating(Number(e.target.value))}
-              />
+              >
+                {menuItemsFromRatings([-2, -1, 0, 1, 2])}
+              </Select>
             </FormControl>
           </Grid>
         </Stack>
