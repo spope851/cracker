@@ -10,7 +10,7 @@ export const WordTable: React.FC = () => {
   const {
     minWordCount: [minCount, setMinCount],
     basicWords,
-    loadingBasic: loading,
+    loadingBasicWords: loading,
     hideWord,
     basicWordSortColumn: [sortColumn, setSortColumn],
     basicWordSortDir: [sortDir, setSortDir],

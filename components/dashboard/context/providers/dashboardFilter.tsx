@@ -14,7 +14,7 @@ import React, {
   useEffect,
   useState,
 } from "react"
-import { defaultTags } from "../../constants"
+import { DEFAULT_FILTERS, DEFAULT_TAGS } from "../../constants"
 import type { FilteredToken, FilteredEntity, TagCount } from "../../types"
 import { DashboardFilterContext } from "../dashboardFilter"
 import {
@@ -60,14 +60,23 @@ export const DashboardFilterContextProvider: React.FC<
   basicSentencesRating: cachedBasicSentencesRating,
   hiddenWords: cachedHiddenWords,
   basicSentenceTerms: cachedBasicSentenceTerms,
+  basicPreQueryRating: cachedBasicPreQueryRating,
+  basicPreQueryMinHours: cachedBasicPreQueryMinHours,
+  basicPreQueryMaxHours: cachedBasicPreQueryMaxHours,
+  basicPostQueryMinHours: cachedBasicPostQueryMinHours,
+  basicPostQueryMaxHours: cachedBasicPostQueryMaxHours,
+  basicWordSortColumn: cachedBasicWordSortColumn,
+  basicWordSortDir: cachedBasicWordSortDir,
+  basicSentenceSortColumn: cachedBasicSentenceSortColumn,
+  basicSentenceSortDir: cachedBasicSentenceSortDir,
 }) => {
   // PREMIUM FILTERS
 
   const [analyzeEntities, setAnalyzeEntities] = useState<boolean>(
-    JSON.parse(cachedAnalyzeEntities || "true")
+    JSON.parse(cachedAnalyzeEntities || DEFAULT_FILTERS.analyzeEntities)
   )
   const [premiumRunningAvg, setPremiumRunningAvg] = useState<RunningAverage>(
-    cachedPremiumRunningAvg || "30"
+    cachedPremiumRunningAvg || DEFAULT_FILTERS.premiumRunningAvg
   )
   const [daysOfUse, setDaysOfUse] = useState<DashboardMetrics["daysOfUse"]>()
   const [filteredTokens, setFilteredTokens] = useState<FilteredToken[]>()
@@ -75,18 +84,18 @@ export const DashboardFilterContextProvider: React.FC<
     (cachedHiddenTokens && JSON.parse(cachedHiddenTokens)) || []
   )
   const [tokenTags, setTokenTags] = useState<PartOfSpeech["tag"][]>(
-    (cachedTokenTags && JSON.parse(cachedTokenTags)) || defaultTags.slice(0, 4)
+    (cachedTokenTags && JSON.parse(cachedTokenTags)) || DEFAULT_FILTERS.tokenTags
   )
   const [tokenTagCounts, setTokenTagCounts] = useState<TagCount[]>()
   const [minTokenCount, setMinTokenCount] = useState(
-    Number(cachedMinTokenCount) || 2
+    Number(cachedMinTokenCount) || DEFAULT_FILTERS.minTokenCount
   )
   const [filteredEntities, setFilteredEntities] = useState<FilteredEntity[]>()
   const [hiddenEntities, setHiddenEntities] = useState<string[]>(
     (cachedHiddenEntities && JSON.parse(cachedHiddenEntities)) || []
   )
   const [minEntityCount, setMinEntityCount] = useState(
-    Number(cachedMinEntityCount) || 2
+    Number(cachedMinEntityCount) || DEFAULT_FILTERS.minEntityCount
   )
   const [filteredSentences, setFilteredSentences] = useState<Sentence[]>()
   const [sentencesRating, setSentencesRating] = useState<number[] | null>(
@@ -111,9 +120,11 @@ export const DashboardFilterContextProvider: React.FC<
   // BASIC FILTERS
 
   const [basicRunningAvg, setBasicRunningAvg] = useState<RunningAverage>(
-    cachedBasicRunningAvg || "30"
+    cachedBasicRunningAvg || DEFAULT_FILTERS.basicRunningAvg
   )
-  const [minWordCount, setMinWordCount] = useState(Number(cachedMinWordCount) || 2)
+  const [minWordCount, setMinWordCount] = useState(
+    Number(cachedMinWordCount) || DEFAULT_FILTERS.minWordCount
+  )
   const [basicSentencesRating, setBasicSentencesRating] = useState<number[] | null>(
     cachedBasicSentencesRating && JSON.parse(cachedBasicSentencesRating)
   )
@@ -124,56 +135,13 @@ export const DashboardFilterContextProvider: React.FC<
     (cachedBasicSentenceTerms && JSON.parse(cachedBasicSentenceTerms)) || []
   )
 
-  // cache filters
-  useEffect(() => {
-    ;(async () =>
-      await fetch("/api/cache/cacheDashboardFilters", {
-        method: "post",
-        body: JSON.stringify({
-          cachedPremium: premium,
-          premiumRunningAvg,
-          analyzeEntities,
-          tokenTags: JSON.stringify(tokenTags),
-          minTokenCount,
-          minEntityCount,
-          sentenceTerms: JSON.stringify(sentenceTerms),
-          hiddenTokens: JSON.stringify(hiddenTokens),
-          hiddenEntities: JSON.stringify(hiddenEntities),
-          sentencesRating: JSON.stringify(sentencesRating),
-          // basic caches
-          basicRunningAvg,
-          minWordCount,
-          basicSentencesRating: JSON.stringify(basicSentencesRating),
-          hiddenWords: JSON.stringify(hiddenWords),
-          basicSentenceTerms: JSON.stringify(basicSentenceTerms),
-        }),
-      }))()
-  }, [
-    premium,
-    premiumRunningAvg,
-    analyzeEntities,
-    tokenTags,
-    minTokenCount,
-    minEntityCount,
-    sentenceTerms,
-    hiddenTokens,
-    hiddenEntities,
-    sentencesRating,
-    // basic caches
-    basicRunningAvg,
-    minWordCount,
-    basicSentencesRating,
-    hiddenWords,
-    basicSentenceTerms,
-  ])
-
   // PREMIUM LOGIC
 
   // get tag counts
   useEffect(() => {
     if (tokens)
       setTokenTagCounts(
-        defaultTags.map((tag) => {
+        DEFAULT_TAGS.map((tag) => {
           return {
             tag,
             count: tokens.filter((t) => t.partOfSpeech?.tag === tag).length,
@@ -324,12 +292,20 @@ export const DashboardFilterContextProvider: React.FC<
   const [basicWords, setBasicWords] = useState<Word[]>()
   const [basicSentences, setBasicSentences] = useState<BasicSentence[]>()
   const [basicPreQueryRating, setBasicPreQueryRating] = useState<number[] | null>(
-    null
+    cachedBasicPreQueryRating && JSON.parse(cachedBasicPreQueryRating)
   )
-  const [basicPreQueryMinHours, setBasicPreQueryMinHours] = useState(0)
-  const [basicPreQueryMaxHours, setBasicPreQueryMaxHours] = useState(24)
-  const [basicPostQueryMinHours, setBasicPostQueryMinHours] = useState(0)
-  const [basicPostQueryMaxHours, setBasicPostQueryMaxHours] = useState(24)
+  const [basicPreQueryMinHours, setBasicPreQueryMinHours] = useState(
+    Number(cachedBasicPreQueryMinHours) || DEFAULT_FILTERS.basicPreQueryMinHours
+  )
+  const [basicPreQueryMaxHours, setBasicPreQueryMaxHours] = useState(
+    Number(cachedBasicPreQueryMaxHours) || DEFAULT_FILTERS.basicPreQueryMaxHours
+  )
+  const [basicPostQueryMinHours, setBasicPostQueryMinHours] = useState(
+    Number(cachedBasicPostQueryMinHours) || DEFAULT_FILTERS.basicPostQueryMinHours
+  )
+  const [basicPostQueryMaxHours, setBasicPostQueryMaxHours] = useState(
+    Number(cachedBasicPostQueryMaxHours) || DEFAULT_FILTERS.basicPostQueryMaxHours
+  )
 
   const variables = {
     runningAvg: basicRunningAvg,
@@ -339,8 +315,12 @@ export const DashboardFilterContextProvider: React.FC<
   }
 
   const [basicWordSortColumn, setBasicWordSortColumn] =
-    useState<WordTableSortColumn>("count")
-  const [basicWordSortDir, setBasicWordSortDir] = useState<SortDir>("desc")
+    useState<WordTableSortColumn>(
+      cachedBasicWordSortColumn || DEFAULT_FILTERS.basicWordSortColumn
+    )
+  const [basicWordSortDir, setBasicWordSortDir] = useState<SortDir>(
+    cachedBasicWordSortDir || DEFAULT_FILTERS.basicWordSortDir
+  )
 
   const { data: basicWordsQuery, loading: loadingBasicWords } = useQuery(
     BASIC_DASBOARD_WORDS_QUERY,
@@ -356,8 +336,12 @@ export const DashboardFilterContextProvider: React.FC<
   )
 
   const [basicSentenceSortColumn, setBasicSentenceSortColumn] =
-    useState<SentenceTableSortColumn>("date")
-  const [basicSentenceSortDir, setBasicSentenceSortDir] = useState<SortDir>("desc")
+    useState<SentenceTableSortColumn>(
+      cachedBasicSentenceSortColumn || DEFAULT_FILTERS.basicSentenceSortColumn
+    )
+  const [basicSentenceSortDir, setBasicSentenceSortDir] = useState<SortDir>(
+    cachedBasicSentenceSortDir || DEFAULT_FILTERS.basicSentenceSortDir
+  )
 
   const { data: basicSentencessQuery, loading: loadingBasicSentences } = useQuery(
     BASIC_DASBOARD_SENTENCES_QUERY,
@@ -422,6 +406,67 @@ export const DashboardFilterContextProvider: React.FC<
     basicPostQueryMaxHours,
   ])
 
+  // cache filters
+  useEffect(() => {
+    ;(async () =>
+      await fetch("/api/cache/cacheDashboardFilters", {
+        method: "post",
+        body: JSON.stringify({
+          cachedPremium: premium,
+          premiumRunningAvg,
+          analyzeEntities,
+          tokenTags: JSON.stringify(tokenTags),
+          minTokenCount,
+          minEntityCount,
+          sentenceTerms: JSON.stringify(sentenceTerms),
+          hiddenTokens: JSON.stringify(hiddenTokens),
+          hiddenEntities: JSON.stringify(hiddenEntities),
+          sentencesRating: JSON.stringify(sentencesRating),
+          // basic caches
+          basicRunningAvg,
+          minWordCount,
+          basicSentencesRating: JSON.stringify(basicSentencesRating),
+          hiddenWords: JSON.stringify(hiddenWords),
+          basicSentenceTerms: JSON.stringify(basicSentenceTerms),
+          basicPreQueryRating: JSON.stringify(basicPreQueryRating),
+          basicPreQueryMinHours,
+          basicPreQueryMaxHours,
+          basicPostQueryMinHours,
+          basicPostQueryMaxHours,
+          basicWordSortColumn,
+          basicWordSortDir,
+          basicSentenceSortColumn,
+          basicSentenceSortDir,
+        }),
+      }))()
+  }, [
+    premium,
+    premiumRunningAvg,
+    analyzeEntities,
+    tokenTags,
+    minTokenCount,
+    minEntityCount,
+    sentenceTerms,
+    hiddenTokens,
+    hiddenEntities,
+    sentencesRating,
+    // basic caches
+    basicRunningAvg,
+    minWordCount,
+    basicSentencesRating,
+    hiddenWords,
+    basicSentenceTerms,
+    basicPreQueryRating,
+    basicPreQueryMinHours,
+    basicPreQueryMaxHours,
+    basicPostQueryMinHours,
+    basicPostQueryMaxHours,
+    basicWordSortColumn,
+    basicWordSortDir,
+    basicSentenceSortColumn,
+    basicSentenceSortDir,
+  ])
+
   return (
     <DashboardFilterContext.Provider
       value={{
@@ -458,7 +503,8 @@ export const DashboardFilterContextProvider: React.FC<
         addSentenceTerm,
         removeSentenceTerm,
         // BASIC FEATURES
-        loadingBasic: loadingBasicWords || loadingBasicSentences,
+        loadingBasicWords,
+        loadingBasicSentences,
         basicPreQueryRating: [basicPreQueryRating, setBasicPreQueryRating],
         basicPreQueryMinHours: [basicPreQueryMinHours, setBasicPreQueryMinHours],
         basicPreQueryMaxHours: [basicPreQueryMaxHours, setBasicPreQueryMaxHours],

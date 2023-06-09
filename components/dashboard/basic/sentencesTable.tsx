@@ -21,7 +21,7 @@ import { HoursSlider } from "@/components/hoursSlider"
 export const SentencesTable: React.FC = () => {
   const {
     basicSentences: sentences,
-    loadingBasic: loading,
+    loadingBasicSentences: loading,
     avgHours,
     basicSentenceTerms,
     removeSentenceTerm,

@@ -33,7 +33,8 @@ type DashboardFilterContextProps = {
   minTokenCount: number
   setMinTokenCount: Dispatch<SetStateAction<number>>
   loadingPremium: boolean
-  loadingBasic: boolean
+  loadingBasicWords: boolean
+  loadingBasicSentences: boolean
   avgHours?: DashboardMetrics["avgHours"]
   setAvgHours: Dispatch<SetStateAction<DashboardMetrics["avgHours"] | undefined>>
   hideToken: (hide: boolean, token: string) => void
