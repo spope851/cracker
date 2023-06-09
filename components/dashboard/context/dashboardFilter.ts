@@ -55,6 +55,8 @@ type DashboardFilterContextProps = {
   basicPreQueryRating: [number[] | null, Dispatch<SetStateAction<number[] | null>>]
   basicPreQueryMinHours: [number, Dispatch<SetStateAction<number>>]
   basicPreQueryMaxHours: [number, Dispatch<SetStateAction<number>>]
+  basicPostQueryMinHours: [number, Dispatch<SetStateAction<number>>]
+  basicPostQueryMaxHours: [number, Dispatch<SetStateAction<number>>]
   basicWords?: Word[]
   basicSentences?: BasicSentence[]
   minWordCount: [number, Dispatch<SetStateAction<number>>]

@@ -16,6 +16,7 @@ import { aboveAverage, ratingColor } from "../functions"
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp"
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown"
 import { SentenceTableSortColumn } from "@/types"
+import { HoursSlider } from "@/components/hoursSlider"
 
 export const SentencesTable: React.FC = () => {
   const {
@@ -28,6 +29,8 @@ export const SentencesTable: React.FC = () => {
     basicPreQueryRating: [preQueryRating],
     basicSentenceSortColumn: [sortColumn, setSortColumn],
     basicSentenceSortDir: [sortDir, setSortDir],
+    basicPostQueryMinHours,
+    basicPostQueryMaxHours,
   } = useContext(DashboardFilterContext)
 
   const menuItemsFromRatings = (ratings: number[] | null) =>
@@ -76,7 +79,7 @@ export const SentencesTable: React.FC = () => {
           <Grid
             container
             item
-            md={9}
+            md={5}
             display="flex"
             flexDirection="row"
             alignItems="center"
@@ -98,12 +101,12 @@ export const SentencesTable: React.FC = () => {
           <Grid
             container
             item
-            md={3}
+            md={7}
             display="flex"
             justifyContent="flex-end"
             direction="row"
             alignItems="center"
-            columnGap={1}
+            columnGap={5}
           >
             <FormControl sx={{ width: 150 }}>
               <InputLabel>rating(s)</InputLabel>
@@ -122,6 +125,7 @@ export const SentencesTable: React.FC = () => {
                   : menuItemsFromRatings(preQueryRating)}
               </Select>
             </FormControl>
+            <HoursSlider min={basicPostQueryMinHours} max={basicPostQueryMaxHours} />
           </Grid>
         </Stack>
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>

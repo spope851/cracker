@@ -53,6 +53,23 @@ const filterBySentenceTerms = <T extends { text?: Text | null }>(
       new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
   )
 
+const filterBySentenceHours = <
+  T extends { text?: Text | null; numberCreativeHours?: number }
+>(
+  minHours: number,
+  maxHours: number,
+  sentences?: T[]
+): T[] | undefined =>
+  sentences?.filter((sentence) => {
+    if (
+      sentence.text?.content &&
+      typeof sentence.numberCreativeHours === "number" &&
+      sentence.numberCreativeHours >= minHours &&
+      sentence.numberCreativeHours <= maxHours
+    )
+      return sentence
+  })
+
 const filterBySentenceRating = <T extends { text?: Text | null; rating?: number }>(
   sentencesRating: number[],
   sentences?: T[],
@@ -81,6 +98,7 @@ export {
   aboveAverage,
   setHiddenFilter,
   filterBySentenceRating,
+  filterBySentenceHours,
   filterByMinCount,
   filterBySentenceTerms,
 }

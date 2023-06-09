@@ -35,6 +35,7 @@ import {
   setHiddenFilter,
   filterBySentenceRating,
   filterBySentenceTerms,
+  filterBySentenceHours,
 } from "../../functions"
 
 export const DashboardFilterContextProvider: React.FC<
@@ -327,6 +328,8 @@ export const DashboardFilterContextProvider: React.FC<
   )
   const [basicPreQueryMinHours, setBasicPreQueryMinHours] = useState(0)
   const [basicPreQueryMaxHours, setBasicPreQueryMaxHours] = useState(24)
+  const [basicPostQueryMinHours, setBasicPostQueryMinHours] = useState(0)
+  const [basicPostQueryMaxHours, setBasicPostQueryMaxHours] = useState(24)
 
   const variables = {
     runningAvg: basicRunningAvg,
@@ -402,12 +405,22 @@ export const DashboardFilterContextProvider: React.FC<
   // filter sentences
   useEffect(() => {
     setBasicSentences(
-      filterBySentenceRating(
-        basicSentencesRating || [],
-        filterBySentenceTerms(basicSentenceTerms, basicQuerySentences)
+      filterBySentenceHours(
+        basicPostQueryMinHours,
+        basicPostQueryMaxHours,
+        filterBySentenceRating(
+          basicSentencesRating || [],
+          filterBySentenceTerms(basicSentenceTerms, basicQuerySentences)
+        )
       )
     )
-  }, [basicQuerySentences, basicSentencesRating, basicSentenceTerms])
+  }, [
+    basicQuerySentences,
+    basicSentencesRating,
+    basicSentenceTerms,
+    basicPostQueryMinHours,
+    basicPostQueryMaxHours,
+  ])
 
   return (
     <DashboardFilterContext.Provider
@@ -449,6 +462,8 @@ export const DashboardFilterContextProvider: React.FC<
         basicPreQueryRating: [basicPreQueryRating, setBasicPreQueryRating],
         basicPreQueryMinHours: [basicPreQueryMinHours, setBasicPreQueryMinHours],
         basicPreQueryMaxHours: [basicPreQueryMaxHours, setBasicPreQueryMaxHours],
+        basicPostQueryMinHours: [basicPostQueryMinHours, setBasicPostQueryMinHours],
+        basicPostQueryMaxHours: [basicPostQueryMaxHours, setBasicPostQueryMaxHours],
         basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
         basicWords,
         basicSentences,
