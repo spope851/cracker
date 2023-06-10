@@ -3,36 +3,34 @@ import { type MyContext } from "@/pages/api/graphql"
 import { PgBasicWord, PgQueryError, PgQueryResponse } from "@/types"
 import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
-import { Arg, Ctx, Float, Int, Query, Resolver } from "type-graphql"
+import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import redis from "@/utils/redis"
-import { GetWords, Word } from "../schemas/dashboard"
+import { BasicDashboardInput, GetWords, Word } from "../schemas/dashboard"
+import { CACHE_KEYS } from "@/constants"
 
 @Resolver(GetWords)
 export class BasicDashboardWords {
   @Query(() => GetWords)
   async basicDashboardWords(
-    @Arg("runningAvg", () => String!) runningAvg: string,
-    @Arg("rating", () => [Int], { nullable: true }) rating: number[] | null,
-    @Arg("minHours", () => Float, { nullable: true }) minHours: number | null,
-    @Arg("maxHours", () => Float, { nullable: true }) maxHours: number | null,
-    @Arg("sortColumn", () => String, { nullable: true }) sortColumn: string | null,
-    @Arg("sortDir", () => String, { nullable: true }) sortDir: string | null,
+    @Arg("args", () => BasicDashboardInput) args: string,
     @Ctx() { req, res }: MyContext
   ): Promise<GetWords> {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
 
-    const args = [user, runningAvg, rating, minHours, maxHours, sortColumn, sortDir]
+    const cachedMetrics = await redis.hget(
+      `${CACHE_KEYS.basicDashboardWords}/${user}`,
+      JSON.stringify(args)
+    )
 
-    // const cachedMetrics = await redis.get(`basic/${user}/${runningAvg}`)
-    // if (cachedMetrics)
-    //   return {
-    //     words: JSON.parse(cachedMetrics),
-    //   }
+    if (cachedMetrics) return JSON.parse(cachedMetrics)
 
     return await pool
-      .query(`SELECT * FROM get_dashboard_words($1, $2, $3, $4, $5, $6, $7)`, args)
+      .query(`SELECT * FROM get_dashboard_words($1, $2, $3, $4, $5, $6, $7)`, [
+        user,
+        ...Object.values(args),
+      ])
       .then(async (r: PgQueryResponse<PgBasicWord>) => {
         const words: Word[] = r.rows.map(({ word, count, days_used }) => {
           return {
@@ -49,7 +47,11 @@ export class BasicDashboardWords {
 
         const dashboard = { words }
 
-        await redis.set(`basic/${user}/${runningAvg}`, JSON.stringify(dashboard))
+        await redis.hset(
+          `${CACHE_KEYS.basicDashboardWords}/${user}`,
+          `${JSON.stringify(args)}`,
+          JSON.stringify(dashboard)
+        )
 
         return dashboard
       })

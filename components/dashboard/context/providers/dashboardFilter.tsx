@@ -292,7 +292,7 @@ export const DashboardFilterContextProvider: React.FC<
   const [basicWords, setBasicWords] = useState<Word[]>()
   const [basicSentences, setBasicSentences] = useState<BasicSentence[]>()
   const [basicPreQueryRating, setBasicPreQueryRating] = useState<number[] | null>(
-    cachedBasicPreQueryRating && JSON.parse(cachedBasicPreQueryRating)
+    cachedBasicPreQueryRating ? JSON.parse(cachedBasicPreQueryRating) : null
   )
   const [basicPreQueryMinHours, setBasicPreQueryMinHours] = useState(
     Number(cachedBasicPreQueryMinHours) || DEFAULT_FILTERS.basicPreQueryMinHours
@@ -326,9 +326,11 @@ export const DashboardFilterContextProvider: React.FC<
     BASIC_DASBOARD_WORDS_QUERY,
     {
       variables: {
-        ...variables,
-        sortColumn: basicWordSortColumn,
-        sortDir: basicWordSortDir,
+        args: {
+          ...variables,
+          sortColumn: basicWordSortColumn,
+          sortDir: basicWordSortDir,
+        },
       },
       skip: premium,
       // onCompleted: (data) => console.log(data),
@@ -347,9 +349,11 @@ export const DashboardFilterContextProvider: React.FC<
     BASIC_DASBOARD_SENTENCES_QUERY,
     {
       variables: {
-        ...variables,
-        sortColumn: basicSentenceSortColumn,
-        sortDir: basicSentenceSortDir,
+        args: {
+          ...variables,
+          sortColumn: basicSentenceSortColumn,
+          sortDir: basicSentenceSortDir,
+        },
       },
       skip: premium,
       // onCompleted: (data) => console.log(data),
