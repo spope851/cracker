@@ -1,4 +1,4 @@
-import { NLP_KEY } from "@/constants"
+import { CACHE_KEYS } from "@/constants"
 import redis from "."
 
 const nlpCaches = ["30", "60", "90", "365"]
@@ -8,7 +8,7 @@ export const deleteNlpCache = async (user: string) =>
     nlpCaches.map(
       async (cache) =>
         await redis
-          .del(`${NLP_KEY}/${user}/${cache}`)
+          .del(`${CACHE_KEYS.premiumDashboard}/${user}/${cache}`)
           .then(async () => await redis.del(`basic/${user}/${cache}`))
           .then(async () => await redis.del(`metrics/${user}/${cache}`))
     )
