@@ -36,12 +36,14 @@ export const WordcloudPopover: React.FC<{
     hideWord,
     addSentenceTerm,
     analyzeEntities,
+    sentenceTerms,
+    basicSentenceTerms,
   } = useContext(DashboardFilterContext)
 
   const foundData = basicWords?.find(({ word: { text } }) => text?.content === word)
     ?.word.mentions
 
-  const { data: mentionsQuery, loading } = useQuery(GET_MENTIONS_QUERY, {
+  const { data: mentionsQuery, loading: _loading } = useQuery(GET_MENTIONS_QUERY, {
     variables: { mentions: foundData as number[] },
     skip: premium,
     // onCompleted: (data) => console.log(data),
@@ -125,6 +127,11 @@ export const WordcloudPopover: React.FC<{
             variant="outlined"
             sx={POPOVER_BUTTON_SX}
             size="small"
+            disabled={
+              premium
+                ? sentenceTerms.includes(word)
+                : basicSentenceTerms.includes(word)
+            }
           >
             filter sentences
           </Button>

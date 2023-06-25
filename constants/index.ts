@@ -1,5 +1,10 @@
 const OVERVIEW_CHAR_LIMIT = 480
 
-const NLP_KEY = "nlp"
+const CACHE_KEYS = {
+  premiumDashboard: "premiumDashboard",
+  basicDashboardSentences: "basicDashboardSentences",
+  basicDashboardWords: "basicDashboardWords",
+  dashboardMetrics: "metrics",
+}
 
-export { OVERVIEW_CHAR_LIMIT, NLP_KEY }
+export { OVERVIEW_CHAR_LIMIT, CACHE_KEYS }
