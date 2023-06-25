@@ -7,6 +7,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Slider,
   Stack,
   Switch,
   Typography,
@@ -22,8 +23,8 @@ import { SentencesTable } from "./sentencesTable"
 import { WordTable } from "./wordTable"
 import { ModalContext } from "@/context/modalContext"
 import { ModalContentWrapper } from "@/components/wrappers"
-import { FeatureFlagsContext } from "@/context/featureFlagsContext"
 import { FeatureFlag } from "@/components/featureFlag"
+import { HoursSlider } from "@/components/hoursSlider"
 
 const CALC_MAX_WIDTH = "calc(100vw - 40px)"
 
@@ -42,8 +43,11 @@ const BasicDashboard: React.FC = () => {
   const {
     premium: [, setPremium],
     basicRunningAvg: [basicRunningAvg, setBasicRunningAvg],
+    basicPreQueryMaxHours,
+    basicPreQueryMinHours,
+    basicPreQueryRating: [basicPreQueryRating, setBasicPreQueryRating],
     daysOfUse,
-    basicWords: tokens,
+    basicWords,
   } = useContext(DashboardFilterContext)
 
   if (!lastPost)
@@ -64,30 +68,58 @@ const BasicDashboard: React.FC = () => {
         justifyContent="space-between"
         alignItems="center"
       >
-        <FormControl
-          sx={{
-            width: { md: RUNNING_AVG_WIDTH, sm: RUNNING_AVG_WIDTH },
-            mr: { md: RUNNING_AVG_MR, sm: RUNNING_AVG_MR },
-            flexGrow: { md: 0, sm: 0, xs: 1 },
-          }}
-        >
-          <InputLabel>running average</InputLabel>
-          <Select
-            value={basicRunningAvg}
-            label="Running Average"
-            onChange={(e) => {
-              setBasicRunningAvg(e.target.value as RunningAverage)
+        <Stack flexDirection="row" mr="auto" rowGap={1}>
+          <FormControl
+            sx={{
+              width: { md: RUNNING_AVG_WIDTH, sm: RUNNING_AVG_WIDTH },
+              mr: { md: RUNNING_AVG_MR, sm: RUNNING_AVG_MR },
+              flexGrow: { md: 0, sm: 0, xs: 1 },
             }}
           >
-            <MenuItem value="30">30 days</MenuItem>
-            <MenuItem disabled={daysOfUse ? daysOfUse < 30 : true} value={"60"}>
-              60 days
-            </MenuItem>
-            <MenuItem disabled={daysOfUse ? daysOfUse < 60 : true} value={"90"}>
-              90 days
-            </MenuItem>
-          </Select>
-        </FormControl>
+            <InputLabel>running average</InputLabel>
+            <Select
+              value={basicRunningAvg}
+              label="Running Average"
+              onChange={(e) => {
+                setBasicRunningAvg(e.target.value as RunningAverage)
+              }}
+            >
+              <MenuItem value="30">30 days</MenuItem>
+              <MenuItem disabled={daysOfUse ? daysOfUse < 30 : true} value={"60"}>
+                60 days
+              </MenuItem>
+              <MenuItem disabled={daysOfUse ? daysOfUse < 60 : true} value={"90"}>
+                90 days
+              </MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            sx={{
+              width: { md: RUNNING_AVG_WIDTH, sm: RUNNING_AVG_WIDTH },
+              flexGrow: { md: 0, sm: 0, xs: 1 },
+              mr: RUNNING_AVG_MR,
+            }}
+          >
+            <InputLabel>rating(s)</InputLabel>
+            <Select
+              multiple
+              value={basicPreQueryRating || []}
+              label="rating(s)"
+              onChange={(e) => {
+                setBasicPreQueryRating(
+                  e.target.value.length > 0 ? (e.target.value as number[]) : null
+                )
+              }}
+            >
+              <MenuItem value={2}>+2</MenuItem>
+              <MenuItem value={1}>+1</MenuItem>
+              <MenuItem value={0}>0</MenuItem>
+              <MenuItem value={-1}>-1</MenuItem>
+              <MenuItem value={-2}>-2</MenuItem>
+            </Select>
+          </FormControl>
+          <HoursSlider min={basicPreQueryMinHours} max={basicPreQueryMaxHours} />
+        </Stack>
         <FeatureFlag name="premiumDashboardSwitch">
           <FormControlLabel
             control={
@@ -127,18 +159,18 @@ const BasicDashboard: React.FC = () => {
         container
         justifyContent="space-between"
         columnSpacing={5}
-        maxWidth={maxWidth}
+        width={maxWidth}
         mb={5}
       >
         <Metrics />
         <WordTable />
       </Grid>
-      <Grid container columnSpacing={5} maxWidth={maxWidth}>
+      <Grid container columnSpacing={5} width={maxWidth}>
         <SentencesTable />
         <Wordcloud
           words={
-            tokens &&
-            tokens.map(({ word, count, hide }, idx) => {
+            basicWords &&
+            basicWords.map(({ word, count, hide }, idx) => {
               return hide
                 ? { text: "", value: 0, key: idx }
                 : { text: word.text?.content || "", value: count, key: idx }

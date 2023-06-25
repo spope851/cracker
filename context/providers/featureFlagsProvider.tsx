@@ -1,4 +1,4 @@
-import { FEATURE_FLAGS_QUERY } from "@/graphql/client"
+import { FEATURE_FLAG_QUERY } from "@/graphql/client"
 import { useQuery } from "@apollo/client"
 import React, { useMemo } from "react"
 import { FeatureFlagsContext } from "../featureFlagsContext"
@@ -7,7 +7,7 @@ import { FeatureFlagsContextProps } from "../featureFlagsContext"
 export const FeatureFlagsContextProvider: React.FC<{
   children: React.ReactNode
 }> = ({ children }) => {
-  const { loading, data } = useQuery(FEATURE_FLAGS_QUERY)
+  const { loading, data } = useQuery(FEATURE_FLAG_QUERY)
 
   const contextValue = useMemo(() => {
     const featureFlagsContextProps = {} as FeatureFlagsContextProps

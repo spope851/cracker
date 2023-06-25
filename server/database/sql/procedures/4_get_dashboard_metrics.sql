@@ -1,6 +1,6 @@
--- PROCEDURE: public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
+-- PROCEDURE: public.get_dashboard_metrics(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor)
 
--- DROP PROCEDURE IF EXISTS public.get_user_dashboard(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor);
+-- DROP PROCEDURE IF EXISTS public.get_dashboard_metrics(integer, character varying, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor, refcursor);
 
 CREATE OR REPLACE PROCEDURE public.get_dashboard_metrics(
 	IN user_id integer,
@@ -11,8 +11,7 @@ CREATE OR REPLACE PROCEDURE public.get_dashboard_metrics(
 	INOUT _count_neg_one refcursor DEFAULT '# of -1 ratings in past year'::refcursor,
 	INOUT _count_zero refcursor DEFAULT '# of 0 ratings in past year'::refcursor,
 	INOUT _count_plus_one refcursor DEFAULT '# of +1 ratings in past year'::refcursor,
-	INOUT _count_plus_two refcursor DEFAULT '# of +2 ratings in past year'::refcursor
-)
+	INOUT _count_plus_two refcursor DEFAULT '# of +2 ratings in past year'::refcursor)
 LANGUAGE 'plpgsql'
 AS $BODY$
 declare

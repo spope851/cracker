@@ -14,16 +14,13 @@ export type Scalars = {
   Float: number;
 };
 
-export type BasicDashboard = {
-  __typename?: 'BasicDashboard';
-  sentences: Array<BasicSentence>;
-  words: Array<Word>;
-};
-
-export type BasicDashboardResponse = {
-  __typename?: 'BasicDashboardResponse';
-  dashboard?: Maybe<BasicDashboard>;
-  errors?: Maybe<Array<PsqlError>>;
+export type BasicDashboardInput = {
+  maxHours?: InputMaybe<Scalars['Float']>;
+  minHours?: InputMaybe<Scalars['Float']>;
+  rating?: InputMaybe<Array<Scalars['Int']>>;
+  runningAvg: Scalars['String'];
+  sortColumn?: InputMaybe<Scalars['String']>;
+  sortDir?: InputMaybe<Scalars['String']>;
 };
 
 export type BasicSentence = {
@@ -39,7 +36,7 @@ export type BasicSentence = {
 
 export type BasicWord = {
   __typename?: 'BasicWord';
-  mentions?: Maybe<Array<Track>>;
+  mentions: Array<Scalars['Int']>;
   text?: Maybe<Text>;
 };
 
@@ -79,6 +76,24 @@ export type FeatureFlag = {
   isEnabled: Scalars['Boolean'];
   name: Scalars['String'];
   requiredRole?: Maybe<Scalars['Int']>;
+};
+
+export type GetMentions = {
+  __typename?: 'GetMentions';
+  errors?: Maybe<Array<PsqlError>>;
+  mentions: Array<Track>;
+};
+
+export type GetSentences = {
+  __typename?: 'GetSentences';
+  errors?: Maybe<Array<PsqlError>>;
+  sentences?: Maybe<Array<BasicSentence>>;
+};
+
+export type GetWords = {
+  __typename?: 'GetWords';
+  errors?: Maybe<Array<PsqlError>>;
+  words: Array<Word>;
 };
 
 export type LastPost = {
@@ -151,11 +166,23 @@ export type PsqlError = {
 
 export type Query = {
   __typename?: 'Query';
+  basicDashboardSentences: GetSentences;
+  basicDashboardWords: GetWords;
   dashboard: PremiumDashboardResponse;
-  dashboardBasic: BasicDashboardResponse;
   dashboardMetrics: DashboardMetricsResponse;
   featureFlags: Array<FeatureFlag>;
+  getWordMentions: GetMentions;
   me: MeQueryResponse;
+};
+
+
+export type QueryBasicDashboardSentencesArgs = {
+  args: BasicDashboardInput;
+};
+
+
+export type QueryBasicDashboardWordsArgs = {
+  args: BasicDashboardInput;
 };
 
 
@@ -164,13 +191,13 @@ export type QueryDashboardArgs = {
 };
 
 
-export type QueryDashboardBasicArgs = {
+export type QueryDashboardMetricsArgs = {
   runningAvg: Scalars['String'];
 };
 
 
-export type QueryDashboardMetricsArgs = {
-  runningAvg: Scalars['String'];
+export type QueryGetWordMentionsArgs = {
+  mentions: Array<Scalars['Int']>;
 };
 
 
@@ -273,12 +300,19 @@ export type Word = {
   word: BasicWord;
 };
 
-export type DashboardBasicQueryQueryVariables = Exact<{
-  runningAvg: Scalars['String'];
+export type BasicDashboardSentencesQueryVariables = Exact<{
+  args: BasicDashboardInput;
 }>;
 
 
-export type DashboardBasicQueryQuery = { __typename?: 'Query', dashboardBasic: { __typename?: 'BasicDashboardResponse', dashboard?: { __typename?: 'BasicDashboard', sentences: Array<{ __typename?: 'BasicSentence', id: string, overview: string, numberCreativeHours: number, rating: number, createdAt?: string | null, text?: { __typename?: 'Text', content?: string | null } | null }>, words: Array<{ __typename?: 'Word', count: number, hide: boolean, word: { __typename?: 'BasicWord', text?: { __typename?: 'Text', content?: string | null } | null, mentions?: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, createdAt?: string | null }> | null } }> } | null } };
+export type BasicDashboardSentencesQuery = { __typename?: 'Query', basicDashboardSentences: { __typename?: 'GetSentences', sentences?: Array<{ __typename?: 'BasicSentence', id: string, overview: string, numberCreativeHours: number, rating: number, createdAt?: string | null, user?: string | null, text?: { __typename?: 'Text', content?: string | null } | null }> | null } };
+
+export type BasicDashboardWordsQueryVariables = Exact<{
+  args: BasicDashboardInput;
+}>;
+
+
+export type BasicDashboardWordsQuery = { __typename?: 'Query', basicDashboardWords: { __typename?: 'GetWords', words: Array<{ __typename?: 'Word', count: number, hide: boolean, word: { __typename?: 'BasicWord', mentions: Array<number>, text?: { __typename?: 'Text', content?: string | null } | null } }> } };
 
 export type DashboardMetricsQueryQueryVariables = Exact<{
   runningAvg: Scalars['String'];
@@ -293,6 +327,13 @@ export type DashboardQueryQueryVariables = Exact<{
 
 
 export type DashboardQueryQuery = { __typename?: 'Query', dashboard: { __typename?: 'PremiumDashboardResponse', dashboard?: { __typename?: 'Dashboard', rawData: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, user?: string | null, createdAt?: string | null }>, sentences?: Array<{ __typename?: 'Sentence', sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null, entities?: Array<{ __typename?: 'Entity', name?: string | null, salience?: number | null, sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, mentions?: Array<{ __typename?: 'Sentence', sentiment?: { __typename?: 'Sentiment', magnitude?: number | null, score?: number | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null }> | null, tokens?: Array<{ __typename?: 'Token', partOfSpeech?: { __typename?: 'PartOfSpeech', tag?: string | null } | null, text?: { __typename?: 'Text', content?: string | null, beginOffset?: number | null } | null }> | null } | null } };
+
+export type GetWordMentionsQueryVariables = Exact<{
+  mentions: Array<Scalars['Int']> | Scalars['Int'];
+}>;
+
+
+export type GetWordMentionsQuery = { __typename?: 'Query', getWordMentions: { __typename?: 'GetMentions', mentions: Array<{ __typename?: 'Track', id: string, overview: string, numberCreativeHours: number, rating: number, createdAt?: string | null }> } };
 
 export type RegisterMutationMutationVariables = Exact<{
   user: UserInput;
@@ -340,9 +381,11 @@ export type UploadTrackerMutationVariables = Exact<{
 export type UploadTrackerMutation = { __typename?: 'Mutation', uploadTracker: { __typename?: 'UploadTrackerResponse', uploaded?: string | null, errors?: Array<{ __typename?: 'PsqlError', field: string, message: string }> | null } };
 
 
-export const DashboardBasicQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardBasicQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardBasic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"words"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"hide"}},{"kind":"Field","name":{"kind":"Name","value":"word"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardBasicQueryQuery, DashboardBasicQueryQueryVariables>;
+export const BasicDashboardSentencesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BasicDashboardSentences"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"args"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BasicDashboardInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"basicDashboardSentences"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"args"},"value":{"kind":"Variable","name":{"kind":"Name","value":"args"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}}]}}]}}]}}]}}]} as unknown as DocumentNode<BasicDashboardSentencesQuery, BasicDashboardSentencesQueryVariables>;
+export const BasicDashboardWordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BasicDashboardWords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"args"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BasicDashboardInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"basicDashboardWords"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"args"},"value":{"kind":"Variable","name":{"kind":"Name","value":"args"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"words"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"word"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mentions"}}]}},{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"hide"}}]}}]}}]}}]} as unknown as DocumentNode<BasicDashboardWordsQuery, BasicDashboardWordsQueryVariables>;
 export const DashboardMetricsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardMetricsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardMetrics"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboardMetrics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"daysOfUse"}},{"kind":"Field","name":{"kind":"Name","value":"avgHours"}},{"kind":"Field","name":{"kind":"Name","value":"ratings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"countNegOne"}},{"kind":"Field","name":{"kind":"Name","value":"countNegTwo"}},{"kind":"Field","name":{"kind":"Name","value":"countZero"}},{"kind":"Field","name":{"kind":"Name","value":"countPlusOne"}},{"kind":"Field","name":{"kind":"Name","value":"countPlusTwo"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardMetricsQueryQuery, DashboardMetricsQueryQueryVariables>;
 export const DashboardQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DashboardQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"runningAvg"},"value":{"kind":"Variable","name":{"kind":"Name","value":"runningAvg"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"dashboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rawData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sentences"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"entities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sentiment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"magnitude"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"salience"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"partOfSpeech"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tag"}}]}},{"kind":"Field","name":{"kind":"Name","value":"text"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"beginOffset"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardQueryQuery, DashboardQueryQueryVariables>;
+export const GetWordMentionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWordMentions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mentions"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getWordMentions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"mentions"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mentions"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mentions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetWordMentionsQuery, GetWordMentionsQueryVariables>;
 export const RegisterMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RegisterMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"register"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"field"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]} as unknown as DocumentNode<RegisterMutationMutation, RegisterMutationMutationVariables>;
 export const FeatureFlagsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FeatureFlags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"featureFlags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"requiredRole"}}]}}]}}]} as unknown as DocumentNode<FeatureFlagsQuery, FeatureFlagsQueryVariables>;
 export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refetch"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refetch"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastPost"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"overview"}},{"kind":"Field","name":{"kind":"Name","value":"numberCreativeHours"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}},{"kind":"Field","name":{"kind":"Name","value":"user"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;

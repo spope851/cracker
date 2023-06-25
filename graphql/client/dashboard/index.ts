@@ -1,3 +1,6 @@
 export * from "./registerMutation"
 export * from "./dashboardQuery"
 export * from "./dashboardMetricsQuery"
+export * from "./basicDashboardWordsQuery"
+export * from "./basicDashboardSentencesQuery"
+export * from "./getMentionsQuery"

@@ -1,20 +1,68 @@
-import { RatingInput } from "@/components/forms"
-import { Box, Chip, FormControl, Grid, Typography } from "@mui/material"
+import {
+  Box,
+  Chip,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material"
 import { Stack } from "@mui/system"
 import React, { useContext } from "react"
 import { TH, TD } from "../components"
 import { DashboardFilterContext } from "../context"
 import { aboveAverage, ratingColor } from "../functions"
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp"
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown"
+import { SentenceTableSortColumn } from "@/types"
+import { HoursSlider } from "@/components/hoursSlider"
 
 export const SentencesTable: React.FC = () => {
   const {
     basicSentences: sentences,
-    loadingBasic: loading,
+    loadingBasicSentences: loading,
     avgHours,
     basicSentenceTerms,
     removeSentenceTerm,
     basicSentencesRating: [sentencesRating, setSentencesRating],
+    basicPreQueryRating: [preQueryRating],
+    basicSentenceSortColumn: [sortColumn, setSortColumn],
+    basicSentenceSortDir: [sortDir, setSortDir],
+    basicPostQueryMinHours,
+    basicPostQueryMaxHours,
   } = useContext(DashboardFilterContext)
+
+  const menuItemsFromRatings = (ratings: number[] | null) =>
+    ratings?.map((rating) => (
+      <MenuItem key={rating} value={rating}>{`${
+        rating > 0 ? "+" : ""
+      }${rating}`}</MenuItem>
+    ))
+
+  const sortArrow =
+    sortDir === "asc" ? (
+      <KeyboardDoubleArrowUpIcon />
+    ) : (
+      <KeyboardDoubleArrowDownIcon />
+    )
+
+  const thSx = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  }
+
+  const reverseDir = () =>
+    setSortDir((c) => {
+      if (c === "asc") return "desc"
+      else return "asc"
+    })
+
+  const sort = (col: SentenceTableSortColumn) => {
+    if (sortColumn === col) reverseDir()
+    else setSortColumn(col)
+  }
 
   return (
     <Grid container item md={7} sm={12} xs={12} mb={{ md: 0, sm: 5, xs: 5 }}>
@@ -31,7 +79,7 @@ export const SentencesTable: React.FC = () => {
           <Grid
             container
             item
-            md={9}
+            md={5}
             display="flex"
             flexDirection="row"
             alignItems="center"
@@ -53,39 +101,48 @@ export const SentencesTable: React.FC = () => {
           <Grid
             container
             item
-            md={3}
+            md={7}
             display="flex"
             justifyContent="flex-end"
             direction="row"
             alignItems="center"
-            columnGap={1}
+            columnGap={5}
           >
-            {typeof sentencesRating === "number" && (
-              <Chip
-                onDelete={() => setSentencesRating("")}
-                sx={{
-                  "& .MuiChip-label": {
-                    pr: 0,
-                  },
+            <FormControl sx={{ width: 150 }}>
+              <InputLabel>rating(s)</InputLabel>
+              <Select
+                multiple
+                value={sentencesRating || []}
+                label="rating(s)"
+                onChange={(e) => {
+                  setSentencesRating(
+                    e.target.value.length > 0 ? (e.target.value as number[]) : null
+                  )
                 }}
-              />
-            )}
-            <FormControl sx={{ width: 80 }}>
-              <RatingInput
-                label="rating"
-                value={sentencesRating}
-                onChange={(e) => setSentencesRating(Number(e.target.value))}
-              />
+              >
+                {preQueryRating === null
+                  ? menuItemsFromRatings([-2, -1, 0, 1, 2])
+                  : menuItemsFromRatings(preQueryRating)}
+              </Select>
             </FormControl>
+            <HoursSlider min={basicPostQueryMinHours} max={basicPostQueryMaxHours} />
           </Grid>
         </Stack>
         <Box component="table" width="100%" sx={{ borderCollapse: "collapse" }}>
           <Box component="thead">
             <Box component="tr">
-              <TH>sentence</TH>
-              <TH>hours</TH>
-              <TH>rating</TH>
-              <TH>date</TH>
+              <TH sx={thSx} onClick={() => sort("sentence")}>
+                sentence {sortColumn === "sentence" && sortArrow}
+              </TH>
+              <TH sx={thSx} onClick={() => sort("hours")}>
+                hours {sortColumn === "hours" && sortArrow}
+              </TH>
+              <TH sx={thSx} onClick={() => sort("rating")}>
+                rating {sortColumn === "rating" && sortArrow}
+              </TH>
+              <TH sx={thSx} onClick={() => sort("date")}>
+                date {sortColumn === "date" && sortArrow}
+              </TH>
             </Box>
           </Box>
           <Box component="tbody">
