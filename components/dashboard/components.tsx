@@ -1,9 +1,21 @@
 import { Box, SxProps } from "@mui/material"
 import React, { ReactNode } from "react"
 
-const TH: React.FC<{ children: ReactNode; sx?: SxProps }> = ({ children, sx }) => (
-  <Box component="th" whiteSpace="nowrap" p={1} sx={sx}>
-    {children}
+const TH: React.FC<{ children: ReactNode; sx?: SxProps; onClick?: () => void }> = ({
+  children,
+  sx,
+  onClick,
+}) => (
+  <Box
+    component="th"
+    whiteSpace="nowrap"
+    p={1}
+    sx={{ display: "table-cell", ":hover": { cursor: onClick && "pointer" } }}
+    onClick={onClick}
+  >
+    <Box sx={sx} width="100%">
+      {children}
+    </Box>
   </Box>
 )
 

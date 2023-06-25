@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import { DashboardMetrics, DashboardMetricsResponse } from "../schemas/dashboard"
 import redis from "@/utils/redis"
+import { CACHE_KEYS } from "@/constants"
 
 @Resolver(DashboardMetricsResponse)
 export class DashboardMetricsReslover {
@@ -18,7 +19,9 @@ export class DashboardMetricsReslover {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
 
-    const cachedMetrics = await redis.get(`metrics/${user}/${runningAvg}`)
+    const cachedMetrics = await redis.get(
+      `${CACHE_KEYS.dashboardMetrics}/${user}/${runningAvg}`
+    )
     if (cachedMetrics)
       return {
         dashboardMetrics: JSON.parse(cachedMetrics),
@@ -50,7 +53,7 @@ export class DashboardMetricsReslover {
         }
 
         await redis.set(
-          `metrics/${user}/${runningAvg}`,
+          `${CACHE_KEYS.dashboardMetrics}/${user}/${runningAvg}`,
           JSON.stringify(dashboardMetrics)
         )
         return { dashboardMetrics }

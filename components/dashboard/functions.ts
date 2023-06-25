@@ -53,20 +53,39 @@ const filterBySentenceTerms = <T extends { text?: Text | null }>(
       new RegExp(sentenceTerms.join("|")).test(sentence.text.content)
   )
 
+const filterBySentenceHours = <
+  T extends { text?: Text | null; numberCreativeHours?: number }
+>(
+  minHours: number,
+  maxHours: number,
+  sentences?: T[]
+): T[] | undefined =>
+  sentences?.filter((sentence) => {
+    if (
+      sentence.text?.content &&
+      typeof sentence.numberCreativeHours === "number" &&
+      sentence.numberCreativeHours >= minHours &&
+      sentence.numberCreativeHours <= maxHours
+    )
+      return sentence
+  })
+
 const filterBySentenceRating = <T extends { text?: Text | null; rating?: number }>(
-  sentencesRating: number | "",
+  sentencesRating: number[],
   sentences?: T[],
   findSentence?: (content?: string) => Track | null | undefined
 ): T[] | undefined =>
-  sentences?.filter((sentence) => {
-    if (sentencesRating === "") return true
-    else if (sentence.text?.content) {
-      const rating =
-        sentence.rating ||
-        (findSentence && findSentence(sentence.text?.content)?.rating)
-      return rating === sentencesRating
-    }
-  })
+  sentencesRating.length === 0
+    ? sentences
+    : sentences?.filter((sentence) => {
+        if (sentence.text?.content) {
+          const rating =
+            typeof sentence.rating === "number"
+              ? sentence.rating
+              : findSentence && findSentence(sentence.text?.content)?.rating
+          return typeof rating === "number" && sentencesRating.includes(rating)
+        }
+      })
 
 const filterByMinCount = <T extends { count: number }>(
   minCount: number,
@@ -79,6 +98,7 @@ export {
   aboveAverage,
   setHiddenFilter,
   filterBySentenceRating,
+  filterBySentenceHours,
   filterByMinCount,
   filterBySentenceTerms,
 }

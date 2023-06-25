@@ -5,32 +5,32 @@ import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import redis from "@/utils/redis"
-import { GetWords, Word } from "../schemas/dashboard"
+import { BasicDashboardInput, GetWords, Word } from "../schemas/dashboard"
+import { CACHE_KEYS } from "@/constants"
 
 @Resolver(GetWords)
 export class BasicDashboardWords {
   @Query(() => GetWords)
   async basicDashboardWords(
-    @Arg("runningAvg", () => String!) runningAvg: string,
+    @Arg("args", () => BasicDashboardInput) args: string,
     @Ctx() { req, res }: MyContext
   ): Promise<GetWords> {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
 
-    const args = [user, runningAvg]
+    const cachedMetrics = await redis.hget(
+      `${CACHE_KEYS.basicDashboardWords}/${user}`,
+      JSON.stringify(args)
+    )
 
-    // const cachedMetrics = await redis.get(`basic/${user}/${runningAvg}`)
-    // if (cachedMetrics)
-    //   return {
-    //     words: JSON.parse(cachedMetrics),
-    //   }
+    if (cachedMetrics) return JSON.parse(cachedMetrics)
 
     return await pool
-      .query(
-        `SELECT * FROM get_dashboard_words($1, $2) order by "count" desc;`,
-        args
-      )
+      .query(`SELECT * FROM get_dashboard_words($1, $2, $3, $4, $5, $6, $7)`, [
+        user,
+        ...Object.values(args),
+      ])
       .then(async (r: PgQueryResponse<PgBasicWord>) => {
         const words: Word[] = r.rows.map(({ word, count, days_used }) => {
           return {
@@ -47,7 +47,11 @@ export class BasicDashboardWords {
 
         const dashboard = { words }
 
-        await redis.set(`basic/${user}/${runningAvg}`, JSON.stringify(dashboard))
+        await redis.hset(
+          `${CACHE_KEYS.basicDashboardWords}/${user}`,
+          `${JSON.stringify(args)}`,
+          JSON.stringify(dashboard)
+        )
 
         return dashboard
       })

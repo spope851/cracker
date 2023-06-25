@@ -1,8 +1,8 @@
 import { graphql } from "@/generated"
 
 export const BASIC_DASBOARD_SENTENCES_QUERY = graphql(`
-  query BasicDashboardSentences($runningAvg: String!) {
-    basicDashboardSentences(runningAvg: $runningAvg) {
+  query BasicDashboardSentences($args: BasicDashboardInput!) {
+    basicDashboardSentences(args: $args) {
       sentences {
         id
         overview

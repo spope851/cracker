@@ -5,29 +5,36 @@ import { pool } from "@/utils/postgres"
 import { getServerSession } from "next-auth"
 import { Arg, Ctx, Query, Resolver } from "type-graphql"
 import redis from "@/utils/redis"
-import { GetSentences, BasicSentence } from "../schemas/dashboard"
+import {
+  GetSentences,
+  BasicSentence,
+  BasicDashboardInput,
+} from "../schemas/dashboard"
+import { CACHE_KEYS } from "@/constants"
 
 @Resolver(GetSentences)
 export class BasicDashboardSentences {
   @Query(() => GetSentences)
   async basicDashboardSentences(
-    @Arg("runningAvg", () => String!) runningAvg: string,
+    @Arg("args", () => BasicDashboardInput) args: string,
     @Ctx() { req, res }: MyContext
   ): Promise<GetSentences> {
     const {
       user: { id: user },
     } = await getServerSession(req, res, authOptions)
 
-    const args = [user, runningAvg]
+    const cachedMetrics = await redis.hget(
+      `${CACHE_KEYS.basicDashboardSentences}/${user}`,
+      JSON.stringify(args)
+    )
 
-    // const cachedMetrics = await redis.get(`basic/${user}/${runningAvg}`)
-    // if (cachedMetrics)
-    //   return {
-    //     sentences: JSON.parse(cachedMetrics),
-    //   }
+    if (cachedMetrics) return JSON.parse(cachedMetrics)
 
     return await pool
-      .query(`SELECT * FROM get_dashboard_sentences($1, $2);`, args)
+      .query(`SELECT * FROM get_dashboard_sentences($1, $2, $3, $4, $5, $6, $7);`, [
+        user,
+        ...Object.values(args),
+      ])
       .then(async (r: PgQueryResponse<PgBasicSentence>) => {
         const sentences: BasicSentence[] = r.rows.map(
           (
@@ -49,7 +56,11 @@ export class BasicDashboardSentences {
 
         const dashboard = { sentences }
 
-        await redis.set(`basic/${user}/${runningAvg}`, JSON.stringify(dashboard))
+        await redis.hset(
+          `${CACHE_KEYS.basicDashboardSentences}/${user}`,
+          `${JSON.stringify(args)}`,
+          JSON.stringify(dashboard)
+        )
 
         return dashboard
       })

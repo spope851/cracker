@@ -8,7 +8,7 @@ import { PremiumDashboardResponse } from "../schemas/dashboard"
 import { Track } from "../schemas/track"
 import language from "@google-cloud/language"
 import redis from "@/utils/redis"
-import { NLP_KEY } from "@/constants"
+import { CACHE_KEYS } from "@/constants"
 
 @Resolver(PremiumDashboardResponse)
 export class PremiumDashboardReslover {
@@ -93,12 +93,17 @@ export class PremiumDashboardReslover {
         entities: annotate.entities,
       }
 
-      await redis.set(`${NLP_KEY}/${user}/${runningAvg}`, JSON.stringify(nlpData))
+      await redis.set(
+        `${CACHE_KEYS.premiumDashboard}/${user}/${runningAvg}`,
+        JSON.stringify(nlpData)
+      )
 
       return nlpData
     }
 
-    const cachedNlpData = await redis.get(`${NLP_KEY}/${user}/${runningAvg}`)
+    const cachedNlpData = await redis.get(
+      `${CACHE_KEYS.premiumDashboard}/${user}/${runningAvg}`
+    )
 
     if (cachedNlpData)
       return {
