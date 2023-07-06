@@ -4,11 +4,12 @@ delete pkg.native
 const { Pool } = pkg
 
 const pool: typeof Pool = new Pool({
-  user: keys.pgUser,
-  host: keys.serverHost,
-  database: keys.pgDatabase,
-  password: keys.pgPassword,
-  port: keys.pgPort,
+  connectionString: `postgres://${keys.pgUser}:${keys.pgPassword}@${keys.serverHost}:${keys.pgPort}/${keys.pgDatabase}?sslmode=disable&gssencmode=disable`,
+  // user: keys.pgUser,
+  // host: keys.serverHost,
+  // database: keys.pgDatabase,
+  // password: keys.pgPassword,
+  // port: keys.pgPort,
 })
 
 pool.on("connect", (client: any) => {
