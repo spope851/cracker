@@ -1,7 +1,13 @@
 import React, { useMemo } from "react"
 import { createTheme, ThemeProvider as MuiProvider } from "@mui/material"
+import { Inter } from "@next/font/google"
 
 const DARK_GREY = "#999"
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+})
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -11,7 +17,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       createTheme({
         palette: {
           primary: {
-            main: "#4f864f",
+            main: "#4162ff",
           },
         },
         components: {
@@ -43,6 +49,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
               },
             },
           },
+        },
+        typography: {
+          fontFamily: inter.style.fontFamily,
         },
       }),
     []
