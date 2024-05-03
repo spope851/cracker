@@ -1,4 +1,4 @@
-import { AppBar, Box, Typography } from "@mui/material"
+import { AppBar, Box, Button, Stack, Typography } from "@mui/material"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import Image from "next/image"
@@ -12,64 +12,83 @@ export default function Navbar() {
   const session = useSession()
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "grey" }}>
-      <Box component="nav">
-        <Box
-          component="ul"
-          display="flex"
-          m={0}
-          p={0}
-          overflow="hidden"
-          sx={{ listStyleType: "none" }}
-        >
-          <Box
-            component="li"
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            px={2}
-            borderRight="solid 1px #bbb"
-            sx={{
-              backgroundColor: router.pathname === "/" ? "primary.main" : "grey",
+    <AppBar
+      className={"animate__animated animate__fadeIn"}
+      position="static"
+      sx={{ backgroundColor: "white", boxShadow: "none" }}
+    >
+      <Box
+        component="ul"
+        display="flex"
+        justifyContent={"space-evenly"}
+        p={0}
+        overflow="hidden"
+        sx={{ listStyleType: "none" }}
+      >
+        <Box display="flex" borderRadius={"35px"} px={2}>
+          <Link
+            href="/"
+            style={{
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            <Link
-              href="/"
-              style={{
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-              }}
+            <Typography
+              variant="h5"
+              m={0}
+              color="primary.main"
+              fontWeight={"600"}
+              display={{ xs: "none", sm: "block" }}
             >
-              <Typography
-                variant="h5"
-                m={0}
-                color="#fff"
-                display={{ xs: "none", sm: "block" }}
-              >
-                cracker
-              </Typography>
-              <Image src={cracker} height={35} width={35} alt="cracker" />
-            </Link>
-          </Box>
-          <Box ml="auto" display="flex">
-            <NavbarItem title="track" />
-            <NavbarItem title="about" />
-            <NavbarItem title="team" />
-            {session.status === "authenticated" && (
-              <Box
-                component="li"
-                p={1}
-                borderLeft="solid 1px #bbb"
-                sx={{
-                  backgroundColor: "grey",
-                }}
-              >
-                <AvatarMenu />
-              </Box>
-            )}
-          </Box>
+              cracker
+            </Typography>
+            <Image
+              src={cracker}
+              height={50}
+              width={50}
+              alt="cracker"
+              style={{
+                backgroundColor: "#fff",
+              }}
+            />
+          </Link>
         </Box>
+        <Stack flexDirection={"row"} alignItems={"center"}>
+          <NavbarItem title="track" />
+          <NavbarItem title="about" />
+          <NavbarItem title="team" />
+        </Stack>
+        {session.status === "authenticated" && (
+          <Box
+            p={1}
+            borderLeft="solid 1px #bbb"
+            sx={{
+              backgroundColor: "grey",
+            }}
+          >
+            <AvatarMenu />
+          </Box>
+        )}
+        {session.status === "unauthenticated" && (
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => router.push("/register")}
+            sx={{
+              borderRadius: "35px",
+              border: "1px solid lightgrey",
+              textTransform: "none",
+              color: "#F1F1F1",
+              margin: 2,
+              "&hover": {
+                backgroundColor: "#F1F1F1",
+              },
+            }}
+          >
+            <Typography color="#6273b3">Get Started</Typography>
+          </Button>
+        )}
       </Box>
     </AppBar>
   )

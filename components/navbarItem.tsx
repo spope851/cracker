@@ -9,14 +9,24 @@ export const NavbarItem: React.FC<{ title: string }> = ({ title }) => {
   return (
     <Box
       component="li"
-      p={2}
-      borderLeft="solid 1px #bbb"
+      px={3}
+      py={1}
+      m={1}
+      borderRadius={"35px"}
       sx={{
-        backgroundColor: router.pathname === `/${title}` ? "primary.main" : "grey",
+        backgroundColor: router.pathname === `/${title}` ? "primary.main" : "white",
+        "&:hover": {
+          backgroundColor: "#F1F1F1",
+        },
       }}
     >
       <Link href={`/${title}`} style={{ textDecoration: "none" }}>
-        <Typography color="#fff">{title}</Typography>
+        <Typography
+          color={router.pathname === `/${title}` ? "#fff" : "#6273b3"}
+          letterSpacing={"0.10rem"}
+        >
+          {title}
+        </Typography>
       </Link>
     </Box>
   )

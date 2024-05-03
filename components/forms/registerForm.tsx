@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react"
-import { Box, Button, InputLabel, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, Stack, TextField, Typography } from "@mui/material"
 import { useMutation } from "@apollo/client"
 import { signIn } from "next-auth/react"
 import { REGISTER_MUTATION } from "@/graphql/client"
 
-export const Register: React.FC = () => {
+export const RegisterForm: React.FC = () => {
   const [email, setEmail] = useState<string>()
   const [username, setUsername] = useState<string>()
   const [password, setPassword] = useState<string>()
@@ -23,6 +23,12 @@ export const Register: React.FC = () => {
 
   return (
     <Box
+      className="animate__animated animate__fadeIn"
+      boxShadow={"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}
+      mx={"auto"}
+      width={"250px"}
+      p={6}
+      borderRadius={"30px"}
       component="form"
       method="post"
       onSubmit={async (e) => {
