@@ -10,7 +10,7 @@ export default function Footer() {
       display="flex"
       justifyContent="space-around"
       mt="auto"
-      sx={{ backgroundColor: "grey" }}
+      sx={{ backgroundColor: "#8a8c8e" }}
     >
       <Box component="ul" sx={{ listStyleType: "none" }}>
         <Box component="li">
