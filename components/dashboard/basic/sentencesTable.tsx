@@ -67,7 +67,9 @@ export const SentencesTable: React.FC = () => {
   return (
     <Grid container item md={7} sm={12} xs={12} mb={{ md: 0, sm: 5, xs: 5 }}>
       <Box
-        border="solid"
+        boxShadow={
+          "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;"
+        }
         borderRadius={2}
         p={5}
         textAlign="left"

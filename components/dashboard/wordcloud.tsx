@@ -57,7 +57,9 @@ export const Wordcloud: React.FC<{ words?: Word[] }> = ({ words: wordsProp }) =>
         setOpen={setPopoverOpen}
       />
       <Box
-        border="solid"
+        boxShadow={
+          "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;"
+        }
         borderRadius={2}
         p={5}
         textAlign="left"
