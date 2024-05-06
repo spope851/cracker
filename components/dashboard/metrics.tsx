@@ -35,7 +35,9 @@ export const Metrics: React.FC = () => {
       <Grid
         item
         flex={1}
-        border="solid"
+        boxShadow={
+          "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;"
+        }
         borderRadius={2}
         p={5}
         display="flex"
@@ -47,23 +49,24 @@ export const Metrics: React.FC = () => {
         ) : (
           <>
             <Typography>
-              {`avg daily creative hours:`}
-              <Typography sx={{ float: "right" }} component="span" fontWeight="bold">
+              {`Average daily creative hours:`}
+              <Typography ml={1} component="span" fontWeight="bold">
                 {dashboardMetrics?.avgHours?.toFixed(1)}
               </Typography>
             </Typography>
             <br />
             <Typography>
-              {`on track for `}
+              {`You're on track for `}
               <Typography fontWeight="bold" component="span">
                 {dashboardMetrics?.avgHours &&
                   (dashboardMetrics.avgHours * 356).toFixed()}
               </Typography>
-              {` creative hours this year`}
+              {` creative hours this year!`}
             </Typography>
             <br />
             <Typography
-              variant="h6"
+              variant="h5"
+              fontWeight={"600"}
               textAlign="center"
               sx={{ textDecoration: "underline" }}
             >
