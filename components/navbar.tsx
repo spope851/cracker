@@ -60,13 +60,7 @@ export default function Navbar() {
           <NavbarItem title="team" />
         </Stack>
         {session.status === "authenticated" && (
-          <Box
-            p={1}
-            borderLeft="solid 1px #bbb"
-            sx={{
-              backgroundColor: "grey",
-            }}
-          >
+          <Box p={1}>
             <AvatarMenu />
           </Box>
         )}
